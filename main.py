@@ -31,6 +31,13 @@ from email.utils import parseaddr
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
+try:
+    import psycopg
+    from psycopg.rows import dict_row
+except ImportError:
+    psycopg = None
+    dict_row = None
+
 load_dotenv()
 
 
@@ -853,9 +860,53 @@ initialize_user_database()
 # INITIALIZE ADMIN CREDENTIALS
 # =========================================================
 
-def initialize_admin_credentials():
+def get_persistent_admin_database_url():
 
-    connection = get_user_db()
+    return (
+        os.environ.get("DATABASE_URL", "").strip()
+        or
+        os.environ.get("POSTGRES_URL", "").strip()
+    )
+
+
+def use_persistent_admin_database():
+
+    return bool(
+        get_persistent_admin_database_url()
+    )
+
+
+def get_admin_database_connection():
+
+    database_url = get_persistent_admin_database_url()
+
+    if database_url:
+
+        if psycopg is None:
+
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "PostgreSQL support is not installed. "
+                    "Add psycopg[binary] to requirements.txt."
+                )
+            )
+
+        return psycopg.connect(
+            database_url,
+            row_factory=dict_row
+        )
+
+    return get_user_db()
+
+
+def initialize_persistent_admin_database():
+
+    if not use_persistent_admin_database():
+
+        return
+
+    connection = get_admin_database_connection()
 
     try:
 
@@ -863,8 +914,55 @@ def initialize_admin_credentials():
 
         cursor.execute(
             """
+            CREATE TABLE IF NOT EXISTS war_room_admin_credentials (
+                id INTEGER PRIMARY KEY,
+                username TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS war_room_admin_sessions (
+                id BIGSERIAL PRIMARY KEY,
+                username TEXT NOT NULL,
+                session_token TEXT NOT NULL UNIQUE,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+
+        connection.commit()
+
+    finally:
+
+        connection.close()
+
+
+def initialize_admin_credentials():
+
+    initialize_persistent_admin_database()
+
+    connection = get_admin_database_connection()
+
+    persistent = use_persistent_admin_database()
+
+    try:
+
+        cursor = connection.cursor()
+
+        credentials_table = (
+            "war_room_admin_credentials"
+            if persistent
+            else "admin_credentials"
+        )
+
+        cursor.execute(
+            f"""
             SELECT id
-            FROM admin_credentials
+            FROM {credentials_table}
             WHERE id = 1
             LIMIT 1
             """
@@ -894,9 +992,11 @@ def initialize_admin_credentials():
             timezone.utc
         ).isoformat()
 
+        placeholder = "%s" if persistent else "?"
+
         cursor.execute(
-            """
-            INSERT INTO admin_credentials
+            f"""
+            INSERT INTO {credentials_table}
                 (
                     id,
                     username,
@@ -904,7 +1004,7 @@ def initialize_admin_credentials():
                     updated_at
                 )
             VALUES
-                (1, ?, ?, ?)
+                (1, {placeholder}, {placeholder}, {placeholder})
             """,
             (
                 username,
@@ -4119,6 +4219,40 @@ def create_admin_session(
         ).isoformat()
     )
 
+    if use_persistent_admin_database():
+
+        connection = get_admin_database_connection()
+
+        try:
+
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                INSERT INTO war_room_admin_sessions
+                    (
+                        username,
+                        session_token,
+                        created_at
+                    )
+                VALUES
+                    (%s, %s, %s)
+                """,
+                (
+                    username,
+                    session_token,
+                    created_at
+                )
+            )
+
+            connection.commit()
+
+            return session_token
+
+        finally:
+
+            connection.close()
+
     connection = get_user_db()
 
     try:
@@ -4160,6 +4294,36 @@ def get_admin_username(
 
         return None
 
+    if use_persistent_admin_database():
+
+        connection = get_admin_database_connection()
+
+        try:
+
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                SELECT username
+                FROM war_room_admin_sessions
+                WHERE session_token = %s
+                LIMIT 1
+                """,
+                (session_token,)
+            )
+
+            row = cursor.fetchone()
+
+            if not row:
+
+                return None
+
+            return row["username"]
+
+        finally:
+
+            connection.close()
+
     connection = get_user_db()
 
     try:
@@ -4173,9 +4337,7 @@ def get_admin_username(
             WHERE session_token = ?
             LIMIT 1
             """,
-            (
-                session_token,
-            )
+            (session_token,)
         )
 
         row = cursor.fetchone()
@@ -4505,18 +4667,26 @@ async def update_current_hackathon_data(
 
 def get_admin_credentials():
 
-    connection = get_user_db()
+    persistent = use_persistent_admin_database()
+
+    connection = get_admin_database_connection()
 
     try:
 
         cursor = connection.cursor()
 
+        table_name = (
+            "war_room_admin_credentials"
+            if persistent
+            else "admin_credentials"
+        )
+
         cursor.execute(
-            """
+            f"""
             SELECT
                 username,
                 password_hash
-            FROM admin_credentials
+            FROM {table_name}
             WHERE id = 1
             LIMIT 1
             """
@@ -4535,8 +4705,6 @@ def get_admin_credentials():
 
         connection.close()
 
-
-    # First-run fallback: initialize from environment.
     username = os.environ.get(
         "WAR_ROOM_ADMIN_USERNAME",
         ""
@@ -4594,7 +4762,7 @@ async def admin_login_api(
             max_age=ADMIN_SESSION_MAX_AGE,
             httponly=True,
             samesite="lax",
-            secure=False,
+            secure=IS_VERCEL,
             path="/"
         )
 
@@ -4634,21 +4802,31 @@ async def admin_logout(
 
     if session_token:
 
-        connection = get_user_db()
+        connection = get_admin_database_connection()
 
         try:
 
             cursor = connection.cursor()
 
-            cursor.execute(
-                """
-                DELETE FROM admin_sessions
-                WHERE session_token = ?
-                """,
-                (
-                    session_token,
+            if use_persistent_admin_database():
+
+                cursor.execute(
+                    """
+                    DELETE FROM war_room_admin_sessions
+                    WHERE session_token = %s
+                    """,
+                    (session_token,)
                 )
-            )
+
+            else:
+
+                cursor.execute(
+                    """
+                    DELETE FROM admin_sessions
+                    WHERE session_token = ?
+                    """,
+                    (session_token,)
+                )
 
             connection.commit()
 
@@ -4759,16 +4937,24 @@ async def change_admin_username(
             detail="New username must be different from the current username."
         )
 
-    connection = get_user_db()
+    persistent = use_persistent_admin_database()
+
+    connection = get_admin_database_connection()
 
     try:
 
         cursor = connection.cursor()
 
+        credentials_table = (
+            "war_room_admin_credentials"
+            if persistent
+            else "admin_credentials"
+        )
+
         cursor.execute(
-            """
+            f"""
             SELECT id
-            FROM admin_credentials
+            FROM {credentials_table}
             WHERE id = 1
             LIMIT 1
             """
@@ -4787,11 +4973,13 @@ async def change_admin_username(
             timezone.utc
         ).isoformat()
 
+        placeholder = "%s" if persistent else "?"
+
         cursor.execute(
-            """
-            UPDATE admin_credentials
-            SET username = ?,
-                updated_at = ?
+            f"""
+            UPDATE {credentials_table}
+            SET username = {placeholder},
+                updated_at = {placeholder}
             WHERE id = 1
             """,
             (
@@ -4800,18 +4988,33 @@ async def change_admin_username(
             )
         )
 
-        # Keep all currently active admin sessions authenticated.
-        cursor.execute(
-            """
-            UPDATE admin_sessions
-            SET username = ?
-            WHERE username = ?
-            """,
-            (
-                new_username,
-                admin_username
+        if persistent:
+
+            cursor.execute(
+                """
+                UPDATE war_room_admin_sessions
+                SET username = %s
+                WHERE username = %s
+                """,
+                (
+                    new_username,
+                    admin_username
+                )
             )
-        )
+
+        else:
+
+            cursor.execute(
+                """
+                UPDATE admin_sessions
+                SET username = ?
+                WHERE username = ?
+                """,
+                (
+                    new_username,
+                    admin_username
+                )
+            )
 
         connection.commit()
 
@@ -4828,6 +5031,7 @@ async def change_admin_username(
     finally:
 
         connection.close()
+
 
 
 # =========================================================
@@ -4865,16 +5069,24 @@ async def change_admin_password(
             detail="New password and confirmation do not match."
         )
 
-    connection = get_user_db()
+    persistent = use_persistent_admin_database()
+
+    connection = get_admin_database_connection()
 
     try:
 
         cursor = connection.cursor()
 
+        credentials_table = (
+            "war_room_admin_credentials"
+            if persistent
+            else "admin_credentials"
+        )
+
         cursor.execute(
-            """
+            f"""
             SELECT username, password_hash
-            FROM admin_credentials
+            FROM {credentials_table}
             WHERE id = 1
             LIMIT 1
             """
@@ -4920,11 +5132,13 @@ async def change_admin_password(
             timezone.utc
         ).isoformat()
 
+        placeholder = "%s" if persistent else "?"
+
         cursor.execute(
-            """
-            UPDATE admin_credentials
-            SET password_hash = ?,
-                updated_at = ?
+            f"""
+            UPDATE {credentials_table}
+            SET password_hash = {placeholder},
+                updated_at = {placeholder}
             WHERE id = 1
             """,
             (
@@ -4946,6 +5160,7 @@ async def change_admin_password(
     finally:
 
         connection.close()
+
 
 
 # =========================================================
