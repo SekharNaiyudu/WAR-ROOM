@@ -58,7 +58,32 @@ CSS_DIR = FRONTEND_DIR / "css"
 JS_DIR = FRONTEND_DIR / "js"
 ASSETS_DIR = FRONTEND_DIR / "assets"
 
-DATA_DIR = BASE_DIR / "data"
+
+# =========================================================
+# VERCEL / LOCAL RUNTIME STORAGE
+# =========================================================
+# Vercel deployment files under /var/task are read-only.
+# Local development continues to use the project directory.
+# Runtime-created data/toolkits use /tmp on Vercel.
+# =========================================================
+
+IS_VERCEL = bool(
+    os.environ.get("VERCEL")
+)
+
+if IS_VERCEL:
+    RUNTIME_DIR = (
+        Path("/tmp") /
+        "war-room"
+    )
+else:
+    RUNTIME_DIR = BASE_DIR
+
+
+DATA_DIR = (
+    RUNTIME_DIR /
+    "data"
+)
 
 DATA_FILE = (
     DATA_DIR /
@@ -76,7 +101,7 @@ USER_DATABASE = (
 # =========================================================
 
 TOOLKIT_DIR = (
-    BASE_DIR /
+    RUNTIME_DIR /
     "toolkits"
 )
 
@@ -92,7 +117,7 @@ HACKATHON_TOOLKIT_DIR = (
 
 
 # =========================================================
-# CREATE DIRECTORIES
+# CREATE / INITIALIZE RUNTIME DIRECTORIES
 # =========================================================
 
 DATA_DIR.mkdir(
@@ -114,6 +139,104 @@ HACKATHON_TOOLKIT_DIR.mkdir(
     parents=True,
     exist_ok=True
 )
+
+
+# =========================================================
+# COPY BUNDLED RUNTIME DATA ON VERCEL
+# =========================================================
+# The deployment filesystem is read-only. If bundled local
+# data/toolkits exist in the repository, copy them once into
+# the writable /tmp runtime area so existing read/download
+# functionality continues to work after deployment.
+# =========================================================
+
+if IS_VERCEL:
+
+    bundled_data_dir = (
+        BASE_DIR /
+        "data"
+    )
+
+    if bundled_data_dir.exists():
+
+        for bundled_file in bundled_data_dir.iterdir():
+
+            if bundled_file.is_file():
+
+                target_file = (
+                    DATA_DIR /
+                    bundled_file.name
+                )
+
+                if not target_file.exists():
+
+                    try:
+
+                        shutil.copy2(
+                            bundled_file,
+                            target_file
+                        )
+
+                    except Exception:
+                        pass
+
+
+    bundled_toolkit_dir = (
+        BASE_DIR /
+        "toolkits"
+    )
+
+    if bundled_toolkit_dir.exists():
+
+        for source_dir in bundled_toolkit_dir.rglob("*"):
+
+            if source_dir.is_dir():
+
+                relative_dir = (
+                    source_dir.relative_to(
+                        bundled_toolkit_dir
+                    )
+                )
+
+                target_dir = (
+                    TOOLKIT_DIR /
+                    relative_dir
+                )
+
+                target_dir.mkdir(
+                    parents=True,
+                    exist_ok=True
+                )
+
+            elif source_dir.is_file():
+
+                relative_file = (
+                    source_dir.relative_to(
+                        bundled_toolkit_dir
+                    )
+                )
+
+                target_file = (
+                    TOOLKIT_DIR /
+                    relative_file
+                )
+
+                if not target_file.exists():
+
+                    try:
+
+                        target_file.parent.mkdir(
+                            parents=True,
+                            exist_ok=True
+                        )
+
+                        shutil.copy2(
+                            source_dir,
+                            target_file
+                        )
+
+                    except Exception:
+                        pass
 
 
 # =========================================================
