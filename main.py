@@ -1196,15 +1196,50 @@ app.mount(
 
 
 # =========================================================
+# PUBLIC HTML FILES
+# =========================================================
+# Explicitly expose the complete frontend/public directory.
+# Vercel's Python runtime can promote StaticFiles directories
+# to its CDN and keep the source directory available to the
+# function. This also makes index.html discoverable at "/".
+# Existing API/page routes declared below remain unchanged
+# because FastAPI evaluates routes in declaration order.
+# =========================================================
+
+app.mount(
+    "/_public",
+    StaticFiles(
+        directory=PUBLIC_DIR,
+        html=True
+    ),
+    name="public-files"
+)
+
+
+# =========================================================
 # HOME PAGE
 # =========================================================
 
 @app.get("/")
 async def home():
 
-    return FileResponse(
+    index_file = (
         PUBLIC_DIR /
         "index.html"
+    )
+
+    if not index_file.exists():
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "frontend/public/index.html is missing "
+                "from the deployment."
+            )
+        )
+
+    return FileResponse(
+        index_file
     )
 
 
