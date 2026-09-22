@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        WAR ROOM — Workshop Access
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/user-login.css?v=3"
+    >
+
+</head>
+
+
+<body>
+
+
+    <img
+        src="/assets/background.png"
+        alt=""
+        class="war-room-background"
+    >
+
+
+    <div class="page-bg"></div>
+
+    <div class="scanlines"></div>
+
+
+    <!-- =====================================================
+         BRAND
+         ===================================================== -->
+
+    <header class="brand">
+
+        <div class="brand-logo">
+            SQ
+        </div>
+
+        <div class="brand-name">
+            Syntho<span>Quest</span>
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         AUTH PAGE
+         ===================================================== -->
+
+    <main class="auth-page">
+
+
+        <section class="auth-card">
+
+
+            <!-- =================================================
+                 WELCOME
+                 ================================================= -->
+
+            <div class="welcome-line">
+
+                <span></span>
+
+                <p>
+                    WELCOME TO
+                </p>
+
+                <span></span>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 WAR ROOM TITLE
+                 ================================================= -->
+
+            <h1>
+
+                <strong>
+                    WAR
+                </strong>
+
+                ROOM
+
+            </h1>
+
+
+
+            <!-- =================================================
+                 TITLE DIVIDER
+                 ================================================= -->
+
+            <div class="title-divider">
+
+                <span></span>
+
+                <b>
+                    ✦
+                </b>
+
+                <span></span>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ACCESS LABEL
+                 ================================================= -->
+
+            <p class="access-label">
+
+                WORKSHOP
+                <strong>
+                    ACCESS.
+                </strong>
+
+            </p>
+
+
+
+            <!-- =================================================
+                 SELECTED WORKSHOP
+                 ================================================= -->
+
+            <div class="domain-box">
+
+                <div
+                    class="domain-icon"
+                    id="domainIcon"
+                >
+                    ⌘
+                </div>
+
+
+                <div>
+
+                    <small>
+                        SELECTED WORKSHOP
+                    </small>
+
+                    <strong id="domainName">
+                        CEH WORKSHOP
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 REGISTER / LOGIN TABS
+                 ================================================= -->
+
+            <div class="auth-tabs">
+
+
+                <button
+                    type="button"
+                    class="auth-tab active"
+                    id="registerTab"
+                >
+                    REGISTER
+                </button>
+
+
+                <button
+                    type="button"
+                    class="auth-tab"
+                    id="loginTab"
+                >
+                    LOGIN
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MESSAGE
+                 ================================================= -->
+
+            <div
+                class="auth-message"
+                id="authMessage"
+            ></div>
+
+
+
+            <!-- =================================================
+                 REGISTER FORM
+                 ================================================= -->
+
+            <form
+                id="registerForm"
+                class="auth-form"
+            >
+
+
+                <div class="field">
+
+                    <label for="registerName">
+                        FULL NAME
+                    </label>
+
+                    <input
+                        id="registerName"
+                        name="name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="registerEmail">
+                        EMAIL ADDRESS
+                    </label>
+
+                    <input
+                        id="registerEmail"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="registerPhone">
+                        PHONE NUMBER
+                    </label>
+
+                    <input
+                        id="registerPhone"
+                        name="phone"
+                        type="tel"
+                        placeholder="Enter your phone number"
+                        autocomplete="tel"
+                        maxlength="15"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="registerPassword">
+                        PASSWORD
+                    </label>
+
+                    <input
+                        id="registerPassword"
+                        name="password"
+                        type="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="confirmPassword">
+                        CONFIRM PASSWORD
+                    </label>
+
+                    <input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm your password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                    id="registerButton"
+                >
+
+                    CREATE WORKSHOP ACCOUNT
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- =================================================
+                 LOGIN FORM
+                 ================================================= -->
+
+            <form
+                id="loginForm"
+                class="auth-form hidden"
+            >
+
+
+                <div class="field">
+
+                    <label for="loginEmail">
+                        EMAIL ADDRESS
+                    </label>
+
+                    <input
+                        id="loginEmail"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="loginPassword">
+                        PASSWORD
+                    </label>
+
+                    <input
+                        id="loginPassword"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- IMPORTANT:
+                     This MUST be submit button.
+                     JavaScript handles /api/workshop/login.
+                -->
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                    id="loginButton"
+                >
+
+                    LOGIN TO WORKSHOP
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- =================================================
+                 BACK TO WORKSHOPS
+                 ================================================= -->
+
+            <button
+                class="back-link"
+                type="button"
+                id="backToWorkshop"
+            >
+
+                ← BACK TO WORKSHOPS
+
+            </button>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer>
+
+        SYNTHOQUEST PRIVATE LIMITED
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         WORKSHOP AUTHENTICATION JAVASCRIPT
+         ===================================================== -->
+
+    <script src="/js/user-login.js?v=4"></script>
+
+
+</body>
+
+</html>

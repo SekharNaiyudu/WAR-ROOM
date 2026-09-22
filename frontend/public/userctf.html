@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WAR ROOM — CTF</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/userctf.css?v=2"
+    >
+
+</head>
+
+
+<body>
+
+<main class="user-dashboard">
+
+
+    <!-- =====================================================
+         SIDEBAR — PRESERVED USER DASHBOARD STRUCTURE
+         ===================================================== -->
+
+    <aside class="user-sidebar">
+
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                SQ
+            </div>
+
+            <div class="sidebar-brand-name">
+                Syntho<span>Quest</span>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-panel-label">
+
+            WAR ROOM
+
+            <span>
+                USER PANEL
+            </span>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+
+            <button
+                class="sidebar-item"
+                data-section="dashboard"
+                type="button"
+                onclick="window.location.href='/user/dashboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+
+            <button
+                class="sidebar-item active"
+                data-section="ctf"
+                type="button"
+                onclick="window.location.href='/user/ctf'"
+            >
+
+                <span class="sidebar-icon">
+                    ⚔
+                </span>
+
+                <span>
+                    CTF
+                </span>
+
+            </button>
+
+
+
+            <button
+                class="sidebar-item"
+                data-section="leaderboard"
+                type="button"
+                onclick="window.location.href='/user/leaderboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ♛
+                </span>
+
+                <span>
+                    Leaderboard
+                </span>
+
+            </button>
+
+
+
+            <button
+                class="sidebar-item logout-item"
+                data-section="logout"
+                type="button"
+            >
+
+                <span class="sidebar-icon">
+                    ⎋
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+
+        </nav>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         CTF CONTENT
+         ===================================================== -->
+
+    <section class="ctf-content">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="ctf-header">
+
+
+            <div>
+
+                <div class="ctf-kicker">
+                    WAR ROOM / USER CTF
+                </div>
+
+
+                <h1>
+                    CTF <span>CHALLENGES</span>
+                </h1>
+
+
+                <!--
+                    Domain is filled dynamically by userctf.js.
+                -->
+
+                <p id="ctfHeaderDescription">
+                    Workshop · CTF · Capture The Flag
+                </p>
+
+            </div>
+
+
+
+            <div class="ctf-header-status">
+
+                <span class="status-dot"></span>
+
+                <span id="ctfHeaderStatus">
+                    WORKSHOP / CTF
+                </span>
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             CATEGORY SELECTION
+             ================================================= -->
+
+        <section class="ctf-section">
+
+
+            <div class="section-heading">
+
+
+                <div>
+
+                    <span class="section-kicker">
+                        CHALLENGE CATEGORIES
+                    </span>
+
+
+                    <h2>
+                        Select a Category
+                    </h2>
+
+                </div>
+
+
+
+                <div class="category-count">
+
+                    <strong id="totalChallengeCount">
+                        0
+                    </strong>
+
+                    <span>
+                        TOTAL
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!--
+                Category cards are generated dynamically.
+
+                CEH login:
+                    Steganography
+                    Wireshark
+                    Event Logs
+
+                VAPT login:
+                    Test Cases
+                    URL Redirection
+                    Broken Link Hijack
+                    File Upload
+                    Error Bypass
+            -->
+
+            <div
+                class="category-grid"
+                id="categoryGrid"
+            >
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             CHALLENGE LIST
+             ================================================= -->
+
+        <section
+            class="ctf-section challenges-section"
+        >
+
+
+            <div
+                class="section-heading challenge-heading"
+            >
+
+
+                <div>
+
+                    <span class="section-kicker">
+                        CURRENT CATEGORY
+                    </span>
+
+
+                    <h2 id="currentCategoryTitle">
+                        SELECT A CATEGORY
+                    </h2>
+
+
+                    <p id="currentCategoryDescription">
+                        Select a category to view challenges.
+                    </p>
+
+                </div>
+
+
+
+                <div class="selected-category-count">
+
+                    <strong
+                        id="currentChallengeCount"
+                    >
+                        0
+                    </strong>
+
+
+                    <span
+                        id="currentChallengeLabel"
+                    >
+                        CHALLENGES
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CHALLENGES GENERATED BY userctf.js
+                 ================================================= -->
+
+            <div
+                class="challenge-list"
+                id="challengeList"
+            ></div>
+
+
+        </section>
+
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================================
+     ANSWER / FLAG SUBMISSION MODAL
+     ========================================================= -->
+
+<div
+    class="answer-modal"
+    id="answerModal"
+    aria-hidden="true"
+>
+
+
+    <!-- =====================================================
+         BACKDROP
+         ===================================================== -->
+
+    <div
+        class="answer-modal-backdrop"
+        data-close-answer-modal
+    ></div>
+
+
+
+    <!-- =====================================================
+         MODAL CARD
+         ===================================================== -->
+
+    <div
+        class="answer-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="answerModalTitle"
+    >
+
+
+        <!-- =================================================
+             CLOSE BUTTON
+             ================================================= -->
+
+        <button
+            type="button"
+            class="answer-modal-close"
+            id="answerModalClose"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+
+
+        <!-- =================================================
+             MODAL KICKER
+             ================================================= -->
+
+        <div
+            class="modal-kicker"
+            id="answerModalKicker"
+        >
+            CHALLENGE ANSWER
+        </div>
+
+
+
+        <!-- =================================================
+             MODAL TITLE
+             ================================================= -->
+
+        <h2 id="answerModalTitle">
+            SUBMIT ANSWER
+        </h2>
+
+
+
+        <!-- =================================================
+             CHALLENGE / FLAG NAME
+             ================================================= -->
+
+        <p id="answerModalChallenge">
+            Challenge 01
+        </p>
+
+
+
+        <!-- =================================================
+             MODAL META
+             ================================================= -->
+
+        <div class="modal-meta">
+
+
+            <span id="answerModalEvent">
+                WORKSHOP
+            </span>
+
+
+            <span>
+                •
+            </span>
+
+
+            <span id="answerModalDomain">
+                CEH
+            </span>
+
+
+            <span>
+                •
+            </span>
+
+
+            <span id="answerModalCategory">
+                STEGANOGRAPHY
+            </span>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             ANSWER / FLAG LABEL
+             ================================================= -->
+
+        <label
+            for="answerInput"
+            class="answer-label"
+            id="answerInputLabel"
+        >
+            ENTER ANSWER
+        </label>
+
+
+
+        <!-- =================================================
+             ANSWER / FLAG INPUT
+             ================================================= -->
+
+        <input
+            type="text"
+            id="answerInput"
+            class="answer-input"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Enter your answer..."
+        >
+
+
+
+        <!-- =================================================
+             MESSAGE
+             ================================================= -->
+
+        <div
+            class="answer-message"
+            id="answerMessage"
+            role="alert"
+        ></div>
+
+
+
+        <!-- =================================================
+             ACTIONS
+             ================================================= -->
+
+        <div class="answer-actions">
+
+
+            <button
+                type="button"
+                class="answer-cancel"
+                id="answerCancel"
+            >
+                CANCEL
+            </button>
+
+
+
+            <button
+                type="button"
+                class="answer-submit"
+                id="answerSubmit"
+            >
+                SUBMIT ANSWER
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     USER CTF JAVASCRIPT
+     ========================================================= -->
+
+<script src="/js/userctf.js?v=2"></script>
+
+
+</body>
+</html>

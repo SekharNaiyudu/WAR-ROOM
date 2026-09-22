@@ -1,0 +1,1418 @@
+/* =========================================================
+   WAR ROOM
+   WORKSHOP USER AUTHENTICATION
+   USER-LOGIN.CSS
+   ========================================================= */
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #ffffff;
+
+    background: #020304;
+}
+
+
+/* =========================================================
+   PAGE BACKGROUND
+   ========================================================= */
+
+.page-bg {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: -10;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.05),
+            rgba(0, 0, 0, 0.18)
+        ),
+        url("/assets/images/background.png")
+        center center / cover no-repeat;
+
+    transform: scale(1.02);
+}
+
+
+/* =========================================================
+   BACKGROUND CINEMATIC VIGNETTE
+   ========================================================= */
+
+.page-bg::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(0, 0, 0, 0.00) 22%,
+            rgba(0, 0, 0, 0.08) 55%,
+            rgba(0, 0, 0, 0.25) 100%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   RED ATMOSPHERE
+   ========================================================= */
+
+.page-bg::after {
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    background:
+        radial-gradient(
+            circle at 12% 70%,
+            rgba(255, 20, 30, 0.10),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 88% 70%,
+            rgba(255, 20, 30, 0.09),
+            transparent 24%
+        );
+
+    pointer-events: none;
+
+    animation:
+        atmospherePulse
+        7s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+/* =========================================================
+   SCANLINES
+   ========================================================= */
+
+.scanlines {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: -5;
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.014) 0,
+            rgba(255, 255, 255, 0.014) 1px,
+            transparent 1px,
+            transparent 5px
+        );
+}
+
+
+/* =========================================================
+   MOVING HORIZONTAL LIGHT
+   ========================================================= */
+
+.scanlines::before {
+    content: "";
+
+    position: absolute;
+
+    top: -25%;
+
+    left: -25%;
+
+    width: 150%;
+    height: 18%;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.018) 20%,
+            rgba(255, 255, 255, 0.045) 42%,
+            rgba(255, 20, 30, 0.045) 50%,
+            rgba(255, 255, 255, 0.025) 62%,
+            transparent 100%
+        );
+
+    filter: blur(7px);
+
+    transform: rotate(-3deg);
+
+    opacity: 0;
+
+    animation:
+        movingLight
+        9s
+        linear
+        infinite;
+}
+
+
+/* =========================================================
+   MOVING SIDE LIGHT
+   ========================================================= */
+
+.scanlines::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: -35%;
+
+    width: 28%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 20, 30, 0.00) 20%,
+            rgba(255, 20, 30, 0.07) 45%,
+            rgba(255, 255, 255, 0.06) 52%,
+            rgba(255, 20, 30, 0.04) 62%,
+            transparent 100%
+        );
+
+    filter: blur(15px);
+
+    transform: skewX(-12deg);
+
+    opacity: 0;
+
+    animation:
+        sideLight
+        12s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================================
+   MOVING LIGHT ANIMATION
+   ========================================================= */
+
+@keyframes movingLight {
+
+    0% {
+        transform:
+            translateY(-80vh)
+            rotate(-3deg);
+
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.18;
+    }
+
+    30% {
+        opacity: 0.40;
+    }
+
+    50% {
+        opacity: 0.58;
+    }
+
+    70% {
+        opacity: 0.35;
+    }
+
+    90% {
+        opacity: 0.12;
+    }
+
+    100% {
+        transform:
+            translateY(180vh)
+            rotate(-3deg);
+
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   SIDE LIGHT ANIMATION
+   ========================================================= */
+
+@keyframes sideLight {
+
+    0% {
+        left: -35%;
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 0.10;
+    }
+
+    30% {
+        opacity: 0.30;
+    }
+
+    48% {
+        opacity: 0.45;
+    }
+
+    65% {
+        opacity: 0.20;
+    }
+
+    82% {
+        opacity: 0.08;
+    }
+
+    100% {
+        left: 115%;
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   ATMOSPHERE PULSE
+   ========================================================= */
+
+@keyframes atmospherePulse {
+
+    0% {
+        opacity: 0.45;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.75;
+        transform: scale(1.03);
+    }
+
+    100% {
+        opacity: 0.50;
+        transform: scale(1);
+    }
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.brand {
+    position: absolute;
+
+    top: 30px;
+    left: 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    z-index: 10;
+}
+
+
+.brand::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -15px;
+
+    width: 46px;
+    height: 2px;
+
+    background: #ed0b17;
+
+    box-shadow:
+        0 0 12px rgba(237, 11, 23, 0.55);
+}
+
+
+.brand-logo {
+    font-size: 20px;
+
+    font-weight: 1000;
+
+    letter-spacing: -1px;
+}
+
+
+.brand-name {
+    font-size: 17px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.brand-name span {
+    color: #ffb000;
+}
+
+
+/* =========================================================
+   AUTH PAGE
+   ========================================================= */
+
+.auth-page {
+    position: relative;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 100px 20px 75px;
+}
+
+
+/* =========================================================
+   AUTH CARD
+   ========================================================= */
+
+.auth-card {
+    position: relative;
+
+    width: min(570px, 100%);
+
+    padding: 38px 52px 34px;
+
+    border: 1px solid rgba(237, 11, 23, 0.72);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(5, 8, 11, 0.88),
+            rgba(1, 3, 5, 0.82)
+        );
+
+    box-shadow:
+        0 0 45px rgba(0, 0, 0, 0.42),
+        inset 0 0 35px rgba(255, 255, 255, 0.018),
+        0 0 18px rgba(229, 9, 20, 0.10);
+
+    backdrop-filter: blur(2px);
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   CARD INNER RED GLOW
+   ========================================================= */
+
+.auth-card::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 17px;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255, 20, 30, 0.035),
+            transparent 42%
+        );
+}
+
+
+/* =========================================================
+   WELCOME LINE
+   ========================================================= */
+
+.welcome-line {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    color: #dddddd;
+}
+
+
+.welcome-line span {
+    width: 75px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #a00a12
+        );
+}
+
+
+.welcome-line span:last-child {
+    background:
+        linear-gradient(
+            90deg,
+            #a00a12,
+            transparent
+        );
+}
+
+
+.welcome-line p {
+    font-size: 11px;
+
+    letter-spacing: 5px;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   WAR ROOM TITLE
+   ========================================================= */
+
+.auth-card h1 {
+    position: relative;
+
+    margin-top: 12px;
+
+    text-align: center;
+
+    font-size: clamp(42px, 7vw, 62px);
+
+    line-height: 1;
+
+    letter-spacing: 2px;
+
+    font-weight: 1000;
+}
+
+
+.auth-card h1 strong {
+    color: #f20b17;
+
+    text-shadow:
+        0 0 15px rgba(242, 11, 23, 0.12);
+}
+
+
+/* =========================================================
+   TITLE DIVIDER
+   ========================================================= */
+
+.title-divider {
+    margin: 20px auto 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 18px;
+}
+
+
+.title-divider span {
+    width: 110px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #6d080e
+        );
+}
+
+
+.title-divider span:last-child {
+    background:
+        linear-gradient(
+            90deg,
+            #6d080e,
+            transparent
+        );
+}
+
+
+.title-divider b {
+    color: #f20b17;
+
+    font-size: 12px;
+
+    text-shadow:
+        0 0 8px rgba(242, 11, 23, 0.35);
+}
+
+
+/* =========================================================
+   ACCESS LABEL
+   ========================================================= */
+
+.access-label {
+    text-align: center;
+
+    color: #aaaaaa;
+
+    font-size: 9px;
+
+    letter-spacing: 4px;
+}
+
+
+.access-label strong {
+    color: #f20b17;
+
+    text-shadow:
+        0 0 8px rgba(242, 11, 23, 0.25);
+}
+
+
+/* =========================================================
+   DOMAIN BOX
+   ========================================================= */
+
+.domain-box {
+    margin-top: 24px;
+
+    min-height: 62px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 11px 14px;
+
+    border: 1px solid rgba(229, 9, 20, 0.25);
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(229, 9, 20, 0.075),
+            rgba(255, 255, 255, 0.012)
+        );
+
+    box-shadow:
+        inset 0 0 20px rgba(229, 9, 20, 0.025);
+}
+
+
+/* =========================================================
+   DOMAIN ICON
+   ========================================================= */
+
+.domain-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    color: #ff1f2d;
+
+    background: #090b0d;
+
+    font-size: 18px;
+
+    box-shadow:
+        inset 3px 3px 7px #000,
+        inset -2px -2px 6px rgba(255, 255, 255, 0.02);
+
+    text-shadow:
+        0 0 8px rgba(255, 31, 45, 0.35);
+}
+
+
+/* =========================================================
+   DOMAIN SMALL TITLE
+   ========================================================= */
+
+.domain-box small {
+    display: block;
+
+    color: #666666;
+
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   DOMAIN NAME
+   ========================================================= */
+
+.domain-box strong {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   AUTH TABS
+   ========================================================= */
+
+.auth-tabs {
+    margin-top: 20px;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.auth-tab {
+    position: relative;
+
+    height: 40px;
+
+    border: 0;
+
+    border-bottom:
+        2px solid transparent;
+
+    background: transparent;
+
+    color: #666666;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.auth-tab:hover {
+    color: #bbbbbb;
+}
+
+
+.auth-tab.active {
+    color: #ffffff;
+
+    border-bottom-color: #ed0b17;
+
+    text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.08);
+}
+
+
+/* =========================================================
+   AUTH FORM
+   ========================================================= */
+
+.auth-form {
+    margin-top: 20px;
+}
+
+
+.auth-form.hidden {
+    display: none;
+}
+
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.field {
+    margin-bottom: 14px;
+}
+
+
+/* =========================================================
+   FIELD LABEL
+   ========================================================= */
+
+.field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #858585;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.field input {
+    width: 100%;
+
+    height: 45px;
+
+    padding: 0 13px;
+
+    outline: none;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 7px;
+
+    background:
+        rgba(8, 11, 13, 0.92);
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.field input::placeholder {
+    color: #4d4d4d;
+}
+
+
+.field input:hover {
+    border-color:
+        rgba(255, 255, 255, 0.16);
+}
+
+
+.field input:focus {
+    border-color:
+        rgba(237, 11, 23, 0.75);
+
+    background:
+        rgba(8, 11, 13, 0.98);
+
+    box-shadow:
+        0 0 0 2px rgba(237, 11, 23, 0.06),
+        0 0 12px rgba(237, 11, 23, 0.04);
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+.primary-button {
+    width: 100%;
+
+    height: 48px;
+
+    margin-top: 5px;
+
+    border:
+        1px solid #ff1c27;
+
+    border-radius: 6px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff101b,
+            #df0710
+        );
+
+    color: #ffffff;
+
+    font-size: 9px;
+
+    font-weight: 1000;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(229, 9, 20, 0.14);
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.primary-button span {
+    margin-left: 9px;
+
+    font-size: 15px;
+}
+
+
+.primary-button:hover {
+    filter: brightness(1.12);
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 9px 23px rgba(229, 9, 20, 0.22);
+}
+
+
+.primary-button:active {
+    transform:
+        translateY(0);
+}
+
+
+.primary-button:disabled {
+    opacity: 0.55;
+
+    cursor: wait;
+
+    transform: none;
+
+    box-shadow:
+        none;
+}
+
+
+/* =========================================================
+   AUTH MESSAGE
+   ========================================================= */
+
+.auth-message {
+    display: none;
+
+    margin-top: 14px;
+
+    padding: 10px 12px;
+
+    border-radius: 7px;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+}
+
+
+.auth-message.show {
+    display: block;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.auth-message.success {
+    color: #56df91;
+
+    border:
+        1px solid rgba(39, 214, 125, 0.20);
+
+    background:
+        rgba(39, 214, 125, 0.06);
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.auth-message.error {
+    color: #ff6971;
+
+    border:
+        1px solid rgba(255, 31, 45, 0.25);
+
+    background:
+        rgba(255, 31, 45, 0.06);
+}
+
+
+/* =========================================================
+   BACK LINK
+   ========================================================= */
+
+.back-link {
+    display: block;
+
+    margin: 19px auto 0;
+
+    border: 0;
+
+    background: none;
+
+    color: #62676b;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.back-link:hover {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    position: fixed;
+
+    bottom: 13px;
+
+    left: 0;
+    right: 0;
+
+    z-index: 5;
+
+    text-align: center;
+
+    color: #4e5458;
+
+    font-size: 7px;
+
+    letter-spacing: 4px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   SUBTLE CARD GLOW ANIMATION
+   ========================================================= */
+
+.auth-card {
+    animation:
+        cardGlow
+        6s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes cardGlow {
+
+    0% {
+        box-shadow:
+            0 0 45px rgba(0, 0, 0, 0.42),
+            inset 0 0 35px rgba(255, 255, 255, 0.018),
+            0 0 18px rgba(229, 9, 20, 0.08);
+    }
+
+    50% {
+        box-shadow:
+            0 0 50px rgba(0, 0, 0, 0.45),
+            inset 0 0 35px rgba(255, 255, 255, 0.02),
+            0 0 23px rgba(229, 9, 20, 0.12);
+    }
+
+    100% {
+        box-shadow:
+            0 0 45px rgba(0, 0, 0, 0.42),
+            inset 0 0 35px rgba(255, 255, 255, 0.018),
+            0 0 18px rgba(229, 9, 20, 0.08);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .brand {
+        top: 22px;
+
+        left: 20px;
+
+        gap: 12px;
+    }
+
+
+    .brand-logo {
+        font-size: 18px;
+    }
+
+
+    .brand-name {
+        font-size: 15px;
+    }
+
+
+    .auth-page {
+        padding:
+            90px 15px 55px;
+    }
+
+
+    .auth-card {
+        padding:
+            30px 24px 27px;
+
+        border-radius: 14px;
+    }
+
+
+    .welcome-line {
+        gap: 10px;
+    }
+
+
+    .welcome-line span {
+        width: 45px;
+    }
+
+
+    .welcome-line p {
+        font-size: 8px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .auth-card h1 {
+        font-size:
+            clamp(38px, 12vw, 52px);
+    }
+
+
+    .title-divider {
+        gap: 12px;
+    }
+
+
+    .title-divider span {
+        width: 65px;
+    }
+
+
+    .access-label {
+        letter-spacing: 2.5px;
+    }
+
+
+    .domain-box {
+        margin-top: 20px;
+    }
+
+
+    .field input {
+        height: 44px;
+    }
+
+
+    .primary-button {
+        height: 47px;
+    }
+
+
+    footer {
+        font-size: 6px;
+
+        letter-spacing: 2px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .brand {
+        top: 18px;
+
+        left: 16px;
+    }
+
+
+    .auth-page {
+        padding:
+            80px 10px 50px;
+    }
+
+
+    .auth-card {
+        padding:
+            26px 18px 24px;
+    }
+
+
+    .welcome-line span {
+        width: 30px;
+    }
+
+
+    .welcome-line p {
+        font-size: 7px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .auth-card h1 {
+        font-size: 38px;
+    }
+
+
+    .title-divider span {
+        width: 45px;
+    }
+
+
+    .domain-box {
+        padding:
+            10px 11px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION SUPPORT
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .page-bg::after,
+    .scanlines::before,
+    .scanlines::after,
+    .auth-card {
+        animation: none;
+    }
+
+}
+
+/* =========================================================
+   USER LOGIN
+   MOVING SIDE WHITE LIGHTS
+   SAME EFFECT AS ADMIN LOGIN
+   ADD AT THE VERY END
+   ========================================================= */
+
+.auth-page::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    background:
+
+        /* =================================================
+           LEFT WHITE LIGHT
+           ================================================= */
+
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            transparent 10%,
+            rgba(255, 255, 255, 0.00) 20%,
+            rgba(255, 255, 255, 0.75) 48%,
+            rgba(210, 235, 255, 0.35) 55%,
+            transparent 72%
+        )
+
+        8% -300px
+        /
+        5px 260px
+        no-repeat,
+
+
+        /* =================================================
+           RIGHT WHITE LIGHT
+           ================================================= */
+
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            transparent 10%,
+            rgba(255, 255, 255, 0.00) 20%,
+            rgba(255, 255, 255, 0.75) 48%,
+            rgba(210, 235, 255, 0.35) 55%,
+            transparent 72%
+        )
+
+        92% -600px
+        /
+        5px 260px
+        no-repeat;
+
+
+    filter:
+
+        drop-shadow(
+            0 0 8px
+            rgba(220, 240, 255, 0.75)
+        );
+
+    opacity: 0.75;
+
+    animation:
+        userSideLights 7s linear infinite;
+}
+
+
+/* =========================================================
+   SIDE LIGHT MOVEMENT
+   ========================================================= */
+
+@keyframes userSideLights {
+
+    0% {
+
+        background-position:
+            8% -300px,
+            92% -600px;
+
+        opacity: 0;
+    }
+
+
+    15% {
+
+        opacity: 0.65;
+    }
+
+
+    50% {
+
+        background-position:
+            8% 500px,
+            92% 300px;
+
+        opacity: 0.85;
+    }
+
+
+    75% {
+
+        opacity: 0.55;
+    }
+
+
+    100% {
+
+        background-position:
+            8% 1050px,
+            92% 850px;
+
+        opacity: 0;
+    }
+}

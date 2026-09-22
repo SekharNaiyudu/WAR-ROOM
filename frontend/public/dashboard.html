@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WAR ROOM — Admin Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/dashboard.css?v=1"
+    >
+    <link rel="stylesheet" href="/css/warroom-modal.css?v=2">
+</head>
+
+
+<body>
+
+
+<main class="admin-dashboard">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="admin-sidebar">
+
+
+        <!-- =================================================
+             BRAND
+             ================================================= -->
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                SQ
+            </div>
+
+            <div class="sidebar-brand-name">
+                Syntho<span>Quest</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDEBAR LABEL
+             ================================================= -->
+
+        <div class="sidebar-panel-label">
+
+            WAR ROOM
+
+            <span>
+                ADMIN CONTROL PANEL
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             NAVIGATION
+             ================================================= -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <button
+                class="sidebar-item active"
+                data-section="home"
+                type="button"
+                onclick="window.location.href='/admin/dashboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+            <!-- WORKSHOP -->
+
+            <button
+                class="sidebar-item"
+                data-section="workshop"
+                type="button"
+                onclick="window.location.href='/admin/workshop'"
+            >
+
+                <span class="sidebar-icon">
+                    ⚔
+                </span>
+
+                <span>
+                    Workshop
+                </span>
+
+            </button>
+
+
+            <!-- HACKATHON -->
+
+            <button
+                class="sidebar-item"
+                data-section="hackathon"
+                type="button"
+                onclick="window.location.href='/admin/hackathon'"
+            >
+
+                <span class="sidebar-icon">
+                    ◈
+                </span>
+
+                <span>
+                    Hackathon
+                </span>
+
+            </button>
+
+
+            <!-- LEADERBOARD -->
+
+            <button
+                class="sidebar-item"
+                data-section="leaderboard"
+                type="button"
+                onclick="window.location.href='/admin/leaderboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ♛
+                </span>
+
+                <span>
+                    Leaderboard
+                </span>
+
+            </button>
+
+
+            <!-- ACCOUNT MANAGEMENT -->
+
+            <button
+                class="sidebar-item"
+                data-section="accounts"
+                type="button"
+                onclick="window.location.href='/admin/accounts'"
+            >
+
+                <span class="sidebar-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Account Management
+                </span>
+
+            </button>
+
+
+            
+
+            <!-- SETTINGS -->
+
+            <button
+                class="sidebar-item"
+                data-section="settings"
+                type="button"
+                onclick="window.location.href='/admin/settings'"
+            >
+
+                <span class="sidebar-icon">
+                ⚙
+                </span>
+
+                <span>
+                Settings
+                </span>
+
+            </button>
+
+            <!-- LOGOUT -->
+
+            <button
+                class="sidebar-item"
+                data-section="logout"
+                type="button"
+                onclick="window.location.href='/admin'"
+            >
+
+                <span class="sidebar-icon">
+                ⎋
+                 </span>
+
+                <span>
+                Logout
+                </span>
+
+            </button>
+
+
+        </nav>
+
+
+        <!-- =================================================
+             SIDEBAR BOTTOM
+             SAME STRUCTURE AS HACKATHON
+             ================================================= -->
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <section class="dashboard-content">
+
+
+        <!-- =================================================
+             TOP HEADER
+             ================================================= -->
+
+        <header class="dashboard-header">
+
+
+            <div class="header-left">
+
+                <div class="header-kicker">
+                    WAR ROOM / ADMIN CONTROL
+                </div>
+
+                <h1 id="pageTitle">
+                    Welcome back, Admin!
+                </h1>
+
+                <p id="pageDescription">
+                    Manage and monitor your cybersecurity events,
+                    workshops and hackathons.
+                </p>
+
+            </div>
+
+
+            <div class="header-right">
+
+
+                <div class="dashboard-search">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                    >
+
+                </div>
+
+
+                <button
+                    class="header-icon-button"
+                    type="button"
+                >
+                    🔔
+                </button>
+
+
+                <button
+                    class="header-icon-button"
+                    type="button"
+                >
+                    ✉
+                </button>
+
+
+                <div class="header-admin">
+
+                    <span class="header-status-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            ADMINISTRATOR
+                        </strong>
+
+                        <small>
+                            FULL ACCESS
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =====================================================
+             HOME / DASHBOARD
+             ===================================================== -->
+
+        <section
+            class="dashboard-section active"
+            id="homeSection"
+        >
+
+
+            <!-- =================================================
+                 EVENT STATUS CARDS
+                 ================================================= -->
+
+            <div class="event-status-grid">
+
+
+                <!-- WORKSHOP -->
+
+                <div class="event-status-card">
+
+                    <div class="event-status-top">
+
+                        <div class="event-status-icon">
+                            ⚔
+                        </div>
+
+                        <span class="event-number">
+                            01
+                        </span>
+
+                    </div>
+
+
+                    <div class="event-status-content">
+
+                        <span class="event-label">
+                            EVENT MANAGEMENT
+                        </span>
+
+                        <h2>
+                            WORKSHOP
+                        </h2>
+
+                        <p>
+                            Manage workshop visibility,
+                            domains and event access.
+                        </p>
+
+                    </div>
+
+
+                    <div class="event-status-bottom">
+
+                        <div>
+
+                            <span class="status-caption">
+                                PUBLIC STATUS
+                            </span>
+
+                            <strong
+                                id="homeWorkshopState"
+                                class="dashboard-state"
+                            >
+                                OFF
+                            </strong>
+
+                        </div>
+
+
+                        <label class="switch large">
+
+                            <input
+                                id="homeWorkshopToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- HACKATHON -->
+
+                <div class="event-status-card">
+
+                    <div class="event-status-top">
+
+                        <div class="event-status-icon">
+                            ◈
+                        </div>
+
+                        <span class="event-number">
+                            02
+                        </span>
+
+                    </div>
+
+
+                    <div class="event-status-content">
+
+                        <span class="event-label">
+                            EVENT MANAGEMENT
+                        </span>
+
+                        <h2>
+                            HACKATHON
+                        </h2>
+
+                        <p>
+                            Manage hackathon visibility,
+                            domains and event access.
+                        </p>
+
+                    </div>
+
+
+                    <div class="event-status-bottom">
+
+                        <div>
+
+                            <span class="status-caption">
+                                PUBLIC STATUS
+                            </span>
+
+                            <strong
+                                id="homeHackathonState"
+                                class="dashboard-state"
+                            >
+                                OFF
+                            </strong>
+
+                        </div>
+
+
+                        <label class="switch large">
+
+                            <input
+                                id="homeHackathonToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 WORKSHOP OVERVIEW
+                 ================================================= -->
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                    <span>
+                        EVENT OVERVIEW
+                    </span>
+
+                    <h2>
+                        WORKSHOP OVERVIEW
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="view-all-btn"
+                    type="button"
+                    data-section="workshop"
+                >
+                    VIEW ALL →
+                </button>
+
+            </div>
+
+
+            <div class="domain-grid">
+
+
+                <!-- CEH -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ◈
+                        </div>
+
+                        <span>
+                            01
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        WORKSHOP DOMAIN
+                    </span>
+
+                    <h3>
+                        CEH
+                    </h3>
+
+                    <p>
+                        Certified Ethical Hacking
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeWorkshopCehState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeWorkshopCehToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- VAPT -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ⬡
+                        </div>
+
+                        <span>
+                            02
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        WORKSHOP DOMAIN
+                    </span>
+
+                    <h3>
+                        VAPT
+                    </h3>
+
+                    <p>
+                        Vulnerability Assessment &
+                        Penetration Testing
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeWorkshopVaptState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeWorkshopVaptToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SOC -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ◉
+                        </div>
+
+                        <span>
+                            03
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        WORKSHOP DOMAIN
+                    </span>
+
+                    <h3>
+                        SOC
+                    </h3>
+
+                    <p>
+                        Security Operations Center
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeWorkshopSocState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeWorkshopSocToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DIGITAL FORENSICS -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ◇
+                        </div>
+
+                        <span>
+                            04
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        WORKSHOP DOMAIN
+                    </span>
+
+                    <h3>
+                        DIGITAL FORENSICS
+                    </h3>
+
+                    <p>
+                        Digital Evidence &
+                        Forensic Investigation
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeWorkshopForensicsState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeWorkshopForensicsToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 HACKATHON OVERVIEW
+                 ================================================= -->
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                    <span>
+                        EVENT OVERVIEW
+                    </span>
+
+                    <h2>
+                        HACKATHON OVERVIEW
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="view-all-btn"
+                    type="button"
+                    data-section="hackathon"
+                >
+                    VIEW ALL →
+                </button>
+
+            </div>
+
+
+            <div class="domain-grid">
+
+
+                <!-- CEH HACKATHON -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ◈
+                        </div>
+
+                        <span>
+                            01
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        HACKATHON DOMAIN
+                    </span>
+
+                    <h3>
+                        CEH HACKATHON
+                    </h3>
+
+                    <p>
+                        Certified Ethical Hacking
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeHackathonCehState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeHackathonCehToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- VAPT HACKATHON -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ⬡
+                        </div>
+
+                        <span>
+                            02
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        HACKATHON DOMAIN
+                    </span>
+
+                    <h3>
+                        VAPT HACKATHON
+                    </h3>
+
+                    <p>
+                        Vulnerability Assessment &
+                        Penetration Testing
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeHackathonVaptState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeHackathonVaptToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SOC HACKATHON -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ◉
+                        </div>
+
+                        <span>
+                            03
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        HACKATHON DOMAIN
+                    </span>
+
+                    <h3>
+                        SOC HACKATHON
+                    </h3>
+
+                    <p>
+                        Security Operations Center
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeHackathonSocState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeHackathonSocToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FORENSICS HACKATHON -->
+
+                <div class="domain-card">
+
+                    <div class="domain-card-top">
+
+                        <div class="domain-icon">
+                            ◇
+                        </div>
+
+                        <span>
+                            04
+                        </span>
+
+                    </div>
+
+                    <span class="domain-label">
+                        HACKATHON DOMAIN
+                    </span>
+
+                    <h3>
+                        FORENSICS HACKATHON
+                    </h3>
+
+                    <p>
+                        Digital Forensics Investigation
+                    </p>
+
+
+                    <div class="domain-card-bottom">
+
+                        <strong
+                            id="homeHackathonForensicsState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </strong>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="homeHackathonForensicsToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 LOWER DASHBOARD
+                 ================================================= -->
+
+            <div class="dashboard-bottom-grid">
+
+
+                <!-- STATISTICS -->
+
+                <div class="dashboard-widget">
+
+                    <div class="widget-heading">
+
+                        <div>
+
+                            <span>
+                                PLATFORM
+                            </span>
+
+                            <h3>
+                                STATISTICS
+                            </h3>
+
+                        </div>
+
+                        <span class="widget-icon">
+                            ◫
+                        </span>
+
+                    </div>
+
+
+                    <div class="statistics-grid">
+
+                        <div class="stat-item">
+
+                            <strong>
+                                04
+                            </strong>
+
+                            <span>
+                                WORKSHOP DOMAINS
+                            </span>
+
+                        </div>
+
+
+                        <div class="stat-item">
+
+                            <strong>
+                                04
+                            </strong>
+
+                            <span>
+                                HACKATHON DOMAINS
+                            </span>
+
+                        </div>
+
+
+                        <div class="stat-item">
+
+                            <strong>
+                                08
+                            </strong>
+
+                            <span>
+                                TOTAL DOMAINS
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RECENT ACTIVITY -->
+
+                <div class="dashboard-widget">
+
+                    <div class="widget-heading">
+
+                        <div>
+
+                            <span>
+                                SYSTEM
+                            </span>
+
+                            <h3>
+                                RECENT ACTIVITY
+                            </h3>
+
+                        </div>
+
+                        <span class="widget-icon">
+                            ◷
+                        </span>
+
+                    </div>
+
+
+                    <div class="activity-list">
+
+                        <div class="activity-item">
+
+                            <span class="activity-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    Dashboard state synchronized
+                                </strong>
+
+                                <small>
+                                    System status is up to date
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="activity-item">
+
+                            <span class="activity-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    Event controls available
+                                </strong>
+
+                                <small>
+                                    Workshop and Hackathon ready
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="activity-item">
+
+                            <span class="activity-dot"></span>
+
+                            <div>
+
+                                <strong>
+                                    WAR ROOM online
+                                </strong>
+
+                                <small>
+                                    Administrative access active
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- LEADERBOARD -->
+
+                <div class="dashboard-widget">
+
+                    <div class="widget-heading">
+
+                        <div>
+
+                            <span>
+                                PERFORMANCE
+                            </span>
+
+                            <h3>
+                                LEADERBOARD
+                            </h3>
+
+                        </div>
+
+                        <span class="widget-icon">
+                            ♛
+                        </span>
+
+                    </div>
+
+
+                    <div class="leaderboard-widget-row">
+
+                        <div>
+
+                            <span class="rank-number">
+                                01
+                            </span>
+
+                            <strong>
+                                WORKSHOP
+                            </strong>
+
+                        </div>
+
+
+                        <span
+                            id="workshopLeaderboardState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </span>
+
+                    </div>
+
+
+                    <div class="leaderboard-widget-row">
+
+                        <div>
+
+                            <span class="rank-number">
+                                02
+                            </span>
+
+                            <strong>
+                                HACKATHON
+                            </strong>
+
+                        </div>
+
+
+                        <span
+                            id="hackathonLeaderboardState"
+                            class="dashboard-state"
+                        >
+                            OFF
+                        </span>
+
+                    </div>
+
+
+                    <div class="hidden-state-controls">
+
+                        <label class="switch">
+
+                            <input
+                                id="workshopLeaderboardToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+
+                        <label class="switch">
+
+                            <input
+                                id="hackathonLeaderboardToggle"
+                                type="checkbox"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                    
+
+                </div>
+
+
+
+                <!-- QUICK ACTIONS -->
+
+                <div class="dashboard-widget">
+
+                    <div class="widget-heading">
+
+                        <div>
+
+                            <span>
+                                MANAGEMENT
+                            </span>
+
+                            <h3>
+                                QUICK ACTIONS
+                            </h3>
+
+                        </div>
+
+                        <span class="widget-icon">
+                            ⚡
+                        </span>
+
+                    </div>
+
+
+                    <div class="quick-actions">
+
+                        <button
+                            type="button"
+                            class="quick-action"
+                            data-section="workshop"
+                        >
+
+                            <span>
+                                ⚔
+                            </span>
+
+                            Workshop Management
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="quick-action"
+                            data-section="hackathon"
+                        >
+
+                            <span>
+                                ◈
+                            </span>
+
+                            Hackathon Management
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="quick-action"
+                            data-section="leaderboard"
+                        >
+
+                            <span>
+                                ♛
+                            </span>
+
+                            Leaderboard
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================================
+             WORKSHOP SECTION
+             ===================================================== -->
+
+        <section
+            class="dashboard-section"
+            id="workshopSection"
+        >
+
+            <!-- EXISTING WORKSHOP CONTENT -->
+
+        </section>
+
+
+
+        <!-- =====================================================
+             HACKATHON SECTION
+             ===================================================== -->
+
+        <section
+            class="dashboard-section"
+            id="hackathonSection"
+        >
+
+            <!-- EXISTING HACKATHON CONTENT -->
+
+        </section>
+
+
+
+        <!-- =====================================================
+             LEADERBOARD SECTION
+             ===================================================== -->
+
+        <section
+            class="leaderboard-control-section"
+        >
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        PERFORMANCE CONTROL
+                    </span>
+
+                    <h2>
+                        LEADERBOARD
+                    </h2>
+
+                </div>
+
+
+                <span class="section-note">
+                    Controlled from Dashboard
+                </span>
+
+            </div>
+
+
+
+            <div class="leaderboard-control-grid">
+
+
+                <!-- WORKSHOP LEADERBOARD -->
+
+                <article
+                    class="leaderboard-control-card"
+                >
+
+
+                    <div class="leaderboard-card-top">
+
+                        <div class="leaderboard-icon">
+                            🏆
+                        </div>
+
+                        <span class="card-number">
+                            01
+                        </span>
+
+                    </div>
+
+
+                    <div class="leaderboard-card-content">
+
+                        <span class="control-label">
+                            WORKSHOP
+                        </span>
+
+                        <h3>
+                            WORKSHOP LEADERBOARD
+                        </h3>
+
+                        <p>
+                            Control public visibility of the
+                            Workshop leaderboard.
+                        </p>
+
+                    </div>
+
+
+                    <div class="leaderboard-card-bottom">
+
+                        <div>
+
+                            <small>
+                                PUBLIC STATUS
+                            </small>
+
+                            <strong
+                                id="leaderboardWorkshopStatus"
+                            >
+                                ON
+                            </strong>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="leaderboardWorkshopToggle"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                </article>
+
+
+
+                <!-- HACKATHON LEADERBOARD -->
+
+                <article
+                    class="leaderboard-control-card"
+                >
+
+
+                    <div class="leaderboard-card-top">
+
+                        <div class="leaderboard-icon">
+                            🏆
+                        </div>
+
+                        <span class="card-number">
+                            02
+                        </span>
+
+                    </div>
+
+
+                    <div class="leaderboard-card-content">
+
+                        <span class="control-label">
+                            HACKATHON
+                        </span>
+
+                        <h3>
+                            HACKATHON LEADERBOARD
+                        </h3>
+
+                        <p>
+                            Control public visibility of the
+                            Hackathon leaderboard.
+                        </p>
+
+                    </div>
+
+
+                    <div class="leaderboard-card-bottom">
+
+                        <div>
+
+                            <small>
+                                PUBLIC STATUS
+                            </small>
+
+                            <strong
+                                id="leaderboardHackathonStatus"
+                            >
+                                ON
+                            </strong>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="leaderboardHackathonToggle"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                </article>
+
+
+</div>
+
+
+<!-- CTF BUTTON -->
+
+<div class="ctf-bottom-center">
+
+
+                <a
+                    href="/admin/ctf"
+                    class="header-ctf"
+                >
+
+                    <span>
+                        CTF
+                    </span>
+
+                    <small>
+                        FULL ACCESS
+                    </small>
+
+                </a>
+
+
+</div>
+
+
+        </section>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+    <script src="/js/warroom-modal.js?v=2"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/admin-approval-notifications.js"></script>
+
+
+</body>
+
+</html>

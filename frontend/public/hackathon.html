@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WAR ROOM — Hackathon Management</title>
+
+
+    
+
+
+
+
+    <!-- =====================================================
+         HACKATHON CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/css/hackathon.css?v=3"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/dashboard.css"
+    >
+
+    <!-- =====================================================
+         HACKATHON PAGE FIXES
+         ===================================================== -->
+
+    <link rel="stylesheet" href="/css/warroom-modal.css?v=2">
+</head>
+
+
+<body>
+
+
+<main class="admin-dashboard">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="admin-sidebar">
+
+
+        <!-- =================================================
+             BRAND
+             ================================================= -->
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                SQ
+            </div>
+
+            <div class="sidebar-brand-name">
+                Syntho<span>Quest</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PANEL LABEL
+             ================================================= -->
+
+        <div class="sidebar-panel-label">
+
+            WAR ROOM
+
+            <span>
+                ADMIN CONTROL PANEL
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             NAVIGATION
+             ================================================= -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/dashboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+            <!-- WORKSHOP -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/workshop'"
+            >
+
+                <span class="sidebar-icon">
+                    ⚔
+                </span>
+
+                <span>
+                    Workshop
+                </span>
+
+            </button>
+
+
+            <!-- HACKATHON -->
+
+            <button
+                class="sidebar-item active"
+                type="button"
+            >
+
+                <span class="sidebar-icon">
+                    ◈
+                </span>
+
+                <span>
+                    Hackathon
+                </span>
+
+            </button>
+
+
+            <!-- LEADERBOARD -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/leaderboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ♛
+                </span>
+
+                <span>
+                    Leaderboard
+                </span>
+
+            </button>
+
+            <!-- ACCOUNT MANAGEMENT -->
+
+            <button
+                class="sidebar-item"
+                data-section="accounts"
+                type="button"
+                onclick="window.location.href='/admin/accounts'"
+            >
+
+                <span class="sidebar-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Account Management
+                </span>
+
+            </button>
+
+            
+
+
+            <!-- SETTINGS -->
+
+            <button
+                class="sidebar-item"
+                data-section="settings"
+                type="button"
+                onclick="window.location.href='/admin/settings'"
+            >
+                <span class="sidebar-icon">
+                ⚙
+                </span>
+
+                <span>
+                Settings
+                </span>
+
+            </button>
+
+            <!-- LOGOUT -->
+
+            <button
+                class="sidebar-item"
+                data-section="logout"
+                type="button"
+                onclick="window.location.href='/admin'"
+            >
+
+                <span class="sidebar-icon">
+                ⎋
+                 </span>
+
+                <span>
+                Logout
+                </span>
+
+            </button>
+
+
+        </nav>
+        
+
+        <!-- =================================================
+             SIDEBAR BOTTOM
+             ADMIN + LOGOUT
+             ================================================= -->
+
+        <div class="sidebar-bottom">
+
+
+            <!-- ADMIN STATUS -->
+
+            
+
+
+            <!-- LOGOUT -->
+
+            
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <section class="dashboard-content hackathon-page">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="dashboard-header">
+
+
+            <div class="header-left">
+
+                <div class="header-kicker">
+                    WAR ROOM / HACKATHON MANAGEMENT
+                </div>
+
+                <h1>
+                    Hackathons
+                </h1>
+
+                <p>
+                    Manage hackathon toolkits and registered participants.
+                </p>
+
+            </div>
+
+
+            <div class="header-right">
+
+
+                <div class="dashboard-search">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="participantSearch"
+                        placeholder="Search participants..."
+                    >
+
+                </div>
+
+
+                <div class="header-admin">
+
+                    <span class="header-status-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            ADMINISTRATOR
+                        </strong>
+
+                        <small>
+                            FULL ACCESS
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             HACKATHON TOOLKIT UPLOAD
+             ================================================= -->
+
+        <section class="hackathon-upload-card">
+
+
+            <!-- LEFT -->
+
+            <div class="upload-main">
+
+
+                <div class="upload-icon">
+                    ↑
+                </div>
+
+
+                <div class="upload-heading">
+
+
+                    <span>
+                        RESOURCE MANAGEMENT
+                    </span>
+
+
+                    <h2>
+                        Upload Hackathon Toolkit
+                    </h2>
+
+
+                    <p>
+                        Upload a ZIP toolkit for the selected hackathon domain.
+                    </p>
+
+
+                    <div class="selected-domain-text">
+
+                        SELECTED DOMAIN:
+
+                        <strong id="selectedDomainLabel">
+                            CEH HACKATHON
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DROP ZONE
+                 ================================================= -->
+
+            <div
+                class="drop-zone"
+                id="uploadDropZone"
+            >
+
+
+                <div class="drop-icon">
+                    ↑
+                </div>
+
+
+                <strong>
+                    Drag & Drop ZIP File Here
+                </strong>
+
+
+                <span>
+                    or
+                </span>
+
+
+                <button
+                    type="button"
+                    id="browseFileBtn"
+                >
+                    Browse ZIP File
+                </button>
+
+
+                <small id="fileName">
+                    No file selected
+                </small>
+
+
+                <input
+                    type="file"
+                    id="toolkitFile"
+                    accept=".zip,application/zip"
+                    hidden
+                >
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RECENT UPLOADS
+                 ================================================= -->
+
+            <div class="recent-upload-area">
+
+
+                <div class="recent-upload-header">
+
+
+                    <div>
+
+                        <span>
+                            TOOLKIT FILES
+                        </span>
+
+                        <h3>
+                            Recent Uploads
+                        </h3>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="refreshFilesBtn"
+                    >
+                        ↻ Refresh
+                    </button>
+
+
+                </div>
+
+
+                <div
+                    class="recent-upload-list"
+                    id="recentUploadList"
+                >
+
+                    <div class="empty-toolkit">
+                        No toolkit uploaded yet.
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             HACKATHON DOMAIN SELECTOR
+             ================================================= -->
+
+        <section class="hackathon-domain-grid">
+
+
+            <!-- CEH -->
+
+            <button
+                type="button"
+                class="hackathon-domain-card active"
+                data-domain="ceh_hackathon"
+                data-name="CEH HACKATHON"
+            >
+
+                <span class="hackathon-domain-icon ceh-icon">
+                    ✣
+                </span>
+
+
+                <span>
+
+                    <strong>
+                        CEH HACKATHON
+                    </strong>
+
+                    <small>
+                        Certified Ethical Hacking
+                    </small>
+
+                </span>
+
+            </button>
+
+
+
+            <!-- VAPT -->
+
+            <button
+                type="button"
+                class="hackathon-domain-card"
+                data-domain="vapt_hackathon"
+                data-name="VAPT HACKATHON"
+            >
+
+                <span class="hackathon-domain-icon vapt-icon">
+                    ○
+                </span>
+
+
+                <span>
+
+                    <strong>
+                        VAPT HACKATHON
+                    </strong>
+
+                    <small>
+                        Vulnerability Assessment & Penetration Testing
+                    </small>
+
+                </span>
+
+            </button>
+
+
+
+            <!-- SOC -->
+
+            <button
+                type="button"
+                class="hackathon-domain-card"
+                data-domain="soc_hackathon"
+                data-name="SOC HACKATHON"
+            >
+
+                <span class="hackathon-domain-icon soc-icon">
+                    ◆
+                </span>
+
+
+                <span>
+
+                    <strong>
+                        SOC HACKATHON
+                    </strong>
+
+                    <small>
+                        Security Operations Center
+                    </small>
+
+                </span>
+
+            </button>
+
+
+
+            <!-- DIGITAL FORENSICS -->
+
+            <button
+                type="button"
+                class="hackathon-domain-card"
+                data-domain="forensics_hackathon"
+                data-name="DIGITAL FORENSICS HACKATHON"
+            >
+
+                <span class="hackathon-domain-icon df-icon">
+                    ◎
+                </span>
+
+
+                <span>
+
+                    <strong>
+                        DIGITAL FORENSICS HACKATHON
+                    </strong>
+
+                    <small>
+                        Digital Evidence & Investigation
+                    </small>
+
+                </span>
+
+            </button>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             MANAGEMENT AREA
+             ================================================= -->
+
+        <section class="hackathon-management-grid">
+
+
+            <!-- =================================================
+                 LEFT — DOMAIN PANEL
+                 ================================================= -->
+
+            <article class="hackathon-domain-panel">
+
+
+                <div class="panel-kicker">
+                    HACKATHON DOMAIN
+                </div>
+
+
+                <h2 id="domainTitle">
+                    CEH Hackathon
+                </h2>
+
+
+                <div class="domain-divider"></div>
+
+
+                <!-- SELECTED DOMAIN -->
+
+                <div class="selected-domain-info">
+
+                    <span>
+                        SELECTED DOMAIN
+                    </span>
+
+                    <strong id="domainCode">
+                        CEH HACKATHON
+                    </strong>
+
+                </div>
+
+
+                <!-- TOOLKIT LOCATION -->
+
+                <div class="toolkit-location">
+
+                    <span>
+                        TOOLKIT LOCATION
+                    </span>
+
+                    <code id="toolkitPath">
+                        hackathon / ceh_hackathon
+                    </code>
+
+                </div>
+
+
+                <!-- TOOLKIT SUMMARY -->
+
+                <div class="domain-toolkit-summary">
+
+                    <span>
+                        TOOLKIT
+                    </span>
+
+                    <strong id="toolkitCount">
+                        0
+                    </strong>
+
+                    <small>
+                        files uploaded
+                    </small>
+
+                </div>
+
+
+                <!-- UPLOAD -->
+
+                <button
+                    type="button"
+                    class="add-domain-button"
+                    id="uploadSelectedBtn"
+                >
+
+                    <span>
+                        +
+                    </span>
+
+                    UPLOAD TOOLKIT
+
+                </button>
+
+
+            </article>
+
+
+
+            <!-- =================================================
+                 RIGHT — PARTICIPANTS
+                 ================================================= -->
+
+            <article class="participants-panel">
+
+
+                <div class="participants-header">
+
+
+                    <div>
+
+                        <span>
+                            REGISTERED PARTICIPANTS
+                        </span>
+
+                        <h2 id="participantsTitle">
+                            CEH Hackathon — Registered Participants
+                        </h2>
+
+                    </div>
+
+
+                    <div class="participant-actions">
+
+
+                        <input
+                            type="text"
+                            id="tableSearch"
+                            placeholder="Search participants..."
+                        >
+
+
+                        <button
+                            type="button"
+                            title="Filter"
+                        >
+                            ≡
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="downloadParticipantsBtn"
+                            title="Download"
+                        >
+                            ↓
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     STATISTICS
+                     ================================================= -->
+
+                <div class="participant-stats">
+
+
+                    <!-- TOTAL -->
+
+                    <div class="participant-stat">
+
+                        <div class="stat-icon red">
+                            ♟
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Total Registered
+                            </span>
+
+                            <strong id="totalRegistered">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIVE -->
+
+                    <div class="participant-stat">
+
+                        <div class="stat-icon green">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Active
+                            </span>
+
+                            <strong id="activeParticipants">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- COMPLETED -->
+
+                    <div class="participant-stat">
+
+                        <div class="stat-icon blue">
+                            🏆
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Completed
+                            </span>
+
+                            <strong id="completedParticipants">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INACTIVE -->
+
+                    <div class="participant-stat">
+
+                        <div class="stat-icon gray">
+                            ♟
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Inactive
+                            </span>
+
+                            <strong id="inactiveParticipants">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     PARTICIPANT TABLE
+                     ================================================= -->
+
+                <div class="participant-table-wrap">
+
+
+                    <table>
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Participant Name
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    College / Organization
+                                </th>
+
+                                <th>
+                                    Registered On
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="participantsTableBody">
+
+
+                            <tr>
+
+                                <td colspan="7">
+
+                                    <div class="empty-participants">
+                                        Registered member backend will be connected here.
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     TABLE FOOTER
+                     ================================================= -->
+
+                <div class="table-footer">
+
+
+                    <span id="tableInfo">
+                        Showing 0 participants
+                    </span>
+
+
+                    <div class="pagination">
+
+
+                        <button type="button">
+                            ‹
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="active"
+                        >
+                            1
+                        </button>
+
+
+                        <button type="button">
+                            ›
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </article>
+
+
+        </section>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     TOAST
+     ===================================================== -->
+
+<div
+    class="toast"
+    id="toast"
+>
+
+    <span id="toastMessage"></span>
+
+</div>
+
+
+
+<!-- =====================================================
+     HACKATHON JAVASCRIPT
+     ===================================================== -->
+
+    <script src="/js/warroom-modal.js?v=2"></script>
+<script src="/js/hackathon.js?v=2"></script>
+
+
+
+</body>
+
+</html>

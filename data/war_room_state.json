@@ -1,0 +1,32 @@
+{
+    "home": {
+        "workshop": true,
+        "hackathon": false,
+        "workshop_ceh": true,
+        "workshop_vapt": false,
+        "workshop_soc": false,
+        "workshop_forensics": false,
+        "ceh_hackathon": false,
+        "vapt_hackathon": false,
+        "soc_hackathon": false,
+        "forensics_hackathon": false
+    },
+    "workshop": {
+        "event": true,
+        "ceh": true,
+        "vapt": false,
+        "soc": false,
+        "forensics": false
+    },
+    "hackathon": {
+        "event": false,
+        "ceh_hackathon": false,
+        "vapt_hackathon": false,
+        "soc_hackathon": false,
+        "forensics_hackathon": false
+    },
+    "leaderboard": {
+        "workshop": true,
+        "hackathon": true
+    }
+}

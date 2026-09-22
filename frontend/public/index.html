@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WAR ROOM</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================================
+         HOME PAGE
+         ================================================= -->
+
+    <main
+        class="home-page"
+        id="homePage"
+    >
+
+
+        <!-- =================================================
+             TOP NAVIGATION
+             ================================================= -->
+
+        <header class="top-bar">
+
+            <div class="synthoquest-brand">
+
+                <div class="sq-logo">
+                    SQ
+                </div>
+
+                <div class="sq-name">
+                    Syntho<span>Quest</span>
+                </div>
+
+            </div>
+
+
+            <a
+                href="/admin"
+                class="admin-login"
+                id="adminLoginBtn"
+            >
+
+                <span class="admin-icon">
+                    ♙
+                </span>
+
+                <span>
+                    ADMIN LOGIN
+                </span>
+
+            </a>
+
+        </header>
+
+
+        <!-- =================================================
+             HERO SECTION
+             ================================================= -->
+
+        <section class="hero-section">
+
+            <div class="welcome-text">
+                WELCOME TO
+            </div>
+
+
+            <h1 class="war-room-title">
+
+                <span>WAR</span> ROOM
+
+            </h1>
+
+
+            <div class="hero-line">
+
+                <span></span>
+
+                <div class="shield-symbol">
+                    ★
+                </div>
+
+                <span></span>
+
+            </div>
+
+
+            <p class="hero-tagline">
+
+                PLAN. PREPARE. PROTECT.
+                <strong>PREVAIL.</strong>
+
+            </p>
+
+
+            <!-- =================================================
+                 EVENT SELECTION
+                 ================================================= -->
+
+            <section class="event-selection">
+
+                <div class="section-title">
+
+                    <span></span>
+
+                    <h2>
+                        SELECT YOUR EVENT
+                    </h2>
+
+                    <span></span>
+
+                </div>
+
+
+                <div class="event-cards">
+
+
+                    <!-- =================================================
+                         WORKSHOP
+                         ================================================= -->
+
+                    <button
+                        type="button"
+                        class="event-card"
+                        id="workshopBtn"
+                    >
+
+                        <div class="card-number">
+                            01
+                        </div>
+
+
+                        <div class="event-icon">
+
+                            <div class="icon-circle">
+                                ♟
+                            </div>
+
+                        </div>
+
+
+                        <h3>
+                            WORKSHOP
+                        </h3>
+
+
+                        <div class="card-divider"></div>
+
+
+                        <p>
+                            Hands-on learning sessions led by
+                            industry experts to sharpen your skills.
+                        </p>
+
+
+                        <div class="event-status">
+
+                            <span class="status-dot"></span>
+
+                            ACTIVE
+
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- =================================================
+                         HACKATHON
+                         ================================================= -->
+
+                    <button
+                        type="button"
+                        class="event-card"
+                        id="hackathonBtn"
+                    >
+
+                        <div class="card-number">
+                            02
+                        </div>
+
+
+                        <div class="event-icon">
+
+                            <div class="icon-circle">
+                                ◇
+                            </div>
+
+                        </div>
+
+
+                        <h3>
+                            HACKATHON
+                        </h3>
+
+
+                        <div class="card-divider"></div>
+
+
+                        <p>
+                            Compete, innovate and build real-world
+                            solutions in a high-energy environment.
+                        </p>
+
+
+                        <div class="event-status">
+
+                            <span class="status-dot"></span>
+
+                            ACTIVE
+
+                        </div>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="home-footer">
+
+            SYNTHOQUEST PRIVATE LIMITED
+
+        </footer>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         EVENT DOMAIN SCREEN
+         ===================================================== -->
+
+    <section
+        class="workshop-screen"
+        id="workshopScreen"
+    >
+
+        <div class="workshop-content">
+
+
+            <!-- =================================================
+                 WELCOME
+                 ================================================= -->
+
+            <div class="workshop-welcome">
+
+                WELCOME TO
+
+            </div>
+
+
+            <!-- =================================================
+                 EVENT TITLE
+                 ================================================= -->
+
+            <h1 class="workshop-title">
+
+                <span id="eventScreenTitle">
+                    WORKSHOP
+                </span>
+
+            </h1>
+
+
+            <!-- =================================================
+                 LINE
+                 ================================================= -->
+
+            <div class="workshop-line">
+
+                <span></span>
+
+                <div class="workshop-shield">
+                    ★
+                </div>
+
+                <span></span>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUBTITLE
+                 ================================================= -->
+
+            <p class="workshop-subtitle">
+
+                SELECT YOUR SECURITY DOMAIN
+
+            </p>
+
+
+            <!-- =================================================
+                 DOMAIN CARDS
+                 ================================================= -->
+
+            <div class="workshop-cards">
+
+
+                <!-- =================================================
+                     CEH
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="workshop-card"
+                    id="cehBtn"
+                >
+
+                    <span class="workshop-number">
+                        01
+                    </span>
+
+
+                    <div class="workshop-icon">
+                        ◈
+                    </div>
+
+
+                    <h3 id="cehTitle">
+                        CEH
+                    </h3>
+
+
+                    <div class="workshop-card-line"></div>
+
+
+                    <p id="cehDescription">
+                        Certified Ethical Hacking
+                    </p>
+
+
+                    <div class="workshop-card-status">
+
+                        <span class="workshop-status-dot"></span>
+
+                        <span id="cehStatus">
+                            ACTIVE
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     VAPT
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="workshop-card"
+                    id="vaptBtn"
+                >
+
+                    <span class="workshop-number">
+                        02
+                    </span>
+
+
+                    <div class="workshop-icon">
+                        ⬡
+                    </div>
+
+
+                    <h3 id="vaptTitle">
+                        VAPT
+                    </h3>
+
+
+                    <div class="workshop-card-line"></div>
+
+
+                    <p id="vaptDescription">
+                        Vulnerability Assessment
+                        &amp; Penetration Testing
+                    </p>
+
+
+                    <div class="workshop-card-status">
+
+                        <span class="workshop-status-dot"></span>
+
+                        <span id="vaptStatus">
+                            ACTIVE
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     SOC
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="workshop-card"
+                    id="socBtn"
+                >
+
+                    <span class="workshop-number">
+                        03
+                    </span>
+
+
+                    <div class="workshop-icon">
+                        ◉
+                    </div>
+
+
+                    <h3 id="socTitle">
+                        SOC
+                    </h3>
+
+
+                    <div class="workshop-card-line"></div>
+
+
+                    <p id="socDescription">
+                        Security Operations Center
+                    </p>
+
+
+                    <div class="workshop-card-status">
+
+                        <span class="workshop-status-dot"></span>
+
+                        <span id="socStatus">
+                            ACTIVE
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     DIGITAL FORENSICS
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="workshop-card"
+                    id="forensicsBtn"
+                >
+
+                    <span class="workshop-number">
+                        04
+                    </span>
+
+
+                    <div class="workshop-icon">
+                        ◇
+                    </div>
+
+
+                    <h3 id="forensicsTitle">
+                        DIGITAL FORENSICS
+                    </h3>
+
+
+                    <div class="workshop-card-line"></div>
+
+
+                    <p id="forensicsDescription">
+                        Digital Evidence &amp;
+                        Forensic Investigation
+                    </p>
+
+
+                    <div class="workshop-card-status">
+
+                        <span class="workshop-status-dot"></span>
+
+                        <span id="forensicsStatus">
+                            ACTIVE
+                        </span>
+
+                    </div>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 BACK
+                 ================================================= -->
+
+            <button
+                type="button"
+                class="workshop-back"
+                id="workshopBack"
+            >
+
+                ← BACK TO EVENTS
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ADMIN ACCESS LOADER
+         ===================================================== -->
+
+    <div
+        class="admin-access-loader"
+        id="adminAccessLoader"
+    >
+
+        <div class="access-loader-content">
+
+            <div class="access-loader-line"></div>
+
+            <div class="access-loader-icon">
+                ♙
+            </div>
+
+            <div class="access-loader-title">
+
+                ACCESSING THE
+                <span>ADMIN</span>
+
+            </div>
+
+            <div class="access-loader-subtitle">
+
+                VERIFYING SECURE ACCESS
+
+            </div>
+
+            <div class="access-progress">
+
+                <div class="access-progress-bar"></div>
+
+            </div>
+
+            <div class="access-loader-status">
+
+                INITIALIZING SECURE CHANNEL
+                <span class="loading-dots"></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+<script>
+
+/* =====================================================
+   ELEMENT REFERENCES
+   ===================================================== */
+/* =====================================================
+   WAR ROOM — INITIAL BOOT SEQUENCE
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const intro =
+            document.getElementById(
+                "warRoomIntro"
+            );
+
+        const quote =
+            document.getElementById(
+                "warRoomIntroQuote"
+            );
+
+        const progress =
+            document.getElementById(
+                "warRoomIntroProgress"
+            );
+
+        const status =
+            document.getElementById(
+                "warRoomIntroStatus"
+            );
+
+
+        if (!intro) {
+
+            return;
+
+        }
+
+
+        /* =================================================
+           TYPING QUOTE
+           ================================================= */
+
+        const bootQuote =
+            "PLAN. PREPARE. PROTECT. PREVAIL.";
+
+        let quoteIndex =
+            0;
+
+
+        function typeQuote() {
+
+            if (!quote) {
+
+                return;
+
+            }
+
+
+            if (
+                quoteIndex <
+                bootQuote.length
+            ) {
+
+                quote.textContent +=
+                    bootQuote.charAt(
+                        quoteIndex
+                    );
+
+                quoteIndex++;
+
+                setTimeout(
+                    typeQuote,
+                    55
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
+           START QUOTE
+           ================================================= */
+
+        setTimeout(
+            typeQuote,
+            1600
+        );
+
+
+        /* =================================================
+           PROGRESS
+           ================================================= */
+
+        let progressValue =
+            0;
+
+
+        setTimeout(
+            function () {
+
+                const progressTimer =
+                    setInterval(
+                        function () {
+
+                            progressValue +=
+                                1;
+
+                            if (progress) {
+
+                                progress.style.width =
+                                    progressValue +
+                                    "%";
+
+                            }
+
+
+                            if (
+                                progressValue >=
+                                100
+                            ) {
+
+                                clearInterval(
+                                    progressTimer
+                                );
+
+                            }
+
+                        },
+                        28
+                    );
+
+            },
+            1700
+        );
+
+
+        /* =================================================
+           STATUS UPDATE
+           ================================================= */
+
+        setTimeout(
+            function () {
+
+                if (status) {
+
+                    status.innerHTML = `
+                        SECURITY CHECK COMPLETE
+                        <span class="warroom-loading-dots"></span>
+                    `;
+
+                }
+
+            },
+            3500
+        );
+
+
+        /* =================================================
+           ACCESS GRANTED
+           ================================================= */
+
+        setTimeout(
+            function () {
+
+                intro.classList.add(
+                    "access-granted"
+                );
+
+
+                if (status) {
+
+                    status.innerHTML =
+                        "SECURE CHANNEL ESTABLISHED";
+
+                }
+
+            },
+            4050
+        );
+
+
+        /* =================================================
+           CLOSE INTRO
+           ================================================= */
+
+        setTimeout(
+            function () {
+
+                intro.classList.add(
+                    "hide"
+                );
+
+            },
+            5000
+        );
+
+
+        /* =================================================
+           REMOVE FROM DOM
+           ================================================= */
+
+        setTimeout(
+            function () {
+
+                intro.remove();
+
+            },
+            6400
+        );
+
+    }
+);
+
+const homePage =
+    document.getElementById("homePage");
+
+
+const adminLoginBtn =
+    document.getElementById("adminLoginBtn");
+
+
+const adminAccessLoader =
+    document.getElementById("adminAccessLoader");
+
+
+const workshopBtn =
+    document.getElementById("workshopBtn");
+
+
+const hackathonBtn =
+    document.getElementById("hackathonBtn");
+
+
+const workshopScreen =
+    document.getElementById("workshopScreen");
+
+
+const workshopBack =
+    document.getElementById("workshopBack");
+
+
+const eventScreenTitle =
+    document.getElementById("eventScreenTitle");
+
+
+const cehBtn =
+    document.getElementById("cehBtn");
+
+
+const vaptBtn =
+    document.getElementById("vaptBtn");
+
+
+const socBtn =
+    document.getElementById("socBtn");
+
+
+const forensicsBtn =
+    document.getElementById("forensicsBtn");
+
+
+/* =====================================================
+   CURRENT EVENT
+   ===================================================== */
+
+let currentEvent = "WORKSHOP";
+
+
+/* =====================================================
+   OPEN EVENT SCREEN
+   ===================================================== */
+
+function openEventScreen(eventName) {
+
+    currentEvent =
+        eventName;
+
+
+    eventScreenTitle.textContent =
+        eventName;
+
+
+    homePage.classList.add(
+        "workshop-open"
+    );
+
+
+    workshopScreen.classList.add(
+        "active"
+    );
+
+
+    updateDomainScreen();
+
+}
+
+
+/* =====================================================
+   UPDATE HOME EVENT CARD
+   ===================================================== */
+
+function updateHomeEventCard(
+    button,
+    isActive
+) {
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    const status =
+        button.querySelector(
+            ".event-status"
+        );
+
+
+    if (!isActive) {
+
+        button.disabled =
+            true;
+
+
+        button.classList.add(
+            "event-disabled"
+        );
+
+
+        if (status) {
+
+            status.innerHTML = `
+                <span class="status-dot"></span>
+                NO EVENT RUNNING
+            `;
+
+        }
+
+    }
+
+    else {
+
+        button.disabled =
+            false;
+
+
+        button.classList.remove(
+            "event-disabled"
+        );
+
+
+        if (status) {
+
+            status.innerHTML = `
+                <span class="status-dot"></span>
+                ACTIVE
+            `;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE DOMAIN BUTTON
+   ===================================================== */
+
+function updateDomainButton(
+    button,
+    isActive,
+    statusElement
+) {
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.disabled =
+        !isActive;
+
+
+    button.classList.toggle(
+        "event-disabled",
+        !isActive
+    );
+
+
+    if (statusElement) {
+
+        statusElement.textContent =
+            isActive
+                ? "ACTIVE"
+                : "INACTIVE";
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE DOMAIN SCREEN
+   ===================================================== */
+
+function updateDomainScreen() {
+
+    if (!window.WAR_ROOM_STATE) {
+
+        return;
+
+    }
+
+
+    const state =
+        window.WAR_ROOM_STATE;
+
+
+    /* =================================================
+       WORKSHOP
+       ================================================= */
+
+    if (
+        currentEvent ===
+        "WORKSHOP"
+    ) {
+
+        const workshopEventActive =
+            Boolean(
+                state.home?.workshop
+            );
+
+
+        updateDomainButton(
+            cehBtn,
+            workshopEventActive &&
+            Boolean(
+                state.home?.workshop_ceh
+            ),
+            document.getElementById(
+                "cehStatus"
+            )
+        );
+
+
+        updateDomainButton(
+            vaptBtn,
+            workshopEventActive &&
+            Boolean(
+                state.home?.workshop_vapt
+            ),
+            document.getElementById(
+                "vaptStatus"
+            )
+        );
+
+
+        updateDomainButton(
+            socBtn,
+            workshopEventActive &&
+            Boolean(
+                state.home?.workshop_soc
+            ),
+            document.getElementById(
+                "socStatus"
+            )
+        );
+
+
+        updateDomainButton(
+            forensicsBtn,
+            workshopEventActive &&
+            Boolean(
+                state.home?.workshop_forensics
+            ),
+            document.getElementById(
+                "forensicsStatus"
+            )
+        );
+
+
+        document.getElementById(
+            "cehTitle"
+        ).textContent =
+            "CEH";
+
+
+        document.getElementById(
+            "vaptTitle"
+        ).textContent =
+            "VAPT";
+
+
+        document.getElementById(
+            "socTitle"
+        ).textContent =
+            "SOC";
+
+
+        document.getElementById(
+            "forensicsTitle"
+        ).textContent =
+            "DIGITAL FORENSICS";
+
+    }
+
+
+    /* =================================================
+       HACKATHON
+       ================================================= */
+
+    else {
+
+        const hackathonEventActive =
+            Boolean(
+                state.home?.hackathon
+            );
+
+
+        updateDomainButton(
+            cehBtn,
+            hackathonEventActive &&
+            Boolean(
+                state.home?.ceh_hackathon
+            ),
+            document.getElementById(
+                "cehStatus"
+            )
+        );
+
+
+        updateDomainButton(
+            vaptBtn,
+            hackathonEventActive &&
+            Boolean(
+                state.home?.vapt_hackathon
+            ),
+            document.getElementById(
+                "vaptStatus"
+            )
+        );
+
+
+        updateDomainButton(
+            socBtn,
+            hackathonEventActive &&
+            Boolean(
+                state.home?.soc_hackathon
+            ),
+            document.getElementById(
+                "socStatus"
+            )
+        );
+
+
+        updateDomainButton(
+            forensicsBtn,
+            hackathonEventActive &&
+            Boolean(
+                state.home?.forensics_hackathon
+            ),
+            document.getElementById(
+                "forensicsStatus"
+            )
+        );
+
+
+        document.getElementById(
+            "cehTitle"
+        ).textContent =
+            "CEH HACKATHON";
+
+
+        document.getElementById(
+            "vaptTitle"
+        ).textContent =
+            "VAPT HACKATHON";
+
+
+        document.getElementById(
+            "socTitle"
+        ).textContent =
+            "SOC HACKATHON";
+
+
+        document.getElementById(
+            "forensicsTitle"
+        ).textContent =
+            "DIGITAL FORENSICS HACKATHON";
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD PUBLIC STATE
+   ===================================================== */
+
+async function loadPublicEventStatus() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/system/state?time=" +
+                Date.now(),
+                {
+                    method:
+                        "GET",
+
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load WAR ROOM state."
+            );
+
+        }
+
+
+        const state =
+            await response.json();
+
+
+        console.log(
+            "WAR ROOM PUBLIC STATE:",
+            state
+        );
+
+
+        window.WAR_ROOM_STATE =
+            state;
+
+
+        /* =================================================
+           MAIN EVENTS
+           ================================================= */
+
+        updateHomeEventCard(
+            workshopBtn,
+            Boolean(
+                state.home?.workshop
+            )
+        );
+
+
+        updateHomeEventCard(
+            hackathonBtn,
+            Boolean(
+                state.home?.hackathon
+            )
+        );
+
+
+        /* =================================================
+           CURRENT DOMAIN SCREEN
+           ================================================= */
+
+        updateDomainScreen();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "WAR ROOM STATE ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   OPEN USER AUTHENTICATION
+   ===================================================== */
+
+function openUserLogin(domain) {
+
+    if (!domain) {
+
+        console.error(
+            "Invalid domain."
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       WORKSHOP USER LOGIN
+       ================================================= */
+
+    if (
+        currentEvent ===
+        "WORKSHOP"
+    ) {
+
+        const loginUrl =
+            "/user-login?event=workshop&domain=" +
+            encodeURIComponent(
+                domain
+            );
+
+
+        console.log(
+            "OPENING WORKSHOP LOGIN:",
+            loginUrl
+        );
+
+
+        window.location.href =
+            loginUrl;
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       HACKATHON TEAM LOGIN
+       ================================================= */
+
+    if (
+        currentEvent ===
+        "HACKATHON"
+    ) {
+
+        const hackathonDomain =
+            domain +
+            "_hackathon";
+
+
+        const loginUrl =
+            "/user-hackathon?domain=" +
+            encodeURIComponent(
+                hackathonDomain
+            );
+
+
+        console.log(
+            "OPENING HACKATHON LOGIN:",
+            loginUrl
+        );
+
+
+        window.location.href =
+            loginUrl;
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       INVALID EVENT
+       ================================================= */
+
+    console.error(
+        "Invalid event:",
+        currentEvent
+    );
+
+}
+
+
+/* =====================================================
+   ADMIN LOGIN
+   ===================================================== */
+
+adminLoginBtn.addEventListener(
+    "click",
+    function (event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        adminAccessLoader.classList.add(
+            "active"
+        );
+
+
+        setTimeout(
+            function () {
+
+                window.location.href =
+                    "/admin";
+
+            },
+            1500
+        );
+
+    }
+);
+
+
+/* =====================================================
+   WORKSHOP CLICK
+   ===================================================== */
+
+workshopBtn.addEventListener(
+    "click",
+    function (event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        if (
+            workshopBtn.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        openEventScreen(
+            "WORKSHOP"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   HACKATHON CLICK
+   ===================================================== */
+
+hackathonBtn.addEventListener(
+    "click",
+    function (event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        if (
+            hackathonBtn.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        openEventScreen(
+            "HACKATHON"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   BACK TO EVENTS
+   ===================================================== */
+
+workshopBack.addEventListener(
+    "click",
+    function (event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        workshopScreen.classList.remove(
+            "active"
+        );
+
+
+        homePage.classList.remove(
+            "workshop-open"
+        );
+
+
+        eventScreenTitle.textContent =
+            "WORKSHOP";
+
+
+        currentEvent =
+            "WORKSHOP";
+
+    }
+);
+
+
+/* =====================================================
+   CEH
+   ===================================================== */
+
+cehBtn.addEventListener(
+    "click",
+    function () {
+
+        if (
+            cehBtn.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        openUserLogin(
+            "ceh"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   VAPT
+   ===================================================== */
+
+vaptBtn.addEventListener(
+    "click",
+    function () {
+
+        if (
+            vaptBtn.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        openUserLogin(
+            "vapt"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   SOC
+   ===================================================== */
+
+socBtn.addEventListener(
+    "click",
+    function () {
+
+        if (
+            socBtn.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        openUserLogin(
+            "soc"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   DIGITAL FORENSICS
+   ===================================================== */
+
+forensicsBtn.addEventListener(
+    "click",
+    function () {
+
+        if (
+            forensicsBtn.disabled
+        ) {
+
+            return;
+
+        }
+
+
+        openUserLogin(
+            "forensics"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL LOAD
+   ===================================================== */
+
+loadPublicEventStatus();
+
+
+/* =====================================================
+   PAGE SHOW
+   ===================================================== */
+
+window.addEventListener(
+    "pageshow",
+    function () {
+
+        loadPublicEventStatus();
+
+    }
+);
+
+
+/* =====================================================
+   TAB VISIBILITY
+   ===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function () {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            loadPublicEventStatus();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   AUTO SYNC
+   ===================================================== */
+
+setInterval(
+    function () {
+
+        loadPublicEventStatus();
+
+    },
+    3000
+);
+
+</script>
+
+
+</body>
+<!-- =====================================================
+     WAR ROOM — INITIAL BOOT SEQUENCE
+     ===================================================== -->
+
+<div
+    class="warroom-intro"
+    id="warRoomIntro"
+>
+
+    <div class="warroom-intro-grid"></div>
+
+    <div class="warroom-intro-scanline"></div>
+
+    <div class="warroom-intro-vignette"></div>
+
+    <div class="warroom-intro-content">
+
+        <!-- LOGO -->
+        <div class="warroom-intro-logo">
+            SQ
+        </div>
+
+
+        <!-- BRAND -->
+        <div class="warroom-intro-brand">
+            SYNTHO<span>QUEST</span>
+        </div>
+
+
+        <!-- TOP LINE -->
+        <div class="warroom-intro-line">
+
+            <span></span>
+
+            <b>SECURE ACCESS PROTOCOL</b>
+
+            <span></span>
+
+        </div>
+
+
+        <!-- MAIN TITLE -->
+        <div class="warroom-intro-title">
+
+            <span>WAR</span> ROOM
+
+        </div>
+
+
+        <!-- TYPING QUOTE -->
+        <div
+            class="warroom-intro-quote"
+            id="warRoomIntroQuote"
+        ></div>
+
+
+        <!-- PROGRESS -->
+        <div class="warroom-intro-progress">
+
+            <div
+                class="warroom-intro-progress-bar"
+                id="warRoomIntroProgress"
+            ></div>
+
+        </div>
+
+
+        <!-- STATUS -->
+        <div
+            class="warroom-intro-status"
+            id="warRoomIntroStatus"
+        >
+            INITIALIZING SECURE CHANNEL
+            <span class="warroom-loading-dots"></span>
+        </div>
+
+
+        <!-- ACCESS -->
+        <div
+            class="warroom-intro-access"
+            id="warRoomIntroAccess"
+        >
+            ACCESS GRANTED
+        </div>
+
+    </div>
+
+</div>
+
+</html>

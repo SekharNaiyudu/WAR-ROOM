@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WAR ROOM — Hackathon Access</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/user-hackathon.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         BACKGROUND
+         ===================================================== -->
+
+    <img
+        src="/assets/images/background.png"
+        alt=""
+        class="war-room-background"
+    >
+
+    <div class="page-bg"></div>
+
+    <div class="scanlines"></div>
+
+
+    <!-- =====================================================
+         BRAND
+         ===================================================== -->
+
+    <header class="brand">
+
+        <div class="brand-logo">
+            SQ
+        </div>
+
+        <div class="brand-name">
+            Syntho<span>Quest</span>
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         AUTH PAGE
+         ===================================================== -->
+
+    <main class="auth-page">
+
+        <section class="auth-card">
+
+
+            <!-- =================================================
+                 WELCOME
+                 ================================================= -->
+
+            <div class="welcome-line">
+
+                <span></span>
+
+                <p>
+                    WELCOME TO
+                </p>
+
+                <span></span>
+
+            </div>
+
+
+            <!-- =================================================
+                 WAR ROOM TITLE
+                 ================================================= -->
+
+            <h1>
+
+                <strong>WAR</strong> ROOM
+
+            </h1>
+
+
+            <!-- =================================================
+                 TITLE DIVIDER
+                 ================================================= -->
+
+            <div class="title-divider">
+
+                <span></span>
+
+                <b>✦</b>
+
+                <span></span>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACCESS LABEL
+                 ================================================= -->
+
+            <p class="access-label">
+
+                HACKATHON
+                <strong>ACCESS.</strong>
+
+            </p>
+
+
+            <!-- =================================================
+                 SELECTED HACKATHON
+                 ================================================= -->
+
+            <div class="domain-box">
+
+                <div
+                    class="domain-icon"
+                    id="domainIcon"
+                >
+                    ◇
+                </div>
+
+
+                <div>
+
+                    <small>
+                        SELECTED HACKATHON
+                    </small>
+
+                    <strong id="domainName">
+                        CEH HACKATHON
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 REGISTER / LOGIN TABS
+                 ================================================= -->
+
+            <div class="auth-tabs">
+
+                <button
+                    type="button"
+                    class="auth-tab active"
+                    id="registerTab"
+                >
+                    REGISTER
+                </button>
+
+
+                <button
+                    type="button"
+                    class="auth-tab"
+                    id="loginTab"
+                >
+                    LOGIN
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 MESSAGE
+                 ================================================= -->
+
+            <div
+                class="auth-message"
+                id="authMessage"
+            ></div>
+
+
+            <!-- =================================================
+                 HACKATHON TEAM REGISTRATION
+                 ================================================= -->
+
+            <form
+                id="registerForm"
+                class="auth-form"
+            >
+
+
+                <!-- =================================================
+                     TEAM NAME
+                     ================================================= -->
+
+                <div class="field">
+
+                    <label for="teamName">
+                        TEAM NAME
+                    </label>
+
+                    <input
+                        id="teamName"
+                        name="teamName"
+                        type="text"
+                        placeholder="Enter your team name"
+                        autocomplete="organization"
+                        maxlength="100"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     NUMBER OF TEAM MEMBERS
+                     ================================================= -->
+
+                <div class="field">
+
+                    <label for="memberCount">
+                        NUMBER OF TEAM MEMBERS
+                    </label>
+
+                    <select
+                        id="memberCount"
+                        name="memberCount"
+                        required
+                    >
+
+                        <option
+                            value=""
+                            selected
+                            disabled
+                        >
+                            Select number of members
+                        </option>
+
+                        <option value="1">
+                            1 Member
+                        </option>
+
+                        <option value="2">
+                            2 Members
+                        </option>
+
+                        <option value="3">
+                            3 Members
+                        </option>
+
+                        <option value="4">
+                            4 Members
+                        </option>
+
+                        <option value="5">
+                            5 Members
+                        </option>
+
+                        <option value="6">
+                            6 Members
+                        </option>
+
+                        <option value="7">
+                            7 Members
+                        </option>
+
+                        <option value="8">
+                            8 Members
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =================================================
+                     DYNAMIC TEAM MEMBERS
+                     
+                     JavaScript will create:
+                     Member 1 Name
+                     Member 2 Name
+                     Member 3 Name
+                     ...
+                     ================================================= -->
+
+                <div
+                    id="teamMembersContainer"
+                    class="team-members-container"
+                ></div>
+
+
+                <!-- =================================================
+                     TEAM LEAD EMAIL
+                     ================================================= -->
+
+                <div class="field">
+
+                    <label for="teamLeadEmail">
+                        TEAM LEAD EMAIL
+                    </label>
+
+                    <input
+                        id="teamLeadEmail"
+                        name="teamLeadEmail"
+                        type="email"
+                        placeholder="Enter team lead email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     PASSWORD
+                     ================================================= -->
+
+                <div class="field">
+
+                    <label for="registerPassword">
+                        PASSWORD
+                    </label>
+
+                    <input
+                        id="registerPassword"
+                        name="password"
+                        type="password"
+                        placeholder="Create a team password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     CONFIRM PASSWORD
+                     ================================================= -->
+
+                <div class="field">
+
+                    <label for="confirmPassword">
+                        CONFIRM PASSWORD
+                    </label>
+
+                    <input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm team password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     REGISTER BUTTON
+                     ================================================= -->
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                    id="registerButton"
+                >
+
+                    REGISTER TEAM
+
+                    <span>→</span>
+
+                </button>
+
+            </form>
+
+
+            <!-- =================================================
+                 HACKATHON TEAM LOGIN
+                 ================================================= -->
+
+            <form
+                id="loginForm"
+                class="auth-form hidden"
+            >
+
+
+                <!-- =================================================
+                     TEAM NAME
+                     ================================================= -->
+
+                <div class="field">
+
+                    <label for="loginTeamName">
+                        TEAM NAME
+                    </label>
+
+                    <input
+                        id="loginTeamName"
+                        name="teamName"
+                        type="text"
+                        placeholder="Enter your team name"
+                        autocomplete="organization"
+                        maxlength="100"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     PASSWORD
+                     ================================================= -->
+
+                <div class="field">
+
+                    <label for="loginPassword">
+                        PASSWORD
+                    </label>
+
+                    <input
+                        id="loginPassword"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your team password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     LOGIN BUTTON
+                     ================================================= -->
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                    id="loginButton"
+                >
+
+                    LOGIN TO HACKATHON
+
+                    <span>→</span>
+
+                </button>
+
+            </form>
+
+
+            <!-- =================================================
+                 BACK TO HACKATHONS
+                 ================================================= -->
+
+            <button
+                class="back-link"
+                type="button"
+                id="backToHackathon"
+            >
+
+                ← BACK TO HACKATHONS
+
+            </button>
+
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer>
+
+        SYNTHOQUEST PRIVATE LIMITED
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="/js/user-hackathon.js?v=2"></script>
+</body>
+
+</html>

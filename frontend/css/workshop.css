@@ -1,0 +1,1640 @@
+/* =========================================================
+   WAR ROOM
+   WORKSHOP MANAGEMENT
+   ========================================================= */
+
+.workshop-page{
+    min-width:0;
+}
+
+
+/* =========================================================
+   TOOLKIT UPLOAD CARD
+   ========================================================= */
+
+.workshop-upload-card{
+
+    position:relative;
+
+    margin-top:28px;
+
+    min-height:200px;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(280px,1.05fr)
+        minmax(300px,1fr)
+        minmax(280px,1fr);
+
+    gap:28px;
+
+    padding:20px 24px;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0a0a0a
+        );
+
+    box-shadow:
+        12px 12px 28px #020202,
+        -8px -8px 22px rgba(255,255,255,.018);
+
+    overflow:hidden;
+}
+
+
+.workshop-upload-card:before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:22px;
+
+    width:150px;
+    height:2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff1f2d,
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px rgba(229,9,20,.4);
+}
+
+
+/* =========================================================
+   UPLOAD LEFT
+   ========================================================= */
+
+.upload-main{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:17px;
+
+    padding-top:10px;
+}
+
+
+.upload-icon{
+
+    width:55px;
+    height:55px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+
+    font-size:24px;
+
+    border:1px solid rgba(229,9,20,.4);
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #090909
+        );
+
+    box-shadow:
+        7px 7px 14px #030303,
+        -4px -4px 10px rgba(255,255,255,.02);
+
+    text-shadow:
+        0 0 10px rgba(229,9,20,.35);
+}
+
+
+.upload-heading{
+
+    min-width:0;
+}
+
+
+.upload-heading>span{
+
+    color:#ff1f2d;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:2.5px;
+}
+
+
+.upload-heading h2{
+
+    margin-top:9px;
+
+    color:#fff;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    letter-spacing:.8px;
+}
+
+
+.upload-heading p{
+
+    margin-top:8px;
+
+    color:#777;
+
+    font-size:10px;
+
+    line-height:1.5;
+}
+
+
+.selected-domain-text{
+
+    margin-top:12px;
+
+    color:#656565;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    letter-spacing:1.6px;
+}
+
+
+.selected-domain-text strong{
+
+    margin-left:6px;
+
+    color:#ff1f2d;
+}
+
+
+/* =========================================================
+   DROP ZONE
+   ========================================================= */
+
+.drop-zone{
+
+    min-height:158px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:6px;
+
+    border:1px dashed rgba(255,255,255,.13);
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111,
+            #0b0b0b
+        );
+
+    transition:.22s ease;
+}
+
+
+.drop-zone.dragging{
+
+    border-color:#e50914;
+
+    background:
+        rgba(229,9,20,.06);
+
+    box-shadow:
+        0 0 22px rgba(229,9,20,.08);
+}
+
+
+.drop-icon{
+
+    color:#777;
+
+    font-size:21px;
+}
+
+
+.drop-zone strong{
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:800;
+}
+
+
+.drop-zone>span{
+
+    color:#666;
+
+    font-size:9px;
+}
+
+
+.drop-zone button{
+
+    min-width:124px;
+
+    height:34px;
+
+    margin-top:4px;
+
+    border:1px solid #ff1f2d;
+
+    border-radius:9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ff2634,
+            #b7070e
+        );
+
+    color:#fff;
+
+    font-size:8px;
+
+    font-weight:900;
+
+    letter-spacing:1.2px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 14px rgba(229,9,20,.14);
+}
+
+
+.drop-zone button:hover{
+
+    filter:brightness(1.1);
+}
+
+
+.drop-zone small{
+
+    color:#555;
+
+    font-size:7px;
+
+    max-width:180px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+}
+
+
+/* =========================================================
+   RECENT UPLOADS
+   ========================================================= */
+
+.recent-upload-area{
+
+    min-width:0;
+
+    padding-top:8px;
+}
+
+
+.recent-upload-header{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    padding-bottom:12px;
+
+    border-bottom:1px solid rgba(255,255,255,.055);
+}
+
+
+.recent-upload-header span{
+
+    color:#777;
+
+    font-size:8px;
+
+    letter-spacing:2px;
+
+    font-weight:800;
+}
+
+
+.recent-upload-header h3{
+
+    margin-top:6px;
+
+    color:#fff;
+
+    font-size:12px;
+
+    font-weight:900;
+}
+
+
+.recent-upload-header button{
+
+    border:0;
+
+    background:none;
+
+    color:#ff1f2d;
+
+    font-size:8px;
+
+    cursor:pointer;
+}
+
+
+.recent-upload-list{
+
+    max-height:125px;
+
+    overflow-y:auto;
+}
+
+
+/* =========================================================
+   TOOLKIT FILE
+   ========================================================= */
+
+.toolkit-file {
+
+    min-height: 58px;
+
+    padding: 8px 2px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: flex-start;
+
+    gap: 5px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.035);
+
+}
+
+
+/* =========================================================
+   FILE INFORMATION
+   ========================================================= */
+
+.toolkit-file-info {
+
+    width: 100%;
+
+    min-width: 0;
+
+}
+
+
+.toolkit-file-info strong {
+
+    display: block;
+
+    color: #ddd;
+
+    font-size: 9px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.toolkit-file-info small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #555;
+
+    font-size: 7px;
+
+}
+
+
+/* =========================================================
+   DOWNLOAD + DELETE
+   ========================================================= */
+
+.toolkit-file-actions {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 14px;
+
+    margin-top: 2px;
+
+}
+
+
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
+
+.toolkit-file-download {
+
+    color: #ff1f2d;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+}
+
+
+.toolkit-file-download:hover {
+
+    color: #ffffff;
+
+}
+
+
+/* =========================================================
+   DELETE
+   ========================================================= */
+
+.toolkit-file-delete {
+
+    border: 0;
+
+    background: none;
+
+    padding: 0;
+
+    color: #ff1f2d;
+
+    font-family: inherit;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+
+    cursor: pointer;
+
+}
+
+
+.toolkit-file-delete:hover {
+
+    color: #ffffff;
+
+}
+
+/* =========================================================
+   DOMAIN CARDS
+   ========================================================= */
+
+.workshop-domain-grid{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:14px;
+}
+
+
+.workshop-domain-card{
+
+    min-width:0;
+
+    min-height:90px;
+
+    padding:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    text-align:left;
+
+    border:1px solid rgba(255,255,255,.045);
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0b0b0b
+        );
+
+    color:#fff;
+
+    cursor:pointer;
+
+    box-shadow:
+        8px 8px 17px #030303,
+        -5px -5px 12px rgba(255,255,255,.018);
+
+    transition:.22s ease;
+}
+
+
+.workshop-domain-card:hover{
+
+    transform:translateY(-2px);
+
+    border-color:rgba(229,9,20,.28);
+}
+
+
+.workshop-domain-card.active{
+
+    border-color:#e50914;
+
+    box-shadow:
+        8px 8px 17px #030303,
+        -5px -5px 12px rgba(255,255,255,.018),
+        0 0 20px rgba(229,9,20,.08);
+
+    position:relative;
+}
+
+
+.workshop-domain-card.active:after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    height:2px;
+
+    background:#ff1f2d;
+
+    border-radius:3px;
+}
+
+
+.workshop-domain-icon{
+
+    width:45px;
+    height:45px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:#0b0b0b;
+
+    font-size:18px;
+
+    box-shadow:
+        inset 3px 3px 7px #030303,
+        inset -3px -3px 7px rgba(255,255,255,.015);
+}
+
+
+.ceh-icon{
+    color:#ff1f2d;
+}
+
+
+.vapt-icon{
+    color:#f07816;
+}
+
+
+.soc-icon{
+    color:#168cff;
+}
+
+
+.df-icon{
+    color:#ff3150;
+}
+
+
+.workshop-domain-card strong{
+
+    display:block;
+
+    color:#fff;
+
+    font-size:12px;
+
+    font-weight:900;
+}
+
+
+.workshop-domain-card small{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:#666;
+
+    font-size:7px;
+
+    line-height:1.4;
+}
+
+
+/* =========================================================
+   MANAGEMENT GRID
+   ========================================================= */
+
+.workshop-management-grid{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(270px,.55fr)
+        minmax(500px,1.45fr);
+
+    gap:18px;
+
+    align-items:stretch;
+}
+
+
+/* =========================================================
+   DOMAIN PANEL
+   ========================================================= */
+
+.workshop-domain-panel{
+
+    min-height:390px;
+
+    padding:28px 22px;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0b0b0b
+        );
+
+    box-shadow:
+        10px 10px 22px #030303,
+        -7px -7px 17px rgba(255,255,255,.018);
+}
+
+
+.panel-kicker{
+
+    color:#ff1f2d;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:2.5px;
+}
+
+
+.workshop-domain-panel h2{
+
+    margin-top:10px;
+
+    color:#fff;
+
+    font-size:19px;
+
+    font-weight:900;
+}
+
+
+.domain-divider{
+
+    height:1px;
+
+    margin:20px 0;
+
+    background:
+        rgba(255,255,255,.055);
+}
+
+
+.domain-toolkit-summary{
+
+    padding:16px;
+
+    border:1px solid rgba(255,255,255,.04);
+
+    border-radius:13px;
+
+    background:#0d0d0d;
+
+    box-shadow:
+        inset 3px 3px 7px #030303;
+}
+
+
+.domain-toolkit-summary span{
+
+    display:block;
+
+    color:#666;
+
+    font-size:7px;
+
+    font-weight:900;
+
+    letter-spacing:1.8px;
+}
+
+
+.domain-toolkit-summary strong{
+
+    display:inline-block;
+
+    margin-top:7px;
+
+    color:#fff;
+
+    font-size:27px;
+}
+
+
+.domain-toolkit-summary small{
+
+    margin-left:7px;
+
+    color:#555;
+
+    font-size:8px;
+}
+
+
+.add-domain-button{
+
+    width:100%;
+
+    height:43px;
+
+    margin-top:20px;
+
+    border:1px solid rgba(229,9,20,.5);
+
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171010,
+            #0b0b0b
+        );
+
+    color:#ff1f2d;
+
+    font-size:8px;
+
+    font-weight:900;
+
+    letter-spacing:1.5px;
+
+    cursor:pointer;
+}
+
+
+.add-domain-button:hover{
+
+    color:#fff;
+
+    background:
+        linear-gradient(
+            145deg,
+            #8e0a11,
+            #e50914
+        );
+}
+
+
+/* =========================================================
+   PARTICIPANTS
+   ========================================================= */
+
+.participants-panel{
+
+    min-width:0;
+
+    padding:25px 20px 17px;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0b0b0b
+        );
+
+    box-shadow:
+        10px 10px 22px #030303,
+        -7px -7px 17px rgba(255,255,255,.018);
+
+    box-sizing:border-box;
+}
+
+
+.participants-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:20px;
+}
+
+
+.participants-header>div:first-child>span{
+
+    color:#ff1f2d;
+
+    font-size:8px;
+
+    font-weight:900;
+
+    letter-spacing:2.2px;
+}
+
+
+.participants-header h2{
+
+    margin-top:9px;
+
+    color:#fff;
+
+    font-size:17px;
+
+    font-weight:900;
+}
+
+
+.participant-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+}
+
+
+.participant-actions input{
+
+    width:190px;
+
+    height:32px;
+
+    padding:0 10px;
+
+    outline:none;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    border-radius:9px;
+
+    background:#0d0d0d;
+
+    color:#fff;
+
+    font-size:8px;
+
+    box-sizing:border-box;
+}
+
+
+.participant-actions input:focus{
+
+    border-color:rgba(229,9,20,.4);
+}
+
+
+.participant-actions button{
+
+    width:32px;
+    height:32px;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:9px;
+
+    background:#0d0d0d;
+
+    color:#888;
+
+    cursor:pointer;
+}
+
+
+.participant-actions button:hover{
+
+    color:#ff1f2d;
+
+    border-color:rgba(229,9,20,.3);
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.participant-stats{
+
+    margin-top:22px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:10px;
+}
+
+
+.participant-stat{
+
+    min-height:70px;
+
+    padding:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    border:1px solid rgba(255,255,255,.04);
+
+    border-radius:13px;
+
+    background:#0e0e0e;
+
+    box-shadow:
+        inset 3px 3px 7px #030303;
+
+    box-sizing:border-box;
+}
+
+
+.stat-icon{
+
+    width:34px;
+    height:34px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#101010;
+
+    font-size:13px;
+}
+
+
+.stat-icon.red{
+    color:#ff1f2d;
+}
+
+
+.stat-icon.green{
+    color:#27d67d;
+}
+
+
+.stat-icon.blue{
+    color:#268cff;
+}
+
+
+.stat-icon.gray{
+    color:#777;
+}
+
+
+.participant-stat span{
+
+    display:block;
+
+    color:#666;
+
+    font-size:7px;
+}
+
+
+.participant-stat strong{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#fff;
+
+    font-size:17px;
+}
+
+
+/* =========================================================
+   PARTICIPANT TABLE
+   FIXED HEIGHT + INTERNAL SCROLL
+   ========================================================= */
+
+.participant-table-wrap{
+
+    width:100%;
+
+    height:220px;
+
+    max-height:220px;
+
+    min-height:220px;
+
+    margin-top:14px;
+
+    overflow-y:auto;
+
+    overflow-x:auto;
+
+    border:1px solid rgba(255,255,255,.04);
+
+    border-radius:13px;
+
+    background:#0a0a0a;
+
+    box-sizing:border-box;
+
+    scrollbar-width:thin;
+
+    scrollbar-color:
+        #e50914
+        #080808;
+}
+
+
+/* =========================================================
+   PARTICIPANT TABLE
+   ========================================================= */
+
+.participant-table-wrap table{
+
+    width:100%;
+
+    min-width:700px;
+
+    border-collapse:collapse;
+
+    table-layout:auto;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.participant-table-wrap th{
+
+    height:38px;
+
+    padding:0 10px;
+
+    text-align:left;
+
+    color:#777;
+
+    background:
+        rgba(229,9,20,.035);
+
+    font-size:7px;
+
+    font-weight:900;
+
+    letter-spacing:.6px;
+
+    white-space:nowrap;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:10;
+}
+
+
+/* =========================================================
+   TABLE DATA
+   ========================================================= */
+
+.participant-table-wrap td{
+
+    height:43px;
+
+    padding:0 10px;
+
+    color:#777;
+
+    border-top:
+        1px solid rgba(255,255,255,.035);
+
+    font-size:8px;
+
+    white-space:nowrap;
+}
+
+
+.participant-table-wrap td:nth-child(2){
+
+    color:#ddd;
+
+    font-weight:700;
+}
+
+
+/* =========================================================
+   EMPTY PARTICIPANTS
+   ========================================================= */
+
+.empty-participants{
+
+    min-height:120px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#444;
+
+    font-size:8px;
+}
+
+
+/* =========================================================
+   STATUS BADGE
+   ========================================================= */
+
+.status-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:4px 8px;
+
+    border-radius:8px;
+
+    background:rgba(35,205,115,.08);
+
+    color:#35d27e;
+
+    font-size:7px;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   TABLE SCROLLBAR
+   ========================================================= */
+
+.participant-table-wrap::-webkit-scrollbar{
+
+    width:8px;
+
+    height:8px;
+}
+
+
+.participant-table-wrap::-webkit-scrollbar-track{
+
+    background:#080808;
+}
+
+
+.participant-table-wrap::-webkit-scrollbar-thumb{
+
+    background:#e50914;
+
+    border-radius:10px;
+}
+
+
+.participant-table-wrap::-webkit-scrollbar-thumb:hover{
+
+    background:#ff1f2d;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.table-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:12px;
+
+    color:#555;
+
+    font-size:7px;
+}
+
+
+.pagination{
+
+    display:flex;
+
+    gap:5px;
+}
+
+
+.pagination button{
+
+    width:27px;
+    height:27px;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:8px;
+
+    background:#0d0d0d;
+
+    color:#777;
+
+    cursor:pointer;
+}
+
+
+.pagination button.active{
+
+    border-color:#e50914;
+
+    background:#e50914;
+
+    color:#fff;
+}
+
+
+/* =========================================================
+   TOOLKIT FILE ACTIONS
+   ========================================================= */
+
+.toolkit-file-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    flex-shrink:0;
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.toolkit-file-delete{
+
+    border:0;
+
+    background:none;
+
+    padding:0;
+
+    color:#777;
+
+    font-family:inherit;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    letter-spacing:.5px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+
+.toolkit-file-delete:hover{
+
+    color:#ff1f2d;
+
+    text-shadow:
+        0 0 8px rgba(229,9,20,.35);
+}
+
+
+/* =========================================================
+   WAR ROOM
+   DEFAULT 120% VISUAL SCALE
+   ========================================================= */
+
+body{
+
+    zoom:1.2;
+}
+
+
+/* =========================================================
+   FIXED SIDEBAR
+   ========================================================= */
+
+.sidebar{
+
+    position:fixed !important;
+
+    top:0 !important;
+    left:0 !important;
+
+    height:calc(100vh / 1.2) !important;
+
+    display:flex !important;
+
+    flex-direction:column !important;
+
+    overflow-y:auto !important;
+
+    overflow-x:hidden !important;
+}
+
+
+/* =========================================================
+   SIDEBAR BOTTOM / LOGOUT
+   ========================================================= */
+
+.sidebar-bottom{
+
+    margin-top:auto !important;
+
+    width:100% !important;
+
+    flex-shrink:0 !important;
+
+    padding-bottom:15px !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:1250px){
+
+    .workshop-upload-card{
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .recent-upload-area{
+
+        grid-column:1 / -1;
+    }
+
+
+    .workshop-management-grid{
+
+        grid-template-columns:1fr;
+    }
+
+}
+
+
+@media(max-width:900px){
+
+    .workshop-domain-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+
+    .participant-stats{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+
+@media(max-width:700px){
+
+    .workshop-upload-card{
+
+        grid-template-columns:1fr;
+    }
+
+
+    .recent-upload-area{
+
+        grid-column:auto;
+    }
+
+
+    .workshop-domain-grid{
+
+        grid-template-columns:1fr;
+    }
+
+
+    .participants-header{
+
+        flex-direction:column;
+    }
+
+
+    .participant-actions{
+
+        width:100%;
+    }
+
+
+    .participant-actions input{
+
+        width:100%;
+    }
+
+
+    /* Mobile table area */
+
+    .participant-table-wrap{
+
+        height:380px;
+
+        max-height:380px;
+
+        min-height:380px;
+    }
+
+
+    .participant-table-wrap table{
+
+        min-width:700px;
+    }
+
+}
+
+/* =========================================================
+   LOGOUT — FULL RED BUTTON
+   ========================================================= */
+
+.sidebar-item[data-section="logout"] {
+
+    margin-top: 14px;
+
+    border: 1px solid #e50914;
+
+    border-radius: 12px;
+
+    background: #e50914;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 14px rgba(229,9,20,.18),
+        5px 5px 12px #020202;
+
+    transition:
+        .2s ease;
+
+}
+
+
+/* LOGOUT ICON */
+
+.sidebar-item[data-section="logout"] .sidebar-icon {
+
+    color: #ffffff;
+
+}
+
+
+/* HOVER */
+
+.sidebar-item[data-section="logout"]:hover {
+
+    background: #ff1f2d;
+
+    border-color: #ff1f2d;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 20px rgba(229,9,20,.30),
+        6px 6px 14px #020202;
+
+    transform: translateY(-1px);
+
+}
+
+
+/* HOVER ICON */
+
+.sidebar-item[data-section="logout"]:hover .sidebar-icon {
+
+    color: #ffffff;
+
+}
+
+
+/* CLICK */
+
+.sidebar-item[data-section="logout"]:active {
+
+    transform: translateY(1px);
+
+}

@@ -1,0 +1,916 @@
+/* =====================================================
+   ADMIN LOGIN PAGE
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   PAGE
+   ===================================================== */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        #020407
+        url("../assets/images/background.png")
+        center center
+        / cover
+        no-repeat
+        fixed;
+}
+
+
+/* =====================================================
+   PAGE CONTAINER
+   ===================================================== */
+
+.admin-page {
+
+    position: relative;
+
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   BACKGROUND DARKNESS
+   ===================================================== */
+
+.admin-page::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(0, 0, 0, 0.18);
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* =====================================================
+   TOP BRAND
+   ===================================================== */
+
+.admin-top-brand {
+
+    position: fixed;
+
+    top: 25px;
+    left: 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    z-index: 10;
+}
+
+
+/* =====================================================
+   SQ LOGO
+   ===================================================== */
+
+.sq-logo {
+
+    width: 43px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    border-bottom:
+        2px solid #e50914;
+
+    transform:
+        skew(-8deg);
+
+    text-shadow:
+        0 0 12px
+        rgba(255, 255, 255, 0.30);
+}
+
+
+/* =====================================================
+   SYNTHOQUEST NAME
+   ===================================================== */
+
+.sq-name {
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.3px;
+}
+
+
+.sq-name span {
+
+    color: #f59b00;
+}
+
+
+/* =====================================================
+   LOGIN CARD
+   ===================================================== */
+
+.admin-login-panel {
+
+    position: relative;
+
+    width: 520px;
+
+    max-width:
+        calc(100vw - 40px);
+
+    padding:
+        38px 48px 32px;
+
+    text-align: center;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(3, 6, 9, 0.91),
+            rgba(5, 8, 11, 0.86)
+        );
+
+    /* ==============================================
+       SUBTLE RED EDGE
+       ============================================== */
+
+    border:
+        1px solid
+        rgba(229, 9, 20, 0.32);
+
+    border-radius: 12px;
+
+    /* ==============================================
+       RED EDGE GLOW
+       ============================================== */
+
+    box-shadow:
+
+        0 0 8px
+        rgba(229, 9, 20, 0.08),
+
+        0 0 25px
+        rgba(229, 9, 20, 0.04),
+
+        0 25px 70px
+        rgba(0, 0, 0, 0.48),
+
+        inset 0 0 45px
+        rgba(255, 255, 255, 0.012);
+
+    backdrop-filter:
+        blur(5px);
+
+    z-index: 2;
+
+    animation:
+        adminCardRedGlow 4s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   ADMIN CARD RED EDGE ANIMATION
+   ===================================================== */
+
+@keyframes adminCardRedGlow {
+
+    0% {
+
+        border-color:
+            rgba(229, 9, 20, 0.25);
+
+        box-shadow:
+
+            0 0 7px
+            rgba(229, 9, 20, 0.06),
+
+            0 0 20px
+            rgba(229, 9, 20, 0.03),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.48),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+
+
+    50% {
+
+        border-color:
+            rgba(229, 9, 20, 0.65);
+
+        box-shadow:
+
+            0 0 10px
+            rgba(229, 9, 20, 0.18),
+
+            0 0 30px
+            rgba(229, 9, 20, 0.08),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.48),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+
+
+    100% {
+
+        border-color:
+            rgba(229, 9, 20, 0.25);
+
+        box-shadow:
+
+            0 0 7px
+            rgba(229, 9, 20, 0.06),
+
+            0 0 20px
+            rgba(229, 9, 20, 0.03),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.48),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+}
+
+
+/* =====================================================
+   WELCOME
+   ===================================================== */
+
+.admin-login-panel .welcome-text {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #eeeeee;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    letter-spacing: 7px;
+
+    margin-left: 7px;
+}
+
+
+.admin-login-panel .welcome-text::before,
+.admin-login-panel .welcome-text::after {
+
+    content: "";
+
+    width: 75px;
+
+    height: 1px;
+
+    margin: 0 14px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(229, 9, 20, 0.80)
+        );
+}
+
+
+.admin-login-panel .welcome-text::after {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(229, 9, 20, 0.80),
+            transparent
+        );
+}
+
+
+/* =====================================================
+   WAR ROOM
+   ===================================================== */
+
+.admin-login-panel .war-room-title {
+
+    margin-top: 8px;
+
+    color: #ffffff;
+
+    font-size: 58px;
+
+    line-height: 0.95;
+
+    font-weight: 900;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+}
+
+
+.admin-login-panel .war-room-title span {
+
+    color: #ed111b;
+
+    text-shadow:
+        0 0 22px
+        rgba(229, 9, 20, 0.20);
+}
+
+
+/* =====================================================
+   DECORATIVE LINE
+   ===================================================== */
+
+.admin-login-panel .hero-line {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 13px;
+}
+
+
+.admin-login-panel .hero-line > span {
+
+    width: 105px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(229, 9, 20, 0.75)
+        );
+}
+
+
+.admin-login-panel .hero-line > span:last-child {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(229, 9, 20, 0.75),
+            transparent
+        );
+}
+
+
+/* =====================================================
+   SHIELD
+   ===================================================== */
+
+.admin-login-panel .shield-symbol {
+
+    width: 28px;
+
+    height: 28px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #ff1823;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, 0.80);
+
+    clip-path:
+        polygon(
+            50% 0%,
+            88% 15%,
+            88% 60%,
+            50% 100%,
+            12% 60%,
+            12% 15%
+        );
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   ADMIN TAGLINE
+   ===================================================== */
+
+.admin-login-panel .hero-tagline {
+
+    margin-top: 11px;
+
+    color: #c9ced1;
+
+    font-size: 9px;
+
+    letter-spacing: 3px;
+}
+
+
+.admin-login-panel .hero-tagline strong {
+
+    color: #ed111b;
+}
+
+
+/* =====================================================
+   LOGIN HEADING
+   ===================================================== */
+
+.admin-heading {
+
+    margin-top: 25px;
+
+    text-align: left;
+}
+
+
+.admin-heading h2 {
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+
+.admin-heading p {
+
+    margin-top: 6px;
+
+    color: #7f898f;
+
+    font-size: 9px;
+
+    line-height: 1.6;
+
+    letter-spacing: 0.4px;
+}
+
+
+/* =====================================================
+   FORM
+   ===================================================== */
+
+.admin-form {
+
+    margin-top: 18px;
+
+    text-align: left;
+}
+
+
+/* =====================================================
+   FIELD
+   ===================================================== */
+
+.admin-field {
+
+    margin-bottom: 15px;
+}
+
+
+.admin-field label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #8e979c;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+}
+
+
+/* =====================================================
+   INPUT
+   ===================================================== */
+
+.admin-field input {
+
+    width: 100%;
+
+    height: 46px;
+
+    padding:
+        0 14px;
+
+    background:
+        rgba(0, 0, 0, 0.48);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.13);
+
+    border-radius: 5px;
+
+    outline: none;
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    transition:
+        0.2s ease;
+}
+
+
+.admin-field input::placeholder {
+
+    color: #596268;
+}
+
+
+.admin-field input:focus {
+
+    border-color:
+        rgba(229, 9, 20, 0.75);
+
+    box-shadow:
+
+        0 0 0 2px
+        rgba(229, 9, 20, 0.07),
+
+        0 0 15px
+        rgba(229, 9, 20, 0.05);
+}
+
+
+/* =====================================================
+   LOGIN BUTTON
+   ===================================================== */
+
+.admin-submit {
+
+    width: 100%;
+
+    height: 47px;
+
+    margin-top: 3px;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background:
+        #e50914;
+
+    color: #ffffff;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    transition:
+        0.2s ease;
+}
+
+
+.admin-submit span {
+
+    margin-left: 8px;
+
+    font-size: 14px;
+}
+
+
+.admin-submit:hover {
+
+    background:
+        #ff1823;
+
+    box-shadow:
+        0 0 25px
+        rgba(229, 9, 20, 0.25);
+
+    transform:
+        translateY(-1px);
+}
+
+
+.admin-submit:active {
+
+    transform:
+        translateY(0);
+}
+
+
+/* =====================================================
+   BACK BUTTON
+   ===================================================== */
+
+.back-home {
+
+    display: inline-block;
+
+    margin-top: 17px;
+
+    color: #707a80;
+
+    text-decoration: none;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    transition:
+        0.2s ease;
+}
+
+
+.back-home:hover {
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+.home-footer {
+
+    position: fixed;
+
+    bottom: 9px;
+
+    left: 0;
+
+    width: 100%;
+
+    text-align: center;
+
+    color:
+        rgba(255, 255, 255, 0.35);
+
+    font-size: 7px;
+
+    letter-spacing: 3px;
+
+    z-index: 10;
+}
+
+
+/* =====================================================
+   MOVING SIDE WHITE LIGHTS
+   ===================================================== */
+
+.admin-page::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    background:
+
+        /* LEFT LIGHT */
+
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            transparent 10%,
+            rgba(255, 255, 255, 0.00) 20%,
+            rgba(255, 255, 255, 0.75) 48%,
+            rgba(210, 235, 255, 0.35) 55%,
+            transparent 72%
+        )
+
+        8% -300px
+        /
+        5px 260px
+        no-repeat,
+
+        /* RIGHT LIGHT */
+
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            transparent 10%,
+            rgba(255, 255, 255, 0.00) 20%,
+            rgba(255, 255, 255, 0.75) 48%,
+            rgba(210, 235, 255, 0.35) 55%,
+            transparent 72%
+        )
+
+        92% -600px
+        /
+        5px 260px
+        no-repeat;
+
+
+    filter:
+
+        drop-shadow(
+            0 0 8px
+            rgba(220, 240, 255, 0.75)
+        );
+
+    opacity: 0.75;
+
+    animation:
+        adminSideLights 7s linear infinite;
+}
+
+
+/* =====================================================
+   SIDE LIGHT MOVEMENT
+   ===================================================== */
+
+@keyframes adminSideLights {
+
+    0% {
+
+        background-position:
+            8% -300px,
+            92% -600px;
+
+        opacity: 0;
+    }
+
+
+    15% {
+
+        opacity: 0.65;
+    }
+
+
+    50% {
+
+        background-position:
+            8% 500px,
+            92% 300px;
+
+        opacity: 0.85;
+    }
+
+
+    75% {
+
+        opacity: 0.55;
+    }
+
+
+    100% {
+
+        background-position:
+            8% 1050px,
+            92% 850px;
+
+        opacity: 0;
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    .admin-top-brand {
+
+        top: 15px;
+
+        left: 15px;
+    }
+
+
+    .sq-name {
+
+        font-size: 14px;
+    }
+
+
+    .admin-login-panel {
+
+        width:
+            calc(100vw - 30px);
+
+        padding:
+            32px 24px 28px;
+    }
+
+
+    .admin-login-panel .welcome-text {
+
+        font-size: 9px;
+
+        letter-spacing: 4px;
+    }
+
+
+    .admin-login-panel .welcome-text::before,
+    .admin-login-panel .welcome-text::after {
+
+        width: 25px;
+
+        margin: 0 7px;
+    }
+
+
+    .admin-login-panel .war-room-title {
+
+        font-size: 43px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .admin-login-panel .hero-line > span {
+
+        width: 55px;
+    }
+
+
+    .admin-login-panel .hero-tagline {
+
+        font-size: 8px;
+
+        letter-spacing: 2px;
+    }
+}

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        WAR ROOM — Leaderboard
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/leaderboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/dashboard.css"
+    >
+
+    <link rel="stylesheet" href="/css/warroom-modal.css?v=2">
+</head>
+
+
+<body>
+
+
+<main class="admin-dashboard">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="admin-sidebar">
+
+
+        <!-- =================================================
+             BRAND
+             ================================================= -->
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                SQ
+            </div>
+
+            <div class="sidebar-brand-name">
+                Syntho<span>Quest</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDEBAR LABEL
+             ================================================= -->
+
+        <div class="sidebar-panel-label">
+
+            WAR ROOM
+
+            <span>
+                ADMIN CONTROL PANEL
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             NAVIGATION
+             ================================================= -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/dashboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+            <!-- WORKSHOP -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/workshop'"
+            >
+
+                <span class="sidebar-icon">
+                    ⚔
+                </span>
+
+                <span>
+                    Workshop
+                </span>
+
+            </button>
+
+
+            <!-- HACKATHON -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/hackathon'"
+            >
+
+                <span class="sidebar-icon">
+                    ◈
+                </span>
+
+                <span>
+                    Hackathon
+                </span>
+
+            </button>
+
+
+            <!-- LEADERBOARD -->
+
+            <button
+                class="sidebar-item active"
+                type="button"
+                onclick="window.location.href='/admin/leaderboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ♛
+                </span>
+
+                <span>
+                    Leaderboard
+                </span>
+
+            </button>
+
+
+            <!-- ACCOUNT MANAGEMENT -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/accounts'"
+            >
+
+                <span class="sidebar-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Account Management
+                </span>
+
+            </button>
+
+
+            
+
+            <!-- SETTINGS -->
+
+            <button
+                class="sidebar-item"
+                data-section="settings"
+                type="button"
+                onclick="window.location.href='/admin/settings'"
+            >
+
+                <span class="sidebar-icon">
+                ⚙
+                </span>
+
+                <span>
+                Settings
+                </span>
+
+            </button>
+
+
+            <!-- LOGOUT -->
+
+            <button
+                class="sidebar-item"
+                data-section="logout"
+                type="button"
+                onclick="window.location.href='/admin'"
+            >
+
+                <span class="sidebar-icon">
+                    ⎋
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <section class="dashboard-content">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="dashboard-header">
+
+
+            <div class="header-left">
+
+                <div class="header-kicker">
+                    WAR ROOM / LEADERBOARD
+                </div>
+
+                <h1 id="pageTitle">
+                    Leaderboard
+                </h1>
+
+                <p id="pageDescription">
+                    View rankings, domains and points across
+                    Workshop and Hackathon events.
+                </p>
+
+            </div>
+
+
+            <div class="header-right">
+
+
+                <div class="dashboard-search">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="leaderboardSearch"
+                        placeholder="Search..."
+                    >
+
+                </div>
+
+
+                <button
+                    class="header-icon-button"
+                    type="button"
+                >
+                    🔔
+                </button>
+
+
+                <button
+                    class="header-icon-button"
+                    type="button"
+                >
+                    ✉
+                </button>
+
+
+                <div class="header-admin">
+
+                    <span class="header-status-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            ADMINISTRATOR
+                        </strong>
+
+                        <small>
+                            FULL ACCESS
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             LEADERBOARD PAGE
+             ================================================= -->
+
+        <section class="leaderboard-page">
+
+
+            <!-- =================================================
+                 CATEGORY HEADING
+                 ================================================= -->
+
+
+
+            <!-- =================================================
+                 EVENT CATEGORY
+                 ================================================= -->
+
+            <div class="leaderboard-event-grid">
+
+
+                <!-- WORKSHOP -->
+
+                <button
+                    type="button"
+                    class="leaderboard-event-card active"
+                    data-event="workshop"
+                >
+
+                    <div class="leaderboard-event-top">
+
+                        <div class="leaderboard-event-icon">
+                            ⚔
+                        </div>
+
+                        <span>
+                            01
+                        </span>
+
+                    </div>
+
+
+                    <div class="leaderboard-event-content">
+
+                        <span>
+                            EVENT CATEGORY
+                        </span>
+
+                        <h3>
+                            WORKSHOP
+                        </h3>
+
+                        <p>
+                            View Workshop participant
+                            rankings and points.
+                        </p>
+
+                    </div>
+
+
+                    <div class="leaderboard-event-bottom">
+
+                        <span>
+                            LEADERBOARD
+                        </span>
+
+                        <strong>
+                            WORKSHOP
+                        </strong>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- HACKATHON -->
+
+                <button
+                    type="button"
+                    class="leaderboard-event-card"
+                    data-event="hackathon"
+                >
+
+                    <div class="leaderboard-event-top">
+
+                        <div class="leaderboard-event-icon">
+                            ◈
+                        </div>
+
+                        <span>
+                            02
+                        </span>
+
+                    </div>
+
+
+                    <div class="leaderboard-event-content">
+
+                        <span>
+                            EVENT CATEGORY
+                        </span>
+
+                        <h3>
+                            HACKATHON
+                        </h3>
+
+                        <p>
+                            View Hackathon team
+                            rankings and points.
+                        </p>
+
+                    </div>
+
+
+                    <div class="leaderboard-event-bottom">
+
+                        <span>
+                            LEADERBOARD
+                        </span>
+
+                        <strong>
+                            HACKATHON
+                        </strong>
+
+                    </div>
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DOMAIN SECTION
+                 ================================================= -->
+
+            <section class="leaderboard-domain-section">
+
+
+                <div class="leaderboard-section-title">
+
+                    <div>
+
+                        <span>
+                            SELECT DOMAIN
+                        </span>
+
+                        <h2 id="domainSectionTitle">
+                            WORKSHOP DOMAINS
+                        </h2>
+
+                    </div>
+
+
+                    <div class="leaderboard-current-event">
+
+                        <span>
+                            CURRENT EVENT
+                        </span>
+
+                        <strong id="currentEventLabel">
+                            WORKSHOP
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     DOMAIN CARDS
+                     ================================================= -->
+
+                <div class="leaderboard-domain-grid">
+
+
+                    <!-- CEH -->
+
+                    <button
+                        type="button"
+                        class="leaderboard-domain-card active"
+                        data-domain="ceh"
+                    >
+
+                        <div class="leaderboard-domain-icon ceh-icon">
+                            ◈
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 01
+                            </span>
+
+                            <h3>
+                                CEH
+                            </h3>
+
+                            <p>
+                                Certified Ethical Hacking
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- VAPT -->
+
+                    <button
+                        type="button"
+                        class="leaderboard-domain-card"
+                        data-domain="vapt"
+                    >
+
+                        <div class="leaderboard-domain-icon vapt-icon">
+                            ⬡
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 02
+                            </span>
+
+                            <h3>
+                                VAPT
+                            </h3>
+
+                            <p>
+                                Vulnerability Assessment &
+                                Penetration Testing
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- SOC -->
+
+                    <button
+                        type="button"
+                        class="leaderboard-domain-card"
+                        data-domain="soc"
+                    >
+
+                        <div class="leaderboard-domain-icon soc-icon">
+                            ◉
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 03
+                            </span>
+
+                            <h3>
+                                SOC
+                            </h3>
+
+                            <p>
+                                Security Operations Center
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- DIGITAL FORENSICS -->
+
+                    <button
+                        type="button"
+                        class="leaderboard-domain-card"
+                        data-domain="forensics"
+                    >
+
+                        <div class="leaderboard-domain-icon df-icon">
+                            ◇
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 04
+                            </span>
+
+                            <h3>
+                                DIGITAL FORENSICS
+                            </h3>
+
+                            <p>
+                                Digital Evidence &
+                                Forensic Investigation
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 LEADERBOARD AREA
+                 ================================================= -->
+
+            <section class="leaderboard-table-section">
+
+
+                <!-- =================================================
+                     TABLE HEADER
+                     ================================================= -->
+
+                <div class="leaderboard-table-header">
+
+
+                    <div>
+
+                        <span>
+                            PERFORMANCE
+                        </span>
+
+                        <h2 id="leaderboardTitle">
+                            WORKSHOP — CEH
+                        </h2>
+
+                        <p id="leaderboardSubtitle">
+                            Ranked participants for the
+                            selected Workshop domain.
+                        </p>
+
+                    </div>
+
+
+                    <div class="leaderboard-actions">
+
+
+                        <div class="leaderboard-search">
+
+                            <span>
+                                ⌕
+                            </span>
+
+                            <input
+                                type="text"
+                                id="participantSearch"
+                                placeholder="Search participants..."
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="leaderboard-action-btn"
+                            id="refreshLeaderboardBtn"
+                        >
+                            ↻ Refresh
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     STATISTICS
+                     ================================================= -->
+
+                <div class="leaderboard-stats-grid">
+
+
+                    <div class="leaderboard-stat-card">
+
+                        <span>
+                            TOTAL
+                        </span>
+
+                        <strong id="totalRanked">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="leaderboard-stat-card">
+
+                        <span>
+                            TOP SCORE
+                        </span>
+
+                        <strong id="topScore">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="leaderboard-stat-card">
+
+                        <span>
+                            DOMAIN
+                        </span>
+
+                        <strong id="selectedDomainStat">
+                            CEH
+                        </strong>
+
+                    </div>
+
+
+                    <div class="leaderboard-stat-card">
+
+                        <span>
+                            EVENT
+                        </span>
+
+                        <strong id="selectedEventStat">
+                            WORKSHOP
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     TABLE
+                     ================================================= -->
+
+                <div class="leaderboard-table-wrap">
+
+
+                    <table class="leaderboard-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    RANK
+                                </th>
+
+                                <th id="nameColumn">
+                                    ACCOUNT NAME
+                                </th>
+
+                                <th>
+                                    DOMAIN
+                                </th>
+
+                                <th>
+                                    POINTS
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="leaderboardTableBody">
+
+
+                            <!-- DUMMY GUI ROWS -->
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="rank-badge rank-first">
+                                        01
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        Student One
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="domain-badge">
+                                        CEH
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <strong class="points-value">
+                                        950
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="rank-badge rank-second">
+                                        02
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        Student Two
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="domain-badge">
+                                        CEH
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <strong class="points-value">
+                                        900
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="rank-badge rank-third">
+                                        03
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        Student Three
+                                    </strong>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="domain-badge">
+                                        CEH
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <strong class="points-value">
+                                        850
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     TABLE FOOTER
+                     ================================================= -->
+
+                <div class="leaderboard-table-footer">
+
+
+                    <span id="leaderboardFooterText">
+                        Showing 3 ranked participants
+                    </span>
+
+
+                    <div class="leaderboard-pagination">
+
+
+                        <button
+                            type="button"
+                            class="pagination-btn"
+                            disabled
+                        >
+                            ←
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="pagination-btn active"
+                        >
+                            1
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="pagination-btn"
+                        >
+                            →
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </section>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+    <script src="/js/warroom-modal.js?v=2"></script>
+<script src="/js/leaderboard.js?v=2"></script>
+
+
+</body>
+
+</html>

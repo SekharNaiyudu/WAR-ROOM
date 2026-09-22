@@ -1,0 +1,3771 @@
+/* =====================================================
+   RESET
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+
+body {
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    /* ==============================================
+       STATIC BACKGROUND IMAGE
+       ============================================== */
+
+    background:
+
+        #020407
+
+        url("../assets/images/background.png")
+
+        center center
+
+        / cover
+
+        no-repeat
+
+        fixed;
+}
+
+
+/* =====================================================
+   HOME PAGE
+   ===================================================== */
+
+.home-page {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 100vh;
+
+    z-index: 1;
+}
+
+
+/* =====================================================
+   MAIN BLACK GLASS PANEL
+   ===================================================== */
+
+.home-page::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 105px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 900px;
+
+    height: 650px;
+
+    max-width:
+        calc(100vw - 180px);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(3, 6, 9, 0.82),
+            rgba(5, 8, 11, 0.76)
+        );
+
+    /* ==============================================
+       RED EDGE
+       ============================================== */
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.32);
+
+    border-radius: 14px;
+
+    /* ==============================================
+       RED EDGE GLOW
+       ============================================== */
+
+    box-shadow:
+
+        0 0 8px
+        rgba(229, 9, 20, 0.08),
+
+        0 0 25px
+        rgba(229, 9, 20, 0.04),
+
+        0 25px 70px
+        rgba(0, 0, 0, 0.40),
+
+        inset 0 0 45px
+        rgba(255, 255, 255, 0.012);
+
+    backdrop-filter:
+        blur(3px);
+
+    z-index: -1;
+
+    pointer-events: none;
+
+    animation:
+        homeCardRedGlow 4s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   HOME CARD RED EDGE ANIMATION
+   ===================================================== */
+
+@keyframes homeCardRedGlow {
+
+    0% {
+
+        border-color:
+            rgba(229, 9, 20, 0.25);
+
+        box-shadow:
+
+            0 0 7px
+            rgba(229, 9, 20, 0.06),
+
+            0 0 20px
+            rgba(229, 9, 20, 0.03),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.40),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+
+
+    50% {
+
+        border-color:
+            rgba(229, 9, 20, 0.65);
+
+        box-shadow:
+
+            0 0 10px
+            rgba(229, 9, 20, 0.18),
+
+            0 0 30px
+            rgba(229, 9, 20, 0.08),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.40),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+
+
+    100% {
+
+        border-color:
+            rgba(229, 9, 20, 0.25);
+
+        box-shadow:
+
+            0 0 7px
+            rgba(229, 9, 20, 0.06),
+
+            0 0 20px
+            rgba(229, 9, 20, 0.03),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.40),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+}
+
+
+/* =====================================================
+   TOP BAR
+   OUTSIDE BLACK PANEL
+   ===================================================== */
+
+.top-bar {
+
+    position: fixed;
+
+    top: 25px;
+
+    left: 28px;
+
+    right: 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    z-index: 20;
+}
+
+
+/* =====================================================
+   SYNTHOQUEST
+   ===================================================== */
+
+.synthoquest-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.sq-logo {
+
+    width: 43px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    border-bottom:
+        2px solid #e50914;
+
+    transform:
+        skew(-8deg);
+
+    text-shadow:
+        0 0 12px
+        rgba(255, 255, 255, 0.30);
+}
+
+
+.sq-name {
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.3px;
+}
+
+
+.sq-name span {
+
+    color: #f59b00;
+}
+
+
+/* =====================================================
+   ADMIN LOGIN
+   ===================================================== */
+
+.admin-login {
+
+    min-width: 190px;
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 11px;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    background:
+
+        rgba(0, 0, 0, 0.42);
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.78);
+
+    border-radius: 7px;
+
+    box-shadow:
+
+        0 0 18px
+        rgba(229, 9, 20, 0.08);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    transition:
+        0.2s ease;
+}
+
+
+.admin-icon {
+
+    color: #ff1823;
+
+    font-size: 19px;
+}
+
+
+.admin-login:hover {
+
+    background:
+        rgba(229, 9, 20, 0.10);
+
+    box-shadow:
+
+        0 0 25px
+        rgba(229, 9, 20, 0.20);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =====================================================
+   HERO SECTION
+   ===================================================== */
+
+.hero-section {
+
+    position: relative;
+
+    width: 900px;
+
+    max-width:
+        calc(100vw - 180px);
+
+    margin:
+        0 auto;
+
+    padding-top: 130px;
+
+    text-align: center;
+
+    z-index: 2;
+}
+
+
+/* =====================================================
+   WELCOME
+   ===================================================== */
+
+.welcome-text {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #eeeeee;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    letter-spacing: 9px;
+
+    margin-left: 9px;
+}
+
+
+.welcome-text::before,
+.welcome-text::after {
+
+    content: "";
+
+    width: 105px;
+
+    height: 1px;
+
+    margin: 0 18px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(229, 9, 20, 0.85)
+        );
+}
+
+
+.welcome-text::after {
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(229, 9, 20, 0.85),
+            transparent
+        );
+}
+
+
+/* =====================================================
+   WAR ROOM
+   ===================================================== */
+
+.war-room-title {
+
+    margin-top: 9px;
+
+    color: #ffffff;
+
+    font-size: 78px;
+
+    line-height: 0.95;
+
+    font-weight: 900;
+
+    letter-spacing: 6px;
+
+    text-transform: uppercase;
+
+    text-shadow:
+
+        0 0 25px
+        rgba(255, 255, 255, 0.07);
+}
+
+
+.war-room-title span {
+
+    color: #ed111b;
+
+    text-shadow:
+
+        0 0 25px
+        rgba(229, 9, 20, 0.20);
+}
+
+
+/* =====================================================
+   HERO LINE
+   ===================================================== */
+
+.hero-line {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 13px;
+
+    margin-top: 15px;
+}
+
+
+.hero-line > span {
+
+    width: 150px;
+
+    height: 1px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(229, 9, 20, 0.75)
+        );
+}
+
+
+.hero-line > span:last-child {
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(229, 9, 20, 0.75),
+            transparent
+        );
+}
+
+
+.shield-symbol {
+
+    width: 31px;
+
+    height: 31px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #ff1823;
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.80);
+
+    clip-path:
+
+        polygon(
+            50% 0%,
+            88% 15%,
+            88% 60%,
+            50% 100%,
+            12% 60%,
+            12% 15%
+        );
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   TAGLINE
+   ===================================================== */
+
+.hero-tagline {
+
+    margin-top: 15px;
+
+    color: #dedede;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    letter-spacing: 5px;
+}
+
+
+.hero-tagline strong {
+
+    color: #ed111b;
+
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   EVENT SELECTION
+   ===================================================== */
+
+.event-selection {
+
+    position: relative;
+
+    width: 760px;
+
+    max-width:
+        calc(100vw - 220px);
+
+    margin:
+        27px auto 0;
+
+    z-index: 3;
+}
+
+
+/* =====================================================
+   SECTION TITLE
+   ===================================================== */
+
+.section-title {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 13px;
+
+    margin-bottom: 14px;
+}
+
+
+.section-title span {
+
+    width: 82px;
+
+    height: 1px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(229, 9, 20, 0.75)
+        );
+}
+
+
+.section-title span:last-child {
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(229, 9, 20, 0.75),
+            transparent
+        );
+}
+
+
+.section-title h2 {
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    letter-spacing: 4px;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   EVENT CARDS
+   ===================================================== */
+
+.event-cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 22px;
+}
+
+
+.event-card {
+
+    position: relative;
+
+    min-height: 285px;
+
+    padding:
+        22px 25px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(13, 17, 21, 0.96),
+            rgba(4, 7, 10, 0.94)
+        );
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.14);
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    box-shadow:
+
+        0 16px 35px
+        rgba(0, 0, 0, 0.30);
+
+    transition:
+        0.25s ease;
+}
+
+
+.event-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 8px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(229, 9, 20, 0.18),
+            transparent 35%,
+            transparent 65%,
+            rgba(229, 9, 20, 0.14)
+        );
+
+    pointer-events: none;
+}
+
+
+.event-card:hover {
+
+    transform:
+        translateY(-4px);
+
+    border-color:
+
+        rgba(229, 9, 20, 0.60);
+
+    box-shadow:
+
+        0 18px 40px
+        rgba(0, 0, 0, 0.45),
+
+        0 0 22px
+        rgba(229, 9, 20, 0.08);
+}
+
+
+/* =====================================================
+   CARD NUMBER
+   ===================================================== */
+
+.card-number {
+
+    position: absolute;
+
+    top: 9px;
+
+    left: 11px;
+
+    width: 32px;
+
+    height: 27px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        #e50914;
+
+    color:
+        #ffffff;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    border-radius: 2px;
+}
+
+
+/* =====================================================
+   EVENT ICON
+   ===================================================== */
+
+.event-icon {
+
+    margin-top: 2px;
+
+    width: 100px;
+
+    height: 100px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.43);
+
+    box-shadow:
+
+        0 0 0 8px
+        rgba(229, 9, 20, 0.02),
+
+        0 0 20px
+        rgba(229, 9, 20, 0.10);
+}
+
+
+.icon-circle {
+
+    width: 80px;
+
+    height: 80px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.52);
+
+    color:
+        #ffffff;
+
+    font-size: 38px;
+}
+
+
+/* =====================================================
+   CARD TITLE
+   ===================================================== */
+
+.event-card h3 {
+
+    margin-top: 13px;
+
+    color:
+        #ffffff;
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    letter-spacing: 4px;
+}
+
+
+.card-divider {
+
+    width: 34px;
+
+    height: 2px;
+
+    margin-top: 10px;
+
+    background:
+        #ed111b;
+
+    box-shadow:
+
+        0 0 10px
+        rgba(229, 9, 20, 0.45);
+}
+
+
+/* =====================================================
+   CARD DESCRIPTION
+   ===================================================== */
+
+.event-card p {
+
+    max-width: 270px;
+
+    margin-top: 12px;
+
+    color:
+        #b8bec3;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   ACTIVE STATUS
+   ===================================================== */
+
+.event-status {
+
+    margin-top: auto;
+
+    min-width: 88px;
+
+    height: 27px;
+
+    padding:
+        0 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    background:
+
+        rgba(255, 255, 255, 0.035);
+
+    border-radius: 20px;
+
+    color:
+        #00e99a;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+}
+
+
+.status-dot {
+
+    width: 6px;
+
+    height: 6px;
+
+    border-radius: 50%;
+
+    background:
+        #00e99a;
+
+    box-shadow:
+
+        0 0 9px
+        rgba(0, 233, 154, 0.80);
+}
+
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+.home-footer {
+
+    position: fixed;
+
+    bottom: 9px;
+
+    left: 0;
+
+    width: 100%;
+
+    text-align: center;
+
+    color:
+
+        rgba(255, 255, 255, 0.35);
+
+    font-size: 7px;
+
+    letter-spacing: 3px;
+
+    z-index: 20;
+}
+
+
+/* =====================================================
+   MOVING LEFT & RIGHT WHITE LIGHT BEAMS
+   ===================================================== */
+
+body::before,
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    top: -220px;
+
+    width: 5px;
+
+    height: 220px;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    border-radius: 50%;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(255, 255, 255, 0.20),
+            rgba(255, 255, 255, 0.95),
+            rgba(220, 240, 255, 0.35),
+            transparent
+        );
+
+    filter:
+
+        blur(1px)
+
+        drop-shadow(
+            0 0 10px
+            rgba(220, 240, 255, 0.85)
+        );
+
+    opacity: 0.75;
+
+    animation:
+        lightBeamMove 6s linear infinite;
+}
+
+
+/* =====================================================
+   LEFT LIGHT
+   ===================================================== */
+
+body::before {
+
+    left: 10%;
+
+    animation-delay: 0s;
+}
+
+
+/* =====================================================
+   RIGHT LIGHT
+   ===================================================== */
+
+body::after {
+
+    right: 10%;
+
+    animation-delay: 3s;
+}
+
+
+/* =====================================================
+   LIGHT MOVEMENT
+   ===================================================== */
+
+@keyframes lightBeamMove {
+
+    0% {
+
+        transform:
+            translateY(0);
+
+        opacity: 0;
+    }
+
+
+    15% {
+
+        opacity: 0.75;
+    }
+
+
+    50% {
+
+        transform:
+            translateY(500px);
+
+        opacity: 0.90;
+    }
+
+
+    75% {
+
+        opacity: 0.60;
+    }
+
+
+    100% {
+
+        transform:
+            translateY(1050px);
+
+        opacity: 0;
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1000px) {
+
+    body {
+        overflow-y: auto;
+    }
+
+    .home-page::before {
+
+        width:
+            calc(100vw - 100px);
+
+        height: 690px;
+    }
+
+    .hero-section {
+
+        width:
+            calc(100vw - 100px);
+    }
+
+    .event-selection {
+
+        width:
+            calc(100vw - 150px);
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .top-bar {
+
+        top: 15px;
+
+        left: 15px;
+
+        right: 15px;
+    }
+
+
+    .sq-name {
+        font-size: 14px;
+    }
+
+
+    .admin-login {
+
+        min-width: auto;
+
+        height: 42px;
+
+        padding: 0 12px;
+
+        font-size: 8px;
+
+        letter-spacing: 1px;
+    }
+
+
+    .hero-section {
+
+        width:
+            calc(100vw - 30px);
+
+        padding-top: 100px;
+    }
+
+
+    .home-page::before {
+
+        top: 80px;
+
+        width:
+            calc(100vw - 20px);
+
+        height: 720px;
+    }
+
+
+    .welcome-text {
+
+        font-size: 10px;
+
+        letter-spacing: 4px;
+    }
+
+
+    .welcome-text::before,
+    .welcome-text::after {
+
+        width: 30px;
+
+        margin: 0 7px;
+    }
+
+
+    .war-room-title {
+
+        font-size: 45px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .hero-tagline {
+
+        font-size: 8px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .event-selection {
+
+        width:
+            calc(100vw - 45px);
+    }
+
+
+    .event-cards {
+
+        grid-template-columns: 1fr;
+    }
+}
+/* =====================================================
+   ADMIN ACCESS LOADING SCREEN
+   ===================================================== */
+
+.admin-access-loader {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(1, 3, 5, 0.97);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+
+/* =====================================================
+   ACTIVE LOADER
+   ===================================================== */
+
+.admin-access-loader.active {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: all;
+}
+
+
+/* =====================================================
+   LOADER CONTENT
+   ===================================================== */
+
+.access-loader-content {
+
+    position: relative;
+
+    width: 420px;
+
+    max-width:
+        calc(100vw - 50px);
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   SCANNING LINE
+   ===================================================== */
+
+.access-loader-line {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 1px;
+
+    margin-bottom: 30px;
+
+    overflow: hidden;
+
+    background:
+        rgba(229, 9, 20, 0.15);
+}
+
+
+.access-loader-line::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: -30%;
+
+    width: 30%;
+
+    height: 100%;
+
+    background:
+        #ff1823;
+
+    box-shadow:
+
+        0 0 12px
+        rgba(229, 9, 20, 0.90),
+
+        0 0 25px
+        rgba(229, 9, 20, 0.50);
+
+    animation:
+        accessScanLine 1.2s linear infinite;
+}
+
+
+@keyframes accessScanLine {
+
+    0% {
+        left: -30%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+
+/* =====================================================
+   ADMIN ACCESS ICON
+   ===================================================== */
+
+.access-loader-icon {
+
+    width: 55px;
+
+    height: 55px;
+
+    margin:
+        0 auto 20px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color:
+        #ff1823;
+
+    font-size: 25px;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, 0.65);
+
+    border-radius: 50%;
+
+    box-shadow:
+
+        0 0 15px
+        rgba(229, 9, 20, 0.15);
+
+    animation:
+        accessIconPulse 1s ease-in-out infinite;
+}
+
+
+@keyframes accessIconPulse {
+
+    0%,
+    100% {
+
+        box-shadow:
+
+            0 0 10px
+            rgba(229, 9, 20, 0.08);
+
+        transform:
+            scale(1);
+    }
+
+    50% {
+
+        box-shadow:
+
+            0 0 25px
+            rgba(229, 9, 20, 0.35);
+
+        transform:
+            scale(1.04);
+    }
+}
+
+
+/* =====================================================
+   ACCESSING THE ADMIN
+   ===================================================== */
+
+.access-loader-title {
+
+    color:
+        #ffffff;
+
+    font-size: 19px;
+
+    font-weight: 800;
+
+    letter-spacing: 4px;
+}
+
+
+.access-loader-title span {
+
+    color:
+        #ed111b;
+
+    text-shadow:
+
+        0 0 15px
+        rgba(229, 9, 20, 0.35);
+}
+
+
+/* =====================================================
+   SUBTITLE
+   ===================================================== */
+
+.access-loader-subtitle {
+
+    margin-top: 10px;
+
+    color:
+        #737d83;
+
+    font-size: 9px;
+
+    letter-spacing: 3px;
+}
+
+
+/* =====================================================
+   PROGRESS BAR
+   ===================================================== */
+
+.access-progress {
+
+    width: 100%;
+
+    height: 2px;
+
+    margin-top: 25px;
+
+    overflow: hidden;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+}
+
+
+.access-progress-bar {
+
+    width: 0%;
+
+    height: 100%;
+
+    background:
+        #e50914;
+
+    box-shadow:
+
+        0 0 12px
+        rgba(229, 9, 20, 0.75);
+
+    animation:
+        accessProgress 1.45s ease-in-out forwards;
+}
+
+
+@keyframes accessProgress {
+
+    0% {
+        width: 0%;
+    }
+
+    25% {
+        width: 30%;
+    }
+
+    60% {
+        width: 65%;
+    }
+
+    85% {
+        width: 88%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+
+/* =====================================================
+   STATUS TEXT
+   ===================================================== */
+
+.access-loader-status {
+
+    margin-top: 12px;
+
+    color:
+        #596268;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =====================================================
+   LOADING DOTS
+   ===================================================== */
+
+.loading-dots::after {
+
+    content: "";
+
+    animation:
+        loadingDots 1s steps(4, end) infinite;
+}
+
+
+@keyframes loadingDots {
+
+    0% {
+        content: "";
+    }
+
+    25% {
+        content: ".";
+    }
+
+    50% {
+        content: "..";
+    }
+
+    75% {
+        content: "...";
+    }
+
+    100% {
+        content: "";
+    }
+}
+
+
+/* =====================================================
+   LOADING SCREEN SIDE LIGHT
+   ===================================================== */
+
+.admin-access-loader::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: 12%;
+
+    width: 1px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(255, 255, 255, 0.65),
+            transparent
+        );
+
+    opacity: 0.35;
+
+    animation:
+        loaderSideLight 2s ease-in-out infinite;
+}
+
+
+.admin-access-loader::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    right: 12%;
+
+    width: 1px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(255, 255, 255, 0.65),
+            transparent
+        );
+
+    opacity: 0.35;
+
+    animation:
+        loaderSideLight 2s ease-in-out infinite reverse;
+}
+
+
+@keyframes loaderSideLight {
+
+    0%,
+    100% {
+
+        opacity: 0.15;
+
+        transform:
+            scaleY(0.5);
+    }
+
+    50% {
+
+        opacity: 0.60;
+
+        transform:
+            scaleY(1);
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    .access-loader-title {
+
+        font-size: 14px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .access-loader-subtitle {
+
+        font-size: 8px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .access-loader-content {
+
+        width:
+            calc(100vw - 50px);
+    }
+}
+/* =====================================================
+   WORKSHOP SELECTION SCREEN
+   ===================================================== */
+
+.workshop-screen {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    z-index: 100;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+}
+
+
+/* =====================================================
+   WORKSHOP SCREEN ACTIVE
+   ===================================================== */
+
+.workshop-screen.active {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    animation:
+        workshopScreenIn
+        0.55s
+        ease-out
+        both;
+}
+
+
+@keyframes workshopScreenIn {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            scale(0.97);
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+    }
+}
+
+
+/* =====================================================
+   WORKSHOP CONTENT
+   ===================================================== */
+
+.workshop-content {
+
+    width: 900px;
+
+    max-width:
+        calc(100vw - 180px);
+
+    padding-top: 20px;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   WORKSHOP WELCOME
+   ===================================================== */
+
+.workshop-welcome {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #eeeeee;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    letter-spacing: 7px;
+}
+
+
+/* =====================================================
+   WORKSHOP TITLE
+   ===================================================== */
+
+.workshop-title {
+
+    margin-top: 8px;
+
+    color: #ffffff;
+
+    font-size: 55px;
+
+    line-height: 0.95;
+
+    font-weight: 900;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+}
+
+
+.workshop-title span {
+
+    color: #ed111b;
+
+    text-shadow:
+
+        0 0 22px
+        rgba(229, 9, 20, 0.20);
+}
+
+
+/* =====================================================
+   WORKSHOP LINE
+   ===================================================== */
+
+.workshop-line {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 13px;
+}
+
+
+.workshop-line > span {
+
+    width: 120px;
+
+    height: 1px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(229, 9, 20, 0.75)
+        );
+}
+
+
+.workshop-line > span:last-child {
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(229, 9, 20, 0.75),
+            transparent
+        );
+}
+
+
+/* =====================================================
+   WORKSHOP SHIELD
+   ===================================================== */
+
+.workshop-shield {
+
+    width: 28px;
+
+    height: 28px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #ff1823;
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.80);
+
+    clip-path:
+
+        polygon(
+            50% 0%,
+            88% 15%,
+            88% 60%,
+            50% 100%,
+            12% 60%,
+            12% 15%
+        );
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   WORKSHOP SUBTITLE
+   ===================================================== */
+
+.workshop-subtitle {
+
+    margin-top: 10px;
+
+    color: #9aa2a7;
+
+    font-size: 9px;
+
+    font-weight: 500;
+
+    letter-spacing: 3px;
+}
+
+
+/* =====================================================
+   WORKSHOP CARDS CONTAINER
+   ===================================================== */
+
+.workshop-cards {
+
+    width: 700px;
+
+    max-width: 100%;
+
+    margin:
+        22px auto 0;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+
+/* =====================================================
+   WORKSHOP CARD
+   ===================================================== */
+
+.workshop-card {
+
+    position: relative;
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 155px;
+
+    padding:
+        20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(13, 17, 21, 0.96),
+            rgba(4, 7, 10, 0.94)
+        );
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.13);
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* =====================================================
+   WORKSHOP CARD RED INNER LIGHT
+   ===================================================== */
+
+.workshop-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 8px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(229, 9, 20, 0.16),
+            transparent 35%,
+            transparent 65%,
+            rgba(229, 9, 20, 0.12)
+        );
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   WORKSHOP CARD HOVER
+   ===================================================== */
+
+.workshop-card:hover {
+
+    transform:
+        translateY(-4px);
+
+    border-color:
+
+        rgba(229, 9, 20, 0.60);
+
+    box-shadow:
+
+        0 16px 35px
+        rgba(0, 0, 0, 0.40),
+
+        0 0 22px
+        rgba(229, 9, 20, 0.10);
+}
+
+
+/* =====================================================
+   WORKSHOP NUMBER
+   ===================================================== */
+
+.workshop-number {
+
+    position: absolute;
+
+    top: 8px;
+
+    left: 10px;
+
+    width: 29px;
+
+    height: 24px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        #e50914;
+
+    color:
+        #ffffff;
+
+    border-radius: 2px;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+/* =====================================================
+   WORKSHOP ICON
+   ===================================================== */
+
+.workshop-icon {
+
+    position: relative;
+
+    width: 50px;
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color:
+        #ff1823;
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.52);
+
+    border-radius: 50%;
+
+    font-size: 22px;
+
+    box-shadow:
+
+        0 0 0 6px
+        rgba(229, 9, 20, 0.025),
+
+        0 0 18px
+        rgba(229, 9, 20, 0.10);
+}
+
+
+/* =====================================================
+   WORKSHOP CARD TITLE
+   ===================================================== */
+
+.workshop-card h3 {
+
+    position: relative;
+
+    margin-top: 10px;
+
+    color:
+        #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    line-height: 1.2;
+}
+
+
+/* =====================================================
+   WORKSHOP CARD LINE
+   ===================================================== */
+
+.workshop-card-line {
+
+    width: 27px;
+
+    height: 2px;
+
+    margin-top: 7px;
+
+    background:
+        #ed111b;
+
+    box-shadow:
+
+        0 0 9px
+        rgba(229, 9, 20, 0.45);
+}
+
+
+/* =====================================================
+   WORKSHOP CARD DESCRIPTION
+   ===================================================== */
+
+.workshop-card p {
+
+    position: relative;
+
+    max-width: 230px;
+
+    margin-top: 7px;
+
+    color:
+        #858e94;
+
+    font-size: 8px;
+
+    line-height: 1.5;
+
+    letter-spacing: 0.4px;
+}
+
+
+/* =====================================================
+   BACK TO EVENTS
+   ===================================================== */
+
+.workshop-back {
+
+    margin-top: 18px;
+
+    padding:
+        8px 16px;
+
+    color:
+        #707a80;
+
+    background:
+        transparent;
+
+    border:
+
+        1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius: 4px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+
+    transition:
+        0.2s ease;
+}
+
+
+.workshop-back:hover {
+
+    color:
+        #ffffff;
+
+    border-color:
+        rgba(229, 9, 20, 0.55);
+
+    background:
+        rgba(229, 9, 20, 0.06);
+
+    box-shadow:
+        0 0 15px
+        rgba(229, 9, 20, 0.06);
+}
+
+
+/* =====================================================
+   HIDE HOME WHEN WORKSHOP OPENS
+   ===================================================== */
+
+.home-page.workshop-open {
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.35s ease;
+}
+
+
+/* =====================================================
+   WORKSHOP MOBILE
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    .workshop-content {
+
+        width:
+            calc(100vw - 30px);
+
+        max-width:
+            calc(100vw - 30px);
+
+        padding-top: 25px;
+    }
+
+
+    .workshop-welcome {
+
+        font-size: 9px;
+
+        letter-spacing: 4px;
+    }
+
+
+    .workshop-title {
+
+        font-size: 38px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .workshop-line > span {
+
+        width: 45px;
+    }
+
+
+    .workshop-subtitle {
+
+        font-size: 8px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .workshop-cards {
+
+        width: 100%;
+
+        gap: 10px;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .workshop-card {
+
+        min-height: 140px;
+
+        padding:
+            16px 10px;
+    }
+
+
+    .workshop-icon {
+
+        width: 42px;
+
+        height: 42px;
+
+        font-size: 18px;
+    }
+
+
+    .workshop-card h3 {
+
+        font-size: 10px;
+
+        letter-spacing: 1px;
+    }
+
+
+    .workshop-card p {
+
+        font-size: 7px;
+    }
+}
+/* =====================================================
+   WORKSHOP BLACK GLASS CARD — FIX
+   ===================================================== */
+
+.workshop-screen {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    z-index: 100;
+
+    isolation: isolate;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+}
+
+
+/* =====================================================
+   WORKSHOP SCREEN ACTIVE
+   ===================================================== */
+
+.workshop-screen.active {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   BLACK GLASS PANEL
+   ===================================================== */
+
+.workshop-screen::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 105px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width: 900px;
+
+    height: 650px;
+
+    max-width:
+        calc(100vw - 180px);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(3, 6, 9, 0.88),
+            rgba(5, 8, 11, 0.82)
+        );
+
+    border:
+
+        1px solid
+        rgba(229, 9, 20, 0.35);
+
+    border-radius: 14px;
+
+    box-shadow:
+
+        0 0 8px
+        rgba(229, 9, 20, 0.08),
+
+        0 0 25px
+        rgba(229, 9, 20, 0.04),
+
+        0 25px 70px
+        rgba(0, 0, 0, 0.45),
+
+        inset 0 0 45px
+        rgba(255, 255, 255, 0.012);
+
+    backdrop-filter:
+        blur(4px);
+
+    z-index: -1;
+
+    pointer-events: none;
+
+    animation:
+        workshopPanelGlow
+        4s
+        ease-in-out
+        infinite;
+}
+
+
+/* =====================================================
+   RED EDGE ANIMATION
+   ===================================================== */
+
+@keyframes workshopPanelGlow {
+
+    0% {
+
+        border-color:
+            rgba(229, 9, 20, 0.25);
+
+        box-shadow:
+
+            0 0 7px
+            rgba(229, 9, 20, 0.06),
+
+            0 0 20px
+            rgba(229, 9, 20, 0.03),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.45),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+
+
+    50% {
+
+        border-color:
+            rgba(229, 9, 20, 0.65);
+
+        box-shadow:
+
+            0 0 10px
+            rgba(229, 9, 20, 0.18),
+
+            0 0 30px
+            rgba(229, 9, 20, 0.08),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.45),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+
+
+    100% {
+
+        border-color:
+            rgba(229, 9, 20, 0.25);
+
+        box-shadow:
+
+            0 0 7px
+            rgba(229, 9, 20, 0.06),
+
+            0 0 20px
+            rgba(229, 9, 20, 0.03),
+
+            0 25px 70px
+            rgba(0, 0, 0, 0.45),
+
+            inset 0 0 45px
+            rgba(255, 255, 255, 0.012);
+    }
+}
+/* =====================================================
+   WORKSHOP CARDS — ACTIVE STATUS
+   ===================================================== */
+
+.workshop-card-status {
+
+    position: absolute;
+
+    right: 12px;
+
+    bottom: 10px;
+
+    min-width: 68px;
+
+    height: 22px;
+
+    padding: 0 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    background:
+        rgba(0, 0, 0, 0.35);
+
+    border:
+        1px solid
+        rgba(0, 233, 154, 0.08);
+
+    border-radius: 20px;
+
+    color:
+        #00e99a;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   ACTIVE STATUS DOT
+   ===================================================== */
+
+.workshop-status-dot {
+
+    width: 5px;
+
+    height: 5px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        #00e99a;
+
+    box-shadow:
+
+        0 0 6px
+        rgba(0, 233, 154, 0.80);
+
+    animation:
+        workshopActivePulse
+        1.8s
+        ease-in-out
+        infinite;
+}
+
+
+/* =====================================================
+   ACTIVE DOT ANIMATION
+   ===================================================== */
+
+@keyframes workshopActivePulse {
+
+    0%,
+    100% {
+
+        opacity: 0.55;
+
+        box-shadow:
+
+            0 0 4px
+            rgba(0, 233, 154, 0.45);
+    }
+
+
+    50% {
+
+        opacity: 1;
+
+        box-shadow:
+
+            0 0 9px
+            rgba(0, 233, 154, 0.95);
+    }
+}
+
+
+/* =====================================================
+   WORKSHOP CARD — KEEP STATUS ABOVE CONTENT
+   ===================================================== */
+
+.workshop-card > * {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* Number should remain above everything */
+
+.workshop-card .workshop-number {
+
+    z-index: 5;
+}
+
+
+/* Active status must stay in bottom-right */
+
+.workshop-card .workshop-card-status {
+
+    position: absolute;
+
+    right: 12px;
+
+    bottom: 10px;
+
+    z-index: 10;
+}
+
+
+/* =====================================================
+   MOBILE ACTIVE STATUS
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    .workshop-card-status {
+
+        right: 7px;
+
+        bottom: 7px;
+
+        min-width: 58px;
+
+        height: 19px;
+
+        padding: 0 7px;
+
+        font-size: 6px;
+
+        letter-spacing: 0.8px;
+    }
+
+
+    .workshop-status-dot {
+
+        width: 4px;
+
+        height: 4px;
+    }
+}
+/* =====================================================
+   FINAL EVENT CLICK FIX
+   WORKSHOP + HACKATHON
+   ===================================================== */
+
+.event-cards {
+
+    position: relative;
+
+    z-index: 50;
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   EVENT CARD CLICKABLE
+   ===================================================== */
+
+.event-card {
+
+    position: relative;
+
+    z-index: 51;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.14);
+
+    outline: none;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+}
+
+
+/* =====================================================
+   EVENT CARD INNER EFFECT
+   MUST NOT BLOCK CLICK
+   ===================================================== */
+
+.event-card::before {
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   EVENT CARD CONTENT
+   ===================================================== */
+
+.event-card > * {
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   HACKATHON + WORKSHOP HOVER
+   ===================================================== */
+
+.event-card:hover {
+
+    cursor: pointer;
+
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(229, 9, 20, 0.60);
+}
+
+
+/* =====================================================
+   WORKSHOP / HACKATHON SCREEN
+   ===================================================== */
+
+.workshop-screen {
+
+    z-index: 100;
+
+}
+
+
+/* =====================================================
+   WORKSHOP / HACKATHON CONTENT
+   ===================================================== */
+
+.workshop-content {
+
+    position: relative;
+
+    z-index: 101;
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   WORKSHOP / HACKATHON CARDS
+   ===================================================== */
+
+.workshop-cards {
+
+    position: relative;
+
+    z-index: 102;
+
+    pointer-events: auto;
+}
+
+
+.workshop-card {
+
+    position: relative;
+
+    z-index: 103;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   BLACK GLASS PANEL MUST NEVER BLOCK CONTENT
+   ===================================================== */
+
+.workshop-screen::before {
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   BACK BUTTON
+   ===================================================== */
+
+.workshop-back {
+
+    position: relative;
+
+    z-index: 105;
+
+    pointer-events: auto;
+
+    cursor: pointer;
+}
+/* =====================================================
+   DISABLED EVENT
+   ===================================================== */
+
+.event-card.event-disabled {
+
+    opacity: 0.42;
+
+    cursor: not-allowed;
+
+    filter:
+        grayscale(0.55);
+
+    border-color:
+        rgba(255, 255, 255, 0.08);
+
+}
+
+
+.event-card.event-disabled:hover {
+
+    transform: none;
+
+    box-shadow: none;
+
+}
+
+
+.event-card.event-disabled
+.status-dot {
+
+    background:
+        #555b60;
+
+    box-shadow: none;
+
+}
+
+
+.event-card.event-disabled
+.event-status {
+
+    color:
+        #70777c;
+
+}
+
+
+/* =====================================================
+   DISABLED BUTTON
+   ===================================================== */
+
+.workshop-card.event-disabled {
+
+    opacity: 0.35;
+
+    cursor: not-allowed;
+
+    filter:
+        grayscale(0.7);
+
+}
+
+
+.workshop-card.event-disabled:hover {
+
+    transform: none;
+
+    box-shadow: none;
+
+}
+/* =====================================================
+   DISABLED EVENT CARD
+   ===================================================== */
+
+.event-card.event-disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    pointer-events: none;
+
+    filter: grayscale(0.4);
+
+}
+
+
+/* =====================================================
+   DISABLED EVENT STATUS
+   ===================================================== */
+
+.event-card.event-disabled
+.event-status {
+
+    color: #ff3b3b;
+
+}
+
+
+/* =====================================================
+   DISABLED STATUS DOT
+   ===================================================== */
+
+.event-card.event-disabled
+.status-dot {
+
+    background: #ff3b3b;
+
+    box-shadow:
+        0 0 8px rgba(255, 0, 0, 0.6);
+
+}
+
+/* =====================================================
+   WAR ROOM — INITIAL BOOT SEQUENCE
+   ===================================================== */
+
+.warroom-intro {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 99999;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(80, 0, 0, 0.10) 0%,
+            rgba(0, 0, 0, 0.82) 42%,
+            rgba(0, 0, 0, 0.97) 100%
+        );
+
+    backdrop-filter:
+        brightness(0.20)
+        contrast(1.15)
+        blur(1px);
+
+    -webkit-backdrop-filter:
+        brightness(0.20)
+        contrast(1.15)
+        blur(1px);
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity 1.2s ease,
+        visibility 1.2s ease;
+
+    overflow: hidden;
+
+}
+
+
+/* =====================================================
+   HIDDEN STATE
+   ===================================================== */
+
+.warroom-intro.hide {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   BACKGROUND GRID
+   ===================================================== */
+
+.warroom-intro-grid {
+
+    position: absolute;
+
+    inset: 0;
+
+    background-image:
+
+        linear-gradient(
+            rgba(255, 0, 30, 0.045) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255, 0, 30, 0.045) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        70px 70px;
+
+    opacity: 0.35;
+
+    transform:
+        perspective(700px)
+        rotateX(55deg)
+        scale(1.4);
+
+    transform-origin:
+        center bottom;
+
+}
+
+
+/* =====================================================
+   SCAN LINE
+   ===================================================== */
+
+.warroom-intro-scanline {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: -10%;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #ff1b2d,
+            #ff1b2d,
+            transparent
+        );
+
+    box-shadow:
+        0 0 18px rgba(255, 20, 40, 0.9);
+
+    animation:
+        warroomScan 3s linear infinite;
+
+    opacity: 0.7;
+
+}
+
+
+@keyframes warroomScan {
+
+    0% {
+        top: -10%;
+    }
+
+    100% {
+        top: 110%;
+    }
+
+}
+
+
+/* =====================================================
+   VIGNETTE — EXTRA DARK
+   ===================================================== */
+
+.warroom-intro-vignette {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        radial-gradient(
+            ellipse at center,
+            transparent 15%,
+            rgba(0, 0, 0, 0.45) 55%,
+            rgba(0, 0, 0, 0.92) 100%
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   CONTENT
+   ===================================================== */
+
+.warroom-intro-content {
+
+    position: relative;
+
+    z-index: 5;
+
+    width: min(
+        850px,
+        90vw
+    );
+
+    text-align: center;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+}
+
+
+/* =====================================================
+   SQ LOGO
+   ===================================================== */
+
+.warroom-intro-logo {
+
+    width: 78px;
+    height: 78px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid
+        rgba(255, 30, 45, 0.9);
+
+    border-radius: 50%;
+
+    color: #ffffff;
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 20, 40, 0.18),
+            rgba(0, 0, 0, 0.8)
+        );
+
+    box-shadow:
+
+        0 0 10px
+            rgba(255, 20, 40, 0.45),
+
+        0 0 35px
+            rgba(255, 20, 40, 0.20);
+
+    opacity: 0;
+
+    transform:
+        scale(0.5);
+
+    animation:
+        warroomLogoIn
+        0.8s
+        ease
+        forwards;
+
+}
+
+
+@keyframes warroomLogoIn {
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+
+    }
+
+}
+
+
+/* =====================================================
+   BRAND
+   ===================================================== */
+
+.warroom-intro-brand {
+
+    margin-top: 18px;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    letter-spacing: 7px;
+
+    color: #ffffff;
+
+    opacity: 0;
+
+    animation:
+        warroomBrandIn
+        0.8s
+        ease
+        0.4s
+        forwards;
+
+}
+
+
+.warroom-intro-brand span {
+
+    color: #ff1d2e;
+
+}
+
+
+@keyframes warroomBrandIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(12px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* =====================================================
+   TOP LINE
+   ===================================================== */
+
+.warroom-intro-line {
+
+    width: min(
+        700px,
+        80vw
+    );
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-top: 28px;
+
+    opacity: 0;
+
+    animation:
+        warroomFadeUp
+        0.7s
+        ease
+        0.8s
+        forwards;
+
+}
+
+
+.warroom-intro-line span {
+
+    flex: 1;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 20, 40, 0.8)
+        );
+
+}
+
+
+.warroom-intro-line span:last-child {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 20, 40, 0.8),
+            transparent
+        );
+
+}
+
+
+.warroom-intro-line b {
+
+    color: #a9a9a9;
+
+    font-size: 10px;
+
+    letter-spacing: 4px;
+
+    white-space: nowrap;
+
+}
+
+
+/* =====================================================
+   WAR ROOM TITLE
+   ===================================================== */
+
+.warroom-intro-title {
+
+    margin-top: 22px;
+
+    font-size:
+        clamp(60px, 9vw, 120px);
+
+    line-height: 0.95;
+
+    font-weight: 1000;
+
+    letter-spacing: 5px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 12px
+        rgba(255,255,255,0.12);
+
+    opacity: 0;
+
+    transform:
+        scale(0.92);
+
+    animation:
+        warroomTitleIn
+        1s
+        cubic-bezier(.2,.8,.2,1)
+        1.1s
+        forwards;
+
+}
+
+
+.warroom-intro-title span {
+
+    color: #ff182b;
+
+    text-shadow:
+
+        0 0 15px
+        rgba(255, 20, 40, 0.55),
+
+        0 0 45px
+        rgba(255, 20, 40, 0.20);
+
+}
+
+
+@keyframes warroomTitleIn {
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+
+    }
+
+}
+
+
+/* =====================================================
+   QUOTE
+   ===================================================== */
+
+.warroom-intro-quote {
+
+    min-height: 25px;
+
+    margin-top: 26px;
+
+    color: #d5d5d5;
+
+    font-size: 12px;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+}
+
+
+.warroom-intro-quote::after {
+
+    content: "▋";
+
+    color: #ff1c30;
+
+    margin-left: 3px;
+
+    animation:
+        warroomCursor
+        0.65s
+        steps(1)
+        infinite;
+
+}
+
+
+@keyframes warroomCursor {
+
+    50% {
+
+        opacity: 0;
+
+    }
+
+}
+
+
+/* =====================================================
+   PROGRESS
+   ===================================================== */
+
+.warroom-intro-progress {
+
+    width: min(
+        460px,
+        70vw
+    );
+
+    height: 2px;
+
+    margin-top: 30px;
+
+    background:
+        rgba(255,255,255,0.08);
+
+    overflow: hidden;
+
+}
+
+
+.warroom-intro-progress-bar {
+
+    width: 0%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff071b,
+            #ff3948
+        );
+
+    box-shadow:
+        0 0 15px
+        rgba(255, 20, 40, 0.9);
+
+}
+
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+.warroom-intro-status {
+
+    margin-top: 15px;
+
+    color: #777;
+
+    font-size: 9px;
+
+    letter-spacing: 4px;
+
+}
+
+
+.warroom-loading-dots::after {
+
+    content: "...";
+
+    display: inline-block;
+
+    width: 18px;
+
+    text-align: left;
+
+    animation:
+        warroomDots
+        1.2s
+        steps(4)
+        infinite;
+
+}
+
+
+@keyframes warroomDots {
+
+    0% {
+        content: "";
+    }
+
+    25% {
+        content: ".";
+    }
+
+    50% {
+        content: "..";
+    }
+
+    75% {
+        content: "...";
+    }
+
+}
+
+
+/* =====================================================
+   ACCESS GRANTED
+   ===================================================== */
+
+.warroom-intro-access {
+
+    margin-top: 18px;
+
+    font-size: 11px;
+
+    font-weight: 900;
+
+    letter-spacing: 5px;
+
+    color: #00ff9d;
+
+    text-shadow:
+        0 0 12px
+        rgba(0, 255, 157, 0.6);
+
+    opacity: 0;
+
+    transform:
+        translateY(8px);
+
+}
+
+
+.warroom-intro.access-granted
+.warroom-intro-access {
+
+    animation:
+        warroomAccessIn
+        0.6s
+        ease
+        forwards;
+
+}
+
+
+@keyframes warroomAccessIn {
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+@keyframes warroomFadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .warroom-intro-title {
+
+        letter-spacing: 2px;
+
+    }
+
+    .warroom-intro-brand {
+
+        letter-spacing: 4px;
+
+    }
+
+    .warroom-intro-line b {
+
+        font-size: 8px;
+
+        letter-spacing: 2px;
+
+    }
+
+    .warroom-intro-quote {
+
+        font-size: 9px;
+
+        letter-spacing: 3px;
+
+    }
+
+}

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WAR ROOM — Account Management</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/accounts.css"
+    >
+    <link
+        rel="stylesheet"
+        href="/css/dashboard.css"
+    >
+    <link rel="stylesheet" href="/css/warroom-modal.css?v=2">
+</head>
+
+
+<body>
+
+
+<main class="admin-dashboard">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="admin-sidebar">
+
+
+        <!-- BRAND -->
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                SQ
+            </div>
+
+            <div class="sidebar-brand-name">
+                Syntho<span>Quest</span>
+            </div>
+
+        </div>
+
+
+        <!-- SIDEBAR LABEL -->
+
+        <div class="sidebar-panel-label">
+
+            WAR ROOM
+
+            <span>
+                ADMIN CONTROL PANEL
+            </span>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/dashboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+            <!-- WORKSHOP -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/workshop'"
+            >
+
+                <span class="sidebar-icon">
+                    ⚔
+                </span>
+
+                <span>
+                    Workshop
+                </span>
+
+            </button>
+
+
+            <!-- HACKATHON -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/hackathon'"
+            >
+
+                <span class="sidebar-icon">
+                    ◈
+                </span>
+
+                <span>
+                    Hackathon
+                </span>
+
+            </button>
+
+
+            <!-- LEADERBOARD -->
+
+            <button
+                class="sidebar-item"
+                type="button"
+                onclick="window.location.href='/admin/leaderboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ♛
+                </span>
+
+                <span>
+                    Leaderboard
+                </span>
+
+            </button>
+
+
+            <!-- ACCOUNT MANAGEMENT -->
+
+            <button
+                class="sidebar-item active"
+                type="button"
+            >
+
+                <span class="sidebar-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Account Management
+                </span>
+
+            </button>
+            
+
+            <!-- SETTINGS -->
+
+            <button
+                class="sidebar-item"
+                data-section="settings"
+                type="button"
+                onclick="window.location.href='/admin/settings'"
+            >
+
+                <span class="sidebar-icon">
+                ⚙
+                </span>
+
+                <span>
+                Settings
+                </span>
+
+            </button>
+
+            <!-- LOGOUT -->
+
+            <button
+                class="sidebar-item"
+                data-section="logout"
+                type="button"
+                onclick="window.location.href='/admin'"
+            >
+
+                <span class="sidebar-icon">
+                ⎋
+                 </span>
+
+                <span>
+                Logout
+                </span>
+
+            </button>
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <section class="dashboard-content">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="dashboard-header">
+
+
+            <div class="header-left">
+
+                <div class="header-kicker">
+                    WAR ROOM / ACCOUNT MANAGEMENT
+                </div>
+
+                <h1>
+                    Account Management
+                </h1>
+
+                <p>
+                    Manage registered participants across
+                    Workshop and Hackathon events.
+                </p>
+
+            </div>
+
+
+            <div class="header-right">
+
+
+                <div class="dashboard-search">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="accountSearch"
+                        placeholder="Search accounts..."
+                    >
+
+                </div>
+
+
+                <div class="header-admin">
+
+                    <span class="header-status-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            ADMINISTRATOR
+                        </strong>
+
+                        <small>
+                            FULL ACCESS
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             ACCOUNT MANAGEMENT
+             ================================================= -->
+
+        <section class="account-management-section">
+
+
+            <!-- =================================================
+                 PAGE INTRO
+                 ================================================= -->
+
+            <div class="account-section-heading">
+
+                <div>
+
+                    <span>
+                        REGISTRATION CONTROL
+                    </span>
+
+                    <h2>
+                        MANAGE ACCOUNTS
+                    </h2>
+
+                    <p>
+                        Select an event and domain to view
+                        registered participants.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 EVENT CATEGORY
+                 ================================================= -->
+
+            <div class="account-event-grid">
+
+
+                <!-- WORKSHOP -->
+
+                <button
+                    type="button"
+                    class="account-event-card active"
+                    data-event="workshop"
+                >
+
+                    <div class="account-event-top">
+
+                        <div class="account-event-icon">
+                            ⚔
+                        </div>
+
+                        <span>
+                            01
+                        </span>
+
+                    </div>
+
+
+                    <div class="account-event-content">
+
+                        <span>
+                            EVENT CATEGORY
+                        </span>
+
+                        <h3>
+                            WORKSHOP
+                        </h3>
+
+                        <p>
+                            Manage students registered
+                            for Workshop domains.
+                        </p>
+
+                    </div>
+
+
+                </button>
+
+
+
+                <!-- HACKATHON -->
+
+                <button
+                    type="button"
+                    class="account-event-card"
+                    data-event="hackathon"
+                >
+
+                    <div class="account-event-top">
+
+                        <div class="account-event-icon">
+                            ◈
+                        </div>
+
+                        <span>
+                            02
+                        </span>
+
+                    </div>
+
+
+                    <div class="account-event-content">
+
+                        <span>
+                            EVENT CATEGORY
+                        </span>
+
+                        <h3>
+                            HACKATHON
+                        </h3>
+
+                        <p>
+                            Manage students registered
+                            for Hackathon domains.
+                        </p>
+
+                    </div>
+
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DOMAIN SECTION
+                 ================================================= -->
+
+            <div class="account-domain-section">
+
+
+                <div class="account-section-title">
+
+                    <div>
+
+                        <span>
+                            SELECT DOMAIN
+                        </span>
+
+                        <h2 id="selectedEventTitle">
+                            WORKSHOP DOMAINS
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="account-domain-grid">
+
+
+                    <!-- CEH -->
+
+                    <button
+                        type="button"
+                        class="account-domain-card active"
+                        data-domain="ceh"
+                    >
+
+                        <div class="account-domain-icon">
+                            ◈
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 01
+                            </span>
+
+                            <h3>
+                                CEH
+                            </h3>
+
+                            <p>
+                                Certified Ethical Hacking
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- VAPT -->
+
+                    <button
+                        type="button"
+                        class="account-domain-card"
+                        data-domain="vapt"
+                    >
+
+                        <div class="account-domain-icon">
+                            ⬡
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 02
+                            </span>
+
+                            <h3>
+                                VAPT
+                            </h3>
+
+                            <p>
+                                Vulnerability Assessment &
+                                Penetration Testing
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- SOC -->
+
+                    <button
+                        type="button"
+                        class="account-domain-card"
+                        data-domain="soc"
+                    >
+
+                        <div class="account-domain-icon">
+                            ◉
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 03
+                            </span>
+
+                            <h3>
+                                SOC
+                            </h3>
+
+                            <p>
+                                Security Operations Center
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- DIGITAL FORENSICS -->
+
+                    <button
+                        type="button"
+                        class="account-domain-card"
+                        data-domain="forensics"
+                    >
+
+                        <div class="account-domain-icon">
+                            ◇
+                        </div>
+
+                        <div>
+
+                            <span>
+                                DOMAIN 04
+                            </span>
+
+                            <h3>
+                                DIGITAL FORENSICS
+                            </h3>
+
+                            <p>
+                                Digital Evidence &
+                                Forensic Investigation
+                            </p>
+
+                        </div>
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 REGISTERED ACCOUNT AREA
+                 ================================================= -->
+
+            <section class="registered-accounts-section">
+
+
+                <div class="registered-accounts-header">
+
+
+                    <div>
+
+                        <span>
+                            REGISTERED ACCOUNTS
+                        </span>
+
+                        <h2 id="accountListTitle">
+                            Workshop — CEH
+                        </h2>
+
+                        <p>
+                            Registered participants for the
+                            selected event and domain.
+                        </p>
+
+                    </div>
+
+
+                    <div class="account-list-actions">
+
+                        <div class="account-table-search">
+
+                            <span>
+                                ⌕
+                            </span>
+
+                            <input
+                                type="text"
+                                id="participantSearch"
+                                placeholder="Search participants..."
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            id="refreshAccountsBtn"
+                            class="account-action-btn"
+                        >
+                            ↻ Refresh
+                        </button>
+
+                        <button
+                            type="button"
+                            class="account-delete-all-btn"
+                            id="deleteAllAccountsBtn"
+                        >
+                            DELETE ALL
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     ACCOUNT STATISTICS
+                     ================================================= -->
+
+                <div class="account-stats-grid">
+
+
+                    <div class="account-stat-card">
+
+                        <span>
+                            TOTAL REGISTERED
+                        </span>
+
+                        <strong id="totalAccounts">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-stat-card">
+
+                        <span>
+                            ACTIVE
+                        </span>
+
+                        <strong id="activeAccounts">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-stat-card">
+
+                        <span>
+                            PENDING APPROVAL
+                        </span>
+
+                        <strong id="pendingAccounts">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-stat-card">
+
+                        <span>
+                            INACTIVE / REJECTED
+                        </span>
+
+                        <strong id="inactiveAccounts">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     ACCOUNT TABLE
+                     ================================================= -->
+
+                <div class="account-table-wrapper">
+
+
+                    <table class="account-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    PARTICIPANT NAME
+                                </th>
+
+                                <th>
+                                    EMAIL
+                                </th>
+
+                                <th>
+                                    COLLEGE / ORGANIZATION
+                                </th>
+
+                                <th>
+                                    REGISTERED ON
+                                </th>
+
+                                <th>
+                                    STATUS
+                                </th>
+
+                                <th>
+                                    ACTION
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="accountsTableBody">
+
+
+                            <tr>
+
+                                <td colspan="7">
+
+                                    <div class="empty-accounts">
+
+                                        <span>
+                                            ◈
+                                        </span>
+
+                                        <strong>
+                                            NO ACCOUNTS FOUND
+                                        </strong>
+
+                                        <small>
+                                            Registered participants
+                                            will appear here.
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </section>
+
+
+        </section>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+    <script src="/js/warroom-modal.js?v=2"></script>
+<script src="/js/accounts.js?v=approval"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,2404 @@
+/* =========================================================
+   WAR ROOM
+   HACKATHON MANAGEMENT
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.hackathon-page{
+
+    min-width:0;
+
+}
+
+
+/* =========================================================
+   TOOLKIT UPLOAD CARD
+   ========================================================= */
+
+.hackathon-upload-card{
+
+    position:relative;
+
+    margin-top:28px;
+
+    min-height:200px;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(280px,1.05fr)
+        minmax(300px,1fr)
+        minmax(280px,1fr);
+
+    gap:28px;
+
+    padding:20px 24px;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0a0a0a
+        );
+
+    box-shadow:
+        12px 12px 28px #020202,
+        -8px -8px 22px rgba(255,255,255,.018);
+
+    overflow:hidden;
+
+}
+
+
+/* =========================================================
+   TOP RED LINE
+   ========================================================= */
+
+.hackathon-upload-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:22px;
+
+    width:150px;
+    height:2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff1f2d,
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px rgba(229,9,20,.4);
+
+}
+
+
+/* =========================================================
+   UPLOAD MAIN
+   ========================================================= */
+
+.upload-main{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:17px;
+
+    padding-top:10px;
+
+}
+
+
+.upload-icon{
+
+    width:55px;
+    height:55px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+
+    font-size:24px;
+
+    border:1px solid rgba(229,9,20,.4);
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #090909
+        );
+
+    box-shadow:
+        7px 7px 14px #030303,
+        -4px -4px 10px rgba(255,255,255,.02);
+
+    text-shadow:
+        0 0 10px rgba(229,9,20,.35);
+
+}
+
+
+/* =========================================================
+   UPLOAD HEADING
+   ========================================================= */
+
+.upload-heading{
+
+    min-width:0;
+
+}
+
+
+.upload-heading > span{
+
+    color:#ff1f2d;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:2.5px;
+
+}
+
+
+.upload-heading h2{
+
+    margin-top:9px;
+
+    color:#fff;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    letter-spacing:.8px;
+
+}
+
+
+.upload-heading p{
+
+    margin-top:8px;
+
+    color:#777;
+
+    font-size:10px;
+
+    line-height:1.5;
+
+}
+
+
+.selected-domain-text{
+
+    margin-top:12px;
+
+    color:#656565;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    letter-spacing:1.6px;
+
+}
+
+
+.selected-domain-text strong{
+
+    margin-left:6px;
+
+    color:#ff1f2d;
+
+}
+
+
+/* =========================================================
+   DROP ZONE
+   ========================================================= */
+
+.drop-zone{
+
+    min-height:158px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    border:1px dashed rgba(255,255,255,.13);
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111,
+            #0b0b0b
+        );
+
+    transition:
+        border-color .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
+
+}
+
+
+.drop-zone.dragging{
+
+    border-color:#e50914;
+
+    background:
+        rgba(229,9,20,.06);
+
+    box-shadow:
+        0 0 22px rgba(229,9,20,.08);
+
+}
+
+
+.drop-icon{
+
+    color:#777;
+
+    font-size:21px;
+
+}
+
+
+.drop-zone strong{
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:800;
+
+}
+
+
+.drop-zone > span{
+
+    color:#666;
+
+    font-size:9px;
+
+}
+
+
+.drop-zone button{
+
+    min-width:124px;
+
+    height:34px;
+
+    margin-top:4px;
+
+    border:1px solid #ff1f2d;
+
+    border-radius:9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ff2634,
+            #b7070e
+        );
+
+    color:#fff;
+
+    font-size:8px;
+
+    font-weight:900;
+
+    letter-spacing:1.2px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 14px rgba(229,9,20,.14);
+
+}
+
+
+.drop-zone button:hover{
+
+    filter:brightness(1.1);
+
+}
+
+
+.drop-zone small{
+
+    color:#555;
+
+    font-size:7px;
+
+    max-width:180px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+
+/* =========================================================
+   RECENT UPLOAD AREA
+   ========================================================= */
+
+.recent-upload-area{
+
+    min-width:0;
+
+    padding-top:8px;
+
+}
+
+
+.recent-upload-header{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    padding-bottom:12px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.055);
+
+}
+
+
+.recent-upload-header span{
+
+    color:#777;
+
+    font-size:8px;
+
+    letter-spacing:2px;
+
+    font-weight:800;
+
+}
+
+
+.recent-upload-header h3{
+
+    margin-top:6px;
+
+    color:#fff;
+
+    font-size:12px;
+
+    font-weight:900;
+
+}
+
+
+.recent-upload-header button{
+
+    border:0;
+
+    background:none;
+
+    color:#ff1f2d;
+
+    font-size:8px;
+
+    cursor:pointer;
+
+}
+
+
+.recent-upload-list{
+
+    max-height:125px;
+
+    overflow-y:auto;
+
+}
+
+
+/* =========================================================
+   RECENT UPLOAD SCROLLBAR
+   ========================================================= */
+
+.recent-upload-list::-webkit-scrollbar{
+
+    width:5px;
+
+}
+
+
+.recent-upload-list::-webkit-scrollbar-track{
+
+    background:#080808;
+
+}
+
+
+.recent-upload-list::-webkit-scrollbar-thumb{
+
+    background:#e50914;
+
+    border-radius:10px;
+
+}
+
+
+/* =========================================================
+   EMPTY TOOLKIT
+   ========================================================= */
+
+.empty-toolkit{
+
+    min-height:70px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#444;
+
+    font-size:8px;
+
+}
+
+
+/* =========================================================
+   TOOLKIT FILE
+   ========================================================= */
+
+.toolkit-file{
+
+    min-height:58px;
+
+    padding:8px 2px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    justify-content:flex-start;
+
+    gap:5px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.035);
+
+}
+
+
+/* =========================================================
+   FILE INFORMATION
+   ========================================================= */
+
+.toolkit-file-info{
+
+    width:100%;
+
+    min-width:0;
+
+}
+
+
+.toolkit-file-info strong{
+
+    display:block;
+
+    color:#ddd;
+
+    font-size:9px;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
+
+
+.toolkit-file-info small{
+
+    display:block;
+
+    margin-top:3px;
+
+    color:#555;
+
+    font-size:7px;
+
+}
+
+
+/* =========================================================
+   TOOLKIT ACTIONS
+   ========================================================= */
+
+.toolkit-file-actions{
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    gap:14px;
+
+    margin-top:2px;
+
+}
+
+
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
+
+.toolkit-file-download{
+
+    color:#ff1f2d !important;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    text-decoration:none;
+
+}
+
+
+.toolkit-file-download:hover{
+
+    color:#fff !important;
+
+}
+
+
+/* =========================================================
+   DELETE
+   ========================================================= */
+
+.toolkit-file-delete{
+
+    border:0;
+
+    background:none;
+
+    padding:0;
+
+    color:#777 !important;
+
+    font-family:inherit;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    letter-spacing:.5px;
+
+    cursor:pointer;
+
+    transition:
+        color .2s ease,
+        text-shadow .2s ease;
+
+}
+
+
+.toolkit-file-delete:hover{
+
+    color:#ff1f2d !important;
+
+    text-shadow:
+        0 0 8px rgba(229,9,20,.35);
+
+}
+
+
+/* =========================================================
+   DOMAIN CARDS
+   ========================================================= */
+
+.hackathon-domain-grid{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:14px;
+
+}
+
+
+/* =========================================================
+   DOMAIN CARD
+   ========================================================= */
+
+.hackathon-domain-card{
+
+    min-width:0;
+
+    min-height:90px;
+
+    padding:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    text-align:left;
+
+    border:1px solid rgba(255,255,255,.045);
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0b0b0b
+        );
+
+    color:#fff;
+
+    cursor:pointer;
+
+    box-shadow:
+        8px 8px 17px #030303,
+        -5px -5px 12px rgba(255,255,255,.018);
+
+    transition:
+        border-color .22s ease,
+        box-shadow .22s ease;
+
+}
+
+
+/* =========================================================
+   DOMAIN CARD HOVER
+   IMPORTANT:
+   NO TRANSFORM
+   ========================================================= */
+
+.hackathon-domain-card:hover{
+
+    border-color:
+        rgba(229,9,20,.28);
+
+}
+
+
+/* =========================================================
+   ACTIVE DOMAIN
+   ========================================================= */
+
+.hackathon-domain-card.active{
+
+    position:relative;
+
+    border-color:#e50914;
+
+    box-shadow:
+        8px 8px 17px #030303,
+        -5px -5px 12px rgba(255,255,255,.018),
+        0 0 20px rgba(229,9,20,.08);
+
+}
+
+
+/* =========================================================
+   ACTIVE BOTTOM LINE
+   ========================================================= */
+
+.hackathon-domain-card.active::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    height:2px;
+
+    background:#ff1f2d;
+
+    border-radius:3px;
+
+}
+
+
+/* =========================================================
+   DOMAIN ICON
+   ========================================================= */
+
+.hackathon-domain-icon{
+
+    width:45px;
+    height:45px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:#0b0b0b;
+
+    font-size:18px;
+
+    box-shadow:
+        inset 3px 3px 7px #030303,
+        inset -3px -3px 7px rgba(255,255,255,.015);
+
+}
+
+
+.ceh-icon{
+
+    color:#ff1f2d;
+
+}
+
+
+.vapt-icon{
+
+    color:#f07816;
+
+}
+
+
+.soc-icon{
+
+    color:#168cff;
+
+}
+
+
+.df-icon{
+
+    color:#ff3150;
+
+}
+
+
+/* =========================================================
+   DOMAIN TEXT
+   ========================================================= */
+
+.hackathon-domain-card strong{
+
+    display:block;
+
+    color:#fff;
+
+    font-size:12px;
+
+    font-weight:900;
+
+}
+
+
+.hackathon-domain-card small{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:#666;
+
+    font-size:7px;
+
+    line-height:1.4;
+
+}
+
+
+/* =========================================================
+   MANAGEMENT GRID
+   ========================================================= */
+
+.hackathon-management-grid{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(270px,.55fr)
+        minmax(500px,1.45fr);
+
+    gap:18px;
+
+    align-items:stretch;
+
+}
+
+
+/* =========================================================
+   HACKATHON DOMAIN PANEL
+   ========================================================= */
+
+.hackathon-domain-panel{
+
+    min-height:390px;
+
+    padding:28px 22px;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0b0b0b
+        );
+
+    box-shadow:
+        10px 10px 22px #030303,
+        -7px -7px 17px rgba(255,255,255,.018);
+
+}
+
+
+/* =========================================================
+   PANEL KICKER
+   ========================================================= */
+
+.panel-kicker{
+
+    color:#ff1f2d;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:2.5px;
+
+}
+
+
+/* =========================================================
+   DOMAIN PANEL HEADING
+   ========================================================= */
+
+.hackathon-domain-panel h2{
+
+    margin-top:10px;
+
+    color:#fff;
+
+    font-size:19px;
+
+    font-weight:900;
+
+}
+
+
+/* =========================================================
+   DOMAIN DIVIDER
+   ========================================================= */
+
+.domain-divider{
+
+    height:1px;
+
+    margin:20px 0;
+
+    background:
+        rgba(255,255,255,.055);
+
+}
+
+
+/* =========================================================
+   SELECTED DOMAIN INFO
+   ========================================================= */
+
+.selected-domain-info{
+
+    margin-bottom:18px;
+
+}
+
+
+.selected-domain-info span{
+
+    display:block;
+
+    color:#666;
+
+    font-size:7px;
+
+    font-weight:900;
+
+    letter-spacing:1.8px;
+
+}
+
+
+.selected-domain-info strong{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:#ff1f2d;
+
+    font-size:9px;
+
+    font-weight:900;
+
+}
+
+
+/* =========================================================
+   TOOLKIT LOCATION
+   ========================================================= */
+
+.toolkit-location{
+
+    margin-bottom:18px;
+
+}
+
+
+.toolkit-location span{
+
+    display:block;
+
+    color:#666;
+
+    font-size:7px;
+
+    font-weight:900;
+
+    letter-spacing:1.8px;
+
+}
+
+
+.toolkit-location code{
+
+    display:block;
+
+    margin-top:7px;
+
+    padding:9px 10px;
+
+    border:1px solid rgba(255,255,255,.04);
+
+    border-radius:9px;
+
+    background:#0d0d0d;
+
+    color:#777;
+
+    font-size:8px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+
+/* =========================================================
+   TOOLKIT SUMMARY
+   ========================================================= */
+
+.domain-toolkit-summary{
+
+    padding:16px;
+
+    border:1px solid rgba(255,255,255,.04);
+
+    border-radius:13px;
+
+    background:#0d0d0d;
+
+    box-shadow:
+        inset 3px 3px 7px #030303;
+
+}
+
+
+.domain-toolkit-summary span{
+
+    display:block;
+
+    color:#666;
+
+    font-size:7px;
+
+    font-weight:900;
+
+    letter-spacing:1.8px;
+
+}
+
+
+.domain-toolkit-summary strong{
+
+    display:inline-block;
+
+    margin-top:7px;
+
+    color:#fff;
+
+    font-size:27px;
+
+}
+
+
+.domain-toolkit-summary small{
+
+    margin-left:7px;
+
+    color:#555;
+
+    font-size:8px;
+
+}
+
+
+/* =========================================================
+   UPLOAD SELECTED BUTTON
+   ========================================================= */
+
+.add-domain-button{
+
+    width:100%;
+
+    height:43px;
+
+    margin-top:20px;
+
+    border:1px solid rgba(229,9,20,.5);
+
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171010,
+            #0b0b0b
+        );
+
+    color:#ff1f2d;
+
+    font-size:8px;
+
+    font-weight:900;
+
+    letter-spacing:1.5px;
+
+    cursor:pointer;
+
+}
+
+
+.add-domain-button:hover{
+
+    color:#fff;
+
+    background:
+        linear-gradient(
+            145deg,
+            #8e0a11,
+            #e50914
+        );
+
+}
+
+
+/* =========================================================
+   PARTICIPANTS PANEL
+   ========================================================= */
+
+.participants-panel{
+
+    min-width:0;
+
+    padding:25px 20px 17px;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0b0b0b
+        );
+
+    box-shadow:
+        10px 10px 22px #030303,
+        -7px -7px 17px rgba(255,255,255,.018);
+
+    box-sizing:border-box;
+
+}
+
+
+/* =========================================================
+   PARTICIPANTS HEADER
+   ========================================================= */
+
+.participants-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+}
+
+
+.participants-header > div:first-child > span{
+
+    color:#ff1f2d;
+
+    font-size:8px;
+
+    font-weight:900;
+
+    letter-spacing:2.2px;
+
+}
+
+
+.participants-header h2{
+
+    margin-top:9px;
+
+    color:#fff;
+
+    font-size:17px;
+
+    font-weight:900;
+
+}
+
+
+/* =========================================================
+   PARTICIPANT ACTIONS
+   ========================================================= */
+
+.participant-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+}
+
+
+.participant-actions input{
+
+    width:190px;
+
+    height:32px;
+
+    padding:0 10px;
+
+    outline:none;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    border-radius:9px;
+
+    background:#0d0d0d;
+
+    color:#fff;
+
+    font-size:8px;
+
+    box-sizing:border-box;
+
+}
+
+
+.participant-actions input:focus{
+
+    border-color:
+        rgba(229,9,20,.4);
+
+}
+
+
+.participant-actions button{
+
+    width:32px;
+    height:32px;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:9px;
+
+    background:#0d0d0d;
+
+    color:#888;
+
+    cursor:pointer;
+
+}
+
+
+.participant-actions button:hover{
+
+    color:#ff1f2d;
+
+    border-color:
+        rgba(229,9,20,.3);
+
+}
+
+
+/* =========================================================
+   PARTICIPANT STATISTICS
+   ========================================================= */
+
+.participant-stats{
+
+    margin-top:22px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:10px;
+
+}
+
+
+.participant-stat{
+
+    min-height:70px;
+
+    padding:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    border:1px solid rgba(255,255,255,.04);
+
+    border-radius:13px;
+
+    background:#0e0e0e;
+
+    box-shadow:
+        inset 3px 3px 7px #030303;
+
+    box-sizing:border-box;
+
+}
+
+
+/* =========================================================
+   STAT ICON
+   ========================================================= */
+
+.stat-icon{
+
+    width:34px;
+    height:34px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#101010;
+
+    font-size:13px;
+
+}
+
+
+.stat-icon.red{
+
+    color:#ff1f2d;
+
+}
+
+
+.stat-icon.green{
+
+    color:#27d67d;
+
+}
+
+
+.stat-icon.blue{
+
+    color:#268cff;
+
+}
+
+
+.stat-icon.gray{
+
+    color:#777;
+
+}
+
+
+/* =========================================================
+   STAT TEXT
+   ========================================================= */
+
+.participant-stat span{
+
+    display:block;
+
+    color:#666;
+
+    font-size:7px;
+
+}
+
+
+.participant-stat strong{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#fff;
+
+    font-size:17px;
+
+}
+
+
+/* =========================================================
+   PARTICIPANT TABLE WRAPPER
+   ========================================================= */
+
+.participant-table-wrap{
+
+    width:100%;
+
+    height:220px;
+
+    max-height:220px;
+
+    min-height:220px;
+
+    margin-top:14px;
+
+    overflow-y:auto;
+
+    overflow-x:auto;
+
+    border:1px solid rgba(255,255,255,.04);
+
+    border-radius:13px;
+
+    background:#0a0a0a;
+
+    box-sizing:border-box;
+
+    scrollbar-width:thin;
+
+    scrollbar-color:
+        #e50914
+        #080808;
+
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.participant-table-wrap table{
+
+    width:100%;
+
+    min-width:700px;
+
+    border-collapse:collapse;
+
+    table-layout:auto;
+
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.participant-table-wrap th{
+
+    height:38px;
+
+    padding:0 10px;
+
+    text-align:left;
+
+    color:#777;
+
+    background:
+        rgba(229,9,20,.035);
+
+    font-size:7px;
+
+    font-weight:900;
+
+    letter-spacing:.6px;
+
+    white-space:nowrap;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:10;
+
+}
+
+
+/* =========================================================
+   TABLE DATA
+   ========================================================= */
+
+.participant-table-wrap td{
+
+    height:43px;
+
+    padding:0 10px;
+
+    color:#777;
+
+    border-top:
+        1px solid rgba(255,255,255,.035);
+
+    font-size:8px;
+
+    white-space:nowrap;
+
+}
+
+
+.participant-table-wrap td:nth-child(2){
+
+    color:#ddd;
+
+    font-weight:700;
+
+}
+
+
+/* =========================================================
+   EMPTY PARTICIPANTS
+   ========================================================= */
+
+.empty-participants{
+
+    min-height:120px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#444;
+
+    font-size:8px;
+
+}
+
+
+/* =========================================================
+   STATUS BADGE
+   ========================================================= */
+
+.status-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:4px 8px;
+
+    border-radius:8px;
+
+    background:
+        rgba(35,205,115,.08);
+
+    color:#35d27e;
+
+    font-size:7px;
+
+    font-weight:800;
+
+}
+
+
+/* =========================================================
+   TABLE SCROLLBAR
+   ========================================================= */
+
+.participant-table-wrap::-webkit-scrollbar{
+
+    width:8px;
+
+    height:8px;
+
+}
+
+
+.participant-table-wrap::-webkit-scrollbar-track{
+
+    background:#080808;
+
+}
+
+
+.participant-table-wrap::-webkit-scrollbar-thumb{
+
+    background:#e50914;
+
+    border-radius:10px;
+
+}
+
+
+.participant-table-wrap::-webkit-scrollbar-thumb:hover{
+
+    background:#ff1f2d;
+
+}
+
+
+/* =========================================================
+   TABLE FOOTER
+   ========================================================= */
+
+.table-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:12px;
+
+    color:#555;
+
+    font-size:7px;
+
+}
+
+
+.pagination{
+
+    display:flex;
+
+    gap:5px;
+
+}
+
+
+.pagination button{
+
+    width:27px;
+    height:27px;
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:8px;
+
+    background:#0d0d0d;
+
+    color:#777;
+
+    cursor:pointer;
+
+}
+
+
+.pagination button.active{
+
+    border-color:#e50914;
+
+    background:#e50914;
+
+    color:#fff;
+
+}
+
+
+/* =========================================================
+   =========================================================
+   WAR ROOM SCALE
+   =========================================================
+   ========================================================= */
+
+body{
+
+    zoom:1.2;
+
+}
+
+
+/* =========================================================
+   FIXED SIDEBAR
+   =========================================================
+   
+   IMPORTANT:
+   Sidebar must stay in the same position on every page.
+   
+   ========================================================= */
+
+.admin-sidebar{
+
+    position:fixed !important;
+
+    top:0 !important;
+
+    left:0 !important;
+
+    height:calc(100vh / 1.2) !important;
+
+    min-height:0 !important;
+
+    display:flex !important;
+
+    flex-direction:column !important;
+
+    overflow:hidden !important;
+
+    flex-shrink:0 !important;
+
+    box-sizing:border-box !important;
+
+    z-index:9999 !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR NAV
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav{
+
+    flex:1 1 auto !important;
+
+    min-height:0 !important;
+
+    overflow:hidden !important;
+
+    box-sizing:border-box !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR ITEMS
+   NEVER MOVE
+   ========================================================= */
+
+.admin-sidebar .sidebar-item{
+
+    position:relative !important;
+
+    top:0 !important;
+
+    bottom:auto !important;
+
+    transform:none !important;
+
+    box-sizing:border-box !important;
+
+}
+
+
+/* =========================================================
+   ACTIVE SIDEBAR ITEM
+   ========================================================= */
+
+.admin-sidebar .sidebar-item.active{
+
+    position:relative !important;
+
+    top:0 !important;
+
+    bottom:auto !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR ICON
+   ========================================================= */
+
+.admin-sidebar .sidebar-icon{
+
+    position:relative !important;
+
+    top:0 !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR TEXT
+   ========================================================= */
+
+.admin-sidebar .sidebar-item > span:not(.sidebar-icon){
+
+    position:relative !important;
+
+    top:0 !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR BOTTOM
+   ========================================================= */
+
+.admin-sidebar .sidebar-bottom{
+
+    margin-top:auto !important;
+
+    width:100% !important;
+
+    flex:0 0 auto !important;
+
+    flex-shrink:0 !important;
+
+    padding-bottom:15px !important;
+
+    box-sizing:border-box !important;
+
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   PREVENT SIDEBAR HOVER MOVEMENT
+   ========================================================= */
+
+.admin-sidebar .sidebar-item:hover{
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   PREVENT ACTIVE CLICK MOVEMENT
+   ========================================================= */
+
+.admin-sidebar .sidebar-item:active{
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   FULL RED BUTTON
+   ========================================================= */
+
+.admin-sidebar .sidebar-item[data-section="logout"]{
+
+    margin-top:14px !important;
+
+    width:100% !important;
+
+    border:1px solid #e50914 !important;
+
+    border-radius:12px !important;
+
+    background:#e50914 !important;
+
+    color:#fff !important;
+
+    box-shadow:
+        0 0 14px rgba(229,9,20,.18),
+        5px 5px 12px #020202;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT ICON
+   ========================================================= */
+
+.admin-sidebar .sidebar-item[data-section="logout"] .sidebar-icon{
+
+    color:#fff !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT TEXT
+   ========================================================= */
+
+.admin-sidebar .sidebar-item[data-section="logout"] span{
+
+    color:#fff !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT HOVER
+   ========================================================= */
+
+.admin-sidebar .sidebar-item[data-section="logout"]:hover{
+
+    background:#ff1f2d !important;
+
+    border-color:#ff1f2d !important;
+
+    color:#fff !important;
+
+    box-shadow:
+        0 0 20px rgba(229,9,20,.30),
+        6px 6px 14px #020202;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT HOVER ICON
+   ========================================================= */
+
+.admin-sidebar .sidebar-item[data-section="logout"]:hover .sidebar-icon{
+
+    color:#fff !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT CLICK
+   ========================================================= */
+
+.admin-sidebar .sidebar-item[data-section="logout"]:active{
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+/*
+   Do not apply transform or position changes to the
+   dashboard content when switching Hackathon page.
+*/
+
+.dashboard-content.hackathon-page{
+
+    position:relative;
+
+    min-width:0;
+
+}
+
+
+/* =========================================================
+   NO PAGE-LEVEL TRANSFORM
+   ========================================================= */
+
+
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:1250px){
+
+    .hackathon-upload-card{
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+
+    .recent-upload-area{
+
+        grid-column:1 / -1;
+
+    }
+
+
+    .hackathon-management-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+/* =========================================================
+   900px
+   ========================================================= */
+
+@media(max-width:900px){
+
+    .hackathon-domain-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+
+    .participant-stats{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+}
+
+
+/* =========================================================
+   700px
+   ========================================================= */
+
+@media(max-width:700px){
+
+    .hackathon-upload-card{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .recent-upload-area{
+
+        grid-column:auto;
+
+    }
+
+
+    .hackathon-domain-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .participants-header{
+
+        flex-direction:column;
+
+    }
+
+
+    .participant-actions{
+
+        width:100%;
+
+    }
+
+
+    .participant-actions input{
+
+        width:100%;
+
+    }
+
+
+    .participant-table-wrap{
+
+        height:380px;
+
+        max-height:380px;
+
+        min-height:380px;
+
+    }
+
+
+    .participant-table-wrap table{
+
+        min-width:700px;
+
+    }
+
+}
+
+
+/* =========================================================
+   600px
+   ========================================================= */
+
+@media(max-width:600px){
+
+    .upload-main{
+
+        flex-direction:column;
+
+    }
+
+
+    .participants-panel{
+
+        padding:
+            20px 15px;
+
+    }
+
+
+    .hackathon-domain-panel{
+
+        padding:
+            22px 17px;
+
+    }
+
+}
+
+
+/* =========================================================
+   END OF HACKATHON CSS
+   ========================================================= */
+
+/* =========================================================
+   SIDEBAR — FINAL FIX
+   ========================================================= */
+
+.admin-sidebar{
+
+    position:fixed !important;
+
+    top:0 !important;
+    left:0 !important;
+
+    height:calc(100vh / 1.2) !important;
+
+    min-height:0 !important;
+
+    display:flex !important;
+
+    flex-direction:column !important;
+
+    overflow:hidden !important;
+
+    box-sizing:border-box !important;
+
+    z-index:9999 !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR NAV
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav{
+
+    flex:1 1 auto !important;
+
+    min-height:0 !important;
+
+    height:auto !important;
+
+    display:flex !important;
+
+    flex-direction:column !important;
+
+    overflow:hidden !important;
+
+    box-sizing:border-box !important;
+
+}
+
+
+/* =========================================================
+   ALL SIDEBAR ITEMS
+   FIXED POSITION
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item{
+
+    position:relative !important;
+
+    top:auto !important;
+    bottom:auto !important;
+
+    left:auto !important;
+    right:auto !important;
+
+    transform:none !important;
+
+    flex-shrink:0 !important;
+
+    box-sizing:border-box !important;
+
+}
+
+
+/* =========================================================
+   ACTIVE ITEM
+   DO NOT MOVE UP/DOWN
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item.active{
+
+    position:relative !important;
+
+    top:auto !important;
+    bottom:auto !important;
+
+    transform:none !important;
+
+    margin-bottom:0 !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR ITEM HOVER
+   NO MOVEMENT
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item:hover{
+
+    transform:none !important;
+
+    top:auto !important;
+
+    bottom:auto !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR ITEM CLICK
+   NO MOVEMENT
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item:active{
+
+    transform:none !important;
+
+    top:auto !important;
+
+    bottom:auto !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR ICON
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-icon{
+
+    position:relative !important;
+
+    top:0 !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   SIDEBAR TEXT
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item span{
+
+    position:relative !important;
+
+    top:0 !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ACTUAL LOGOUT IS INSIDE .sidebar-nav
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item[data-section="logout"]{
+
+    margin-top:auto !important;
+
+    margin-bottom:0 !important;
+
+    flex-shrink:0 !important;
+
+    width:100% !important;
+
+    height:auto !important;
+
+    min-height:55px !important;
+
+    border:1px solid #e50914 !important;
+
+    border-radius:12px !important;
+
+    background:#e50914 !important;
+
+    color:#fff !important;
+
+    box-shadow:
+        0 0 14px rgba(229,9,20,.18),
+        5px 5px 12px #020202;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT HOVER
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item[data-section="logout"]:hover{
+
+    margin-top:auto !important;
+
+    transform:none !important;
+
+    background:#ff1f2d !important;
+
+    border-color:#ff1f2d !important;
+
+    color:#fff !important;
+
+    box-shadow:
+        0 0 20px rgba(229,9,20,.30),
+        6px 6px 14px #020202;
+
+}
+
+
+/* =========================================================
+   LOGOUT ACTIVE / CLICK
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav .sidebar-item[data-section="logout"]:active{
+
+    margin-top:auto !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   LOGOUT ICON
+   ========================================================= */
+
+.admin-sidebar .sidebar-nav
+.sidebar-item[data-section="logout"]
+.sidebar-icon{
+
+    color:#fff !important;
+
+    transform:none !important;
+
+}
+
+
+/* =========================================================
+   EMPTY SIDEBAR BOTTOM
+   ========================================================= */
+
+.admin-sidebar .sidebar-bottom{
+
+    display:none !important;
+
+}

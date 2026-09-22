@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        WAR ROOM — User Dashboard
+    </title>
+
+    <!-- =====================================================
+         USER DASHBOARD CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/css/user-dashboard.css?v=2"
+    >
+
+</head>
+
+
+<body>
+
+
+<main class="user-dashboard">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="user-sidebar">
+
+
+        <!-- =================================================
+             BRAND
+             ================================================= -->
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                SQ
+            </div>
+
+            <div class="sidebar-brand-name">
+                Syntho<span>Quest</span>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDEBAR LABEL
+             ================================================= -->
+
+        <div class="sidebar-panel-label">
+
+            WAR ROOM
+
+            <span>
+                USER PANEL
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             NAVIGATION
+             ================================================= -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- =================================================
+                 DASHBOARD
+                 ================================================= -->
+
+            <button
+                class="sidebar-item active"
+                data-section="dashboard"
+                type="button"
+                onclick="window.location.href='/user/dashboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+            <!-- =================================================
+                 CTF
+                 ================================================= -->
+
+            <button
+                class="sidebar-item"
+                data-section="ctf"
+                type="button"
+                onclick="window.location.href='/user/ctf'"
+            >
+
+                <span class="sidebar-icon">
+                    ⚔
+                </span>
+
+                <span>
+                    CTF
+                </span>
+
+            </button>
+
+
+            <!-- =================================================
+                 LEADERBOARD
+                 ================================================= -->
+
+            <button
+                class="sidebar-item"
+                data-section="leaderboard"
+                type="button"
+                onclick="window.location.href='/user/leaderboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ♛
+                </span>
+
+                <span>
+                    Leaderboard
+                </span>
+
+            </button>
+
+
+            <!-- =================================================
+                 LOGOUT
+                 ================================================= -->
+
+            <button
+                class="sidebar-item"
+                data-section="logout"
+                type="button"
+                onclick="window.location.href='/'"
+            >
+
+                <span class="sidebar-icon">
+                    ⎋
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <section class="dashboard-content">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="dashboard-header">
+
+
+            <div class="header-left">
+
+                <div class="header-kicker">
+                    WAR ROOM / USER DASHBOARD
+                </div>
+
+
+                <h1>
+
+                    Welcome,
+
+                    <span id="userName">
+                        Student
+                    </span>
+
+                </h1>
+
+
+                <p>
+                    Access your event, domain toolkit
+                    and cybersecurity activities.
+                </p>
+
+            </div>
+
+
+            <div class="header-right">
+
+
+                <!-- =================================================
+                     SEARCH
+                     ================================================= -->
+
+                <div class="dashboard-search">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        id="dashboardSearch"
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     NOTIFICATION
+                     ================================================= -->
+
+                <button
+                    class="header-icon-button"
+                    type="button"
+                >
+
+                    🔔
+
+                </button>
+
+
+                <!-- =================================================
+                     MESSAGE
+                     ================================================= -->
+
+                <button
+                    class="header-icon-button"
+                    type="button"
+                >
+
+                    ✉
+
+                </button>
+
+
+                <!-- =================================================
+                     USER STATUS
+                     ================================================= -->
+
+                <div class="header-user">
+
+                    <span class="header-status-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            PARTICIPANT
+                        </strong>
+
+                        <small>
+                            ACTIVE
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             USER DASHBOARD CONTENT
+             ================================================= -->
+
+        <section class="user-dashboard-content">
+
+
+            <!-- =================================================
+                 INTRO
+                 ================================================= -->
+
+            <div class="dashboard-section-heading">
+
+                <span>
+                    YOUR EVENT
+                </span>
+
+                <h2>
+                    EVENT OVERVIEW
+                </h2>
+
+                <p>
+                    Your registered event and domain
+                    information is shown below.
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 EVENT INFORMATION
+                 ================================================= -->
+
+            <div class="event-info-grid">
+
+
+                <!-- =================================================
+                     EVENT
+                     ================================================= -->
+
+                <article class="info-card">
+
+                    <div class="info-card-top">
+
+                        <div class="info-icon">
+                            ⚔
+                        </div>
+
+                        <span>
+                            EVENT
+                        </span>
+
+                    </div>
+
+
+                    <h3 id="userEvent">
+                        WORKSHOP
+                    </h3>
+
+
+                    <p>
+                        Your registered event
+                    </p>
+
+                </article>
+
+
+
+                <!-- =================================================
+                     DOMAIN
+                     ================================================= -->
+
+                <article class="info-card">
+
+                    <div class="info-card-top">
+
+                        <div class="info-icon">
+                            ◈
+                        </div>
+
+                        <span>
+                            DOMAIN
+                        </span>
+
+                    </div>
+
+
+                    <h3 id="userDomain">
+                        CEH
+                    </h3>
+
+
+                    <p id="userDomainDescription">
+                        Certified Ethical Hacking
+                    </p>
+
+                </article>
+
+
+
+                <!-- =================================================
+                     ACCOUNT STATUS
+                     ================================================= -->
+
+                <article class="info-card">
+
+                    <div class="info-card-top">
+
+                        <div class="info-icon">
+                            ✓
+                        </div>
+
+                        <span>
+                            ACCOUNT STATUS
+                        </span>
+
+                    </div>
+
+
+                    <h3
+                        id="userAccountStatus"
+                        class="status-active"
+                    >
+                        ACTIVE
+                    </h3>
+
+
+                    <p>
+                        Registration confirmed
+                    </p>
+
+                </article>
+
+
+
+                <!-- =================================================
+                     POINTS
+                     ================================================= -->
+
+                <article class="info-card">
+
+                    <div class="info-card-top">
+
+                        <div class="info-icon">
+                            ♛
+                        </div>
+
+                        <span>
+                            POINTS
+                        </span>
+
+                    </div>
+
+
+                    <h3 id="userPoints">
+                        0
+                    </h3>
+
+
+                    <p>
+                        Current score
+                    </p>
+
+                </article>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TOOLKIT + QUICK ACCESS
+                 ================================================= -->
+
+            <div class="dashboard-main-grid">
+
+
+                <!-- =================================================
+                     TOOLKIT
+                     ================================================= -->
+
+                <section class="dashboard-card toolkit-card">
+
+
+                    <div class="card-heading">
+
+                        <div>
+
+                            <span>
+                                RESOURCE ACCESS
+                            </span>
+
+                            <h2>
+                                YOUR TOOLKIT
+                            </h2>
+
+                        </div>
+
+
+                        <div class="card-heading-icon">
+                            ↓
+                        </div>
+
+                    </div>
+
+
+                    <div class="toolkit-content">
+
+
+                        <div class="toolkit-file-icon">
+                            ZIP
+                        </div>
+
+
+                        <div class="toolkit-file-details">
+
+                            <span>
+                                AVAILABLE TOOLKIT
+                            </span>
+
+
+                            <h3 id="toolkitFileName">
+                                No toolkit available
+                            </h3>
+
+
+                            <p id="toolkitFileDescription">
+                                Admin-uploaded toolkit
+                                for your registered domain.
+                            </p>
+
+                        </div>
+
+
+                        <a
+                            href="#"
+                            id="downloadToolkitBtn"
+                            class="download-toolkit-btn disabled"
+                        >
+                            DOWNLOAD TOOLKIT
+                        </a>
+
+
+                    </div>
+
+
+                    <div
+                        class="toolkit-empty"
+                        id="toolkitEmptyState"
+                    >
+
+                        Toolkit access will appear here
+                        for your registered event and domain.
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =================================================
+                     QUICK ACCESS
+                     ================================================= -->
+
+                <section class="dashboard-card quick-access-card">
+
+
+                    <div class="card-heading">
+
+                        <div>
+
+                            <span>
+                                USER ACCESS
+                            </span>
+
+                            <h2>
+                                QUICK ACCESS
+                            </h2>
+
+                        </div>
+
+
+                        <div class="card-heading-icon">
+                            ⚡
+                        </div>
+
+                    </div>
+
+
+                    <div class="quick-access-list">
+
+
+                        <!-- CTF -->
+
+                        <button
+                            type="button"
+                            class="quick-access-item"
+                            onclick="window.location.href='/user/ctf'"
+                        >
+
+                            <span class="quick-access-icon">
+                                ⚔
+                            </span>
+
+
+                            <div>
+
+                                <strong>
+                                    CTF
+                                </strong>
+
+
+                                <small>
+                                    Solve challenges and
+                                    earn points.
+                                </small>
+
+                            </div>
+
+
+                            <span class="quick-arrow">
+                                →
+                            </span>
+
+                        </button>
+
+
+
+                        <!-- LEADERBOARD -->
+
+                        <button
+                            type="button"
+                            class="quick-access-item"
+                            onclick="window.location.href='/user/leaderboard'"
+                        >
+
+                            <span class="quick-access-icon">
+                                ♛
+                            </span>
+
+
+                            <div>
+
+                                <strong>
+                                    LEADERBOARD
+                                </strong>
+
+
+                                <small>
+                                    View rankings and
+                                    current points.
+                                </small>
+
+                            </div>
+
+
+                            <span class="quick-arrow">
+                                →
+                            </span>
+
+                        </button>
+
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ACCOUNT + ACTIVITY
+                 ================================================= -->
+
+            <div class="dashboard-bottom-grid">
+
+
+                <!-- =================================================
+                     ACCOUNT DETAILS
+                     ================================================= -->
+
+                <section class="dashboard-card registration-card">
+
+
+                    <div class="card-heading">
+
+                        <div>
+
+                            <span>
+                                REGISTRATION
+                            </span>
+
+
+                            <h2>
+                                ACCOUNT DETAILS
+                            </h2>
+
+                        </div>
+
+
+                        <div class="card-heading-icon">
+                            ◫
+                        </div>
+
+                    </div>
+
+
+                    <div class="account-details">
+
+
+                        <div class="detail-row">
+
+                            <span>
+                                PARTICIPANT NAME
+                            </span>
+
+
+                            <strong id="detailName">
+                                Student
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-row">
+
+                            <span>
+                                EMAIL
+                            </span>
+
+
+                            <strong id="detailEmail">
+                                student@example.com
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-row">
+
+                            <span>
+                                EVENT
+                            </span>
+
+
+                            <strong id="detailEvent">
+                                WORKSHOP
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-row">
+
+                            <span>
+                                DOMAIN
+                            </span>
+
+
+                            <strong id="detailDomain">
+                                CEH
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =================================================
+                     RECENT ACTIVITY
+                     ================================================= -->
+
+                <section class="dashboard-card activity-card">
+
+
+                    <div class="card-heading">
+
+                        <div>
+
+                            <span>
+                                ACTIVITY
+                            </span>
+
+
+                            <h2>
+                                RECENT ACTIVITY
+                            </h2>
+
+                        </div>
+
+
+                        <div class="card-heading-icon">
+                            ◷
+                        </div>
+
+                    </div>
+
+
+                    <div class="activity-list">
+
+
+                        <div class="activity-item">
+
+                            <span class="activity-dot"></span>
+
+
+                            <div>
+
+                                <strong>
+                                    Registration confirmed
+                                </strong>
+
+
+                                <small>
+                                    Your event registration
+                                    is active.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="activity-item">
+
+                            <span class="activity-dot"></span>
+
+
+                            <div>
+
+                                <strong>
+                                    Dashboard ready
+                                </strong>
+
+
+                                <small>
+                                    Your participant dashboard
+                                    is available.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="activity-item">
+
+                            <span class="activity-dot"></span>
+
+
+                            <div>
+
+                                <strong>
+                                    Toolkit access
+                                </strong>
+
+
+                                <small id="toolkitActivity">
+                                    Checking toolkit availability.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
+        </section>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     USER DASHBOARD JAVASCRIPT
+     ===================================================== -->
+
+ <script src="/js/user-dashboard.js?v=9"></script>
+
+
+</body>
+
+</html>

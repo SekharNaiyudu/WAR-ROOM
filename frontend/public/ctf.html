@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CTF Management</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/ctf.css?v=2"
+    >
+
+    <link rel="stylesheet" href="/css/warroom-modal.css?v=2">
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         CTF PAGE
+         SIDEBAR IS NOT INCLUDED HERE
+         ===================================================== -->
+
+    <main class="ctf-page">
+
+
+        <!-- =================================================
+             BACK TO ADMIN DASHBOARD
+             ================================================= -->
+
+        <a
+            href="/admin/dashboard"
+            class="ctf-back-btn"
+            title="Back to Admin Dashboard"
+        >
+
+            <span class="ctf-back-arrow">
+                ←
+            </span>
+
+            <span class="ctf-back-text">
+                BACK
+            </span>
+
+        </a>
+
+
+        <!-- =================================================
+             PAGE HEADER
+             ================================================= -->
+
+        <section class="ctf-header">
+
+            <div>
+
+                <span class="ctf-kicker">
+                    WAR ROOM
+                </span>
+
+                <h1>
+                    CTF MANAGEMENT
+                </h1>
+
+                <p>
+                    Manage challenges, answer keys and points.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             EVENT TYPE
+             ================================================= -->
+
+        <section class="ctf-section">
+
+            <div class="ctf-section-heading">
+
+                <div>
+
+                    <span>
+                        STEP 01
+                    </span>
+
+                    <h2>
+                        SELECT EVENT
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="ctf-event-grid">
+
+
+                <!-- =================================================
+                     WORKSHOP
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-event-card active"
+                    data-event="workshop"
+                >
+
+                    <div class="ctf-card-icon">
+                        W
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            WORKSHOP
+                        </strong>
+
+                        <small>
+                            Manage Workshop CTF
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     HACKATHON
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-event-card"
+                    data-event="hackathon"
+                >
+
+                    <div class="ctf-card-icon">
+                        H
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            HACKATHON
+                        </strong>
+
+                        <small>
+                            Manage Hackathon CTF
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DOMAIN SELECTION
+             ================================================= -->
+
+        <section class="ctf-section">
+
+            <div class="ctf-section-heading">
+
+                <div>
+
+                    <span>
+                        STEP 02
+                    </span>
+
+                    <h2>
+                        SELECT DOMAIN
+                    </h2>
+
+                </div>
+
+
+                <div class="ctf-selected-event">
+
+                    EVENT:
+
+                    <strong id="selectedEvent">
+                        WORKSHOP
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="ctf-domain-grid">
+
+
+                <!-- =================================================
+                     CEH
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-domain-card active"
+                    data-domain="ceh"
+                >
+
+                    <div class="ctf-domain-icon ceh">
+                        CEH
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            CEH
+                        </strong>
+
+                        <small>
+                            Ethical Hacking Challenges
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     VAPT
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-domain-card"
+                    data-domain="vapt"
+                >
+
+                    <div class="ctf-domain-icon vapt">
+                        V
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            VAPT
+                        </strong>
+
+                        <small>
+                            Vulnerability Assessment
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     SOC
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-domain-card"
+                    data-domain="soc"
+                >
+
+                    <div class="ctf-domain-icon soc">
+                        S
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            SOC
+                        </strong>
+
+                        <small>
+                            Security Operations
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     DIGITAL FORENSICS
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-domain-card"
+                    data-domain="digital-forensics"
+                >
+
+                    <div class="ctf-domain-icon df">
+                        DF
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            DIGITAL FORENSICS
+                        </strong>
+
+                        <small>
+                            Forensic Investigation
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CHALLENGE CATEGORY
+             ================================================= -->
+
+        <section class="ctf-section">
+
+            <div class="ctf-section-heading">
+
+                <div>
+
+                    <span>
+                        STEP 03
+                    </span>
+
+                    <h2>
+                        CHALLENGE CATEGORY
+                    </h2>
+
+                </div>
+
+
+                <div class="ctf-selected-event">
+
+                    DOMAIN:
+
+                    <strong id="selectedDomain">
+                        CEH
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CATEGORY GRID
+
+                 ctf.js dynamically changes this section
+                 according to selected domain.
+
+                 CEH:
+                 - Steganography
+                 - Wireshark
+                 - Event Logs
+
+                 VAPT:
+                 - Test Cases
+                 - URL Redirection
+                 - Broken Link Hijack
+                 - File Upload
+                 - Error Bypass
+                 ================================================= -->
+
+            <div class="ctf-category-grid">
+
+
+                <!-- =================================================
+                     STEGANOGRAPHY
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-category-card active"
+                    data-category="steganography"
+                >
+
+                    <div class="ctf-category-number">
+                        01
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            STEGANOGRAPHY
+                        </strong>
+
+                        <small>
+                            20 Challenges
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     WIRESHARK
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-category-card"
+                    data-category="wireshark"
+                >
+
+                    <div class="ctf-category-number">
+                        02
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            WIRESHARK
+                        </strong>
+
+                        <small>
+                            7 Challenges
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     EVENT LOGS
+                     ================================================= -->
+
+                <button
+                    type="button"
+                    class="ctf-category-card"
+                    data-category="event-logs"
+                >
+
+                    <div class="ctf-category-number">
+                        03
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            EVENT LOGS
+                        </strong>
+
+                        <small>
+                            10 Challenges
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CHALLENGES
+             ================================================= -->
+
+        <section class="ctf-section">
+
+
+            <div class="ctf-challenges-header">
+
+                <div>
+
+                    <span>
+                        CHALLENGES
+                    </span>
+
+                    <h2 id="challengeTitle">
+                        STEGANOGRAPHY
+                    </h2>
+
+                </div>
+
+
+                <div class="ctf-challenge-count">
+
+                    <strong id="challengeCount">
+                        20
+                    </strong>
+
+                    <small id="challengeCountLabel">
+                        CHALLENGES
+                    </small>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CHALLENGE LIST
+
+                 CEH:
+                 Multiple challenge cards are generated.
+
+                 VAPT:
+                 One flag card is generated for each category.
+                 ================================================= -->
+
+            <div class="ctf-challenge-list">
+
+                <!-- Challenge / Flag cards are generated by ctf.js -->
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         ANSWER KEY / FLAG MODAL
+         ===================================================== -->
+
+    <div
+        class="ctf-key-modal"
+        id="ctfKeyModal"
+        aria-hidden="true"
+    >
+
+
+        <!-- =================================================
+             MODAL BACKDROP
+             ================================================= -->
+
+        <div
+            class="ctf-key-modal-backdrop"
+            data-close-key-modal
+        ></div>
+
+
+
+        <!-- =================================================
+             MODAL CARD
+             ================================================= -->
+
+        <div
+            class="ctf-key-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ctfKeyModalTitle"
+        >
+
+
+            <!-- CLOSE BUTTON -->
+
+            <button
+                type="button"
+                class="ctf-key-modal-close"
+                id="ctfKeyModalClose"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+
+
+            <!-- MODAL LABEL -->
+
+            <div class="ctf-key-modal-label">
+                ANSWER KEY
+            </div>
+
+
+
+            <!-- MODAL TITLE -->
+
+            <h2 id="ctfKeyModalTitle">
+                ENTER ANSWER KEY
+            </h2>
+
+
+
+            <!-- =================================================
+                 VAPT:
+                 This becomes SUBMIT THE FLAG through ctf.js
+                 ================================================= -->
+
+            <p id="ctfKeyModalChallenge">
+                SUBMIT THE FLAG
+            </p>
+
+
+
+            <!-- =================================================
+                 CHALLENGE META
+                 ================================================= -->
+
+            <div class="ctf-key-modal-meta">
+
+                <span id="ctfKeyModalEvent">
+                    WORKSHOP
+                </span>
+
+                <span>
+                    •
+                </span>
+
+                <span id="ctfKeyModalDomain">
+                    CEH
+                </span>
+
+                <span>
+                    •
+                </span>
+
+                <span id="ctfKeyModalCategory">
+                    STEGANOGRAPHY
+                </span>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ANSWER KEY INPUT
+                 ================================================= -->
+
+            <label
+                class="ctf-key-input-label"
+                for="ctfAnswerKey"
+            >
+                ANSWER KEY
+            </label>
+
+
+            <input
+                type="text"
+                id="ctfAnswerKey"
+                class="ctf-key-input"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Enter answer key..."
+            >
+
+
+
+            <!-- =================================================
+                 ERROR MESSAGE
+                 ================================================= -->
+
+            <div
+                class="ctf-key-error"
+                id="ctfKeyError"
+                role="alert"
+            ></div>
+
+
+
+            <!-- =================================================
+                 MODAL ACTIONS
+                 ================================================= -->
+
+            <div class="ctf-key-modal-actions">
+
+
+                <!-- CANCEL -->
+
+                <button
+                    type="button"
+                    class="ctf-modal-cancel"
+                    id="ctfKeyCancel"
+                >
+                    CANCEL
+                </button>
+
+
+
+                <!-- SAVE -->
+
+                <button
+                    type="button"
+                    class="ctf-modal-save"
+                    id="ctfKeySave"
+                >
+                    SAVE
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CTF JAVASCRIPT
+         ===================================================== -->
+
+        <script src="/js/warroom-modal.js?v=2"></script>
+<script src="/js/ctf.js?v=2"></script>
+
+
+</body>
+
+</html>

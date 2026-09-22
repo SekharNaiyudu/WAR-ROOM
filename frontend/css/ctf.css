@@ -1,0 +1,2442 @@
+/* =========================================================
+   WAR ROOM — CTF MANAGEMENT
+   MASTER DASHBOARD THEME
+   RED + BLACK NEUMORPHISM
+   ========================================================= */
+
+:root {
+    --dashboard-black: #070707;
+    --dashboard-black-2: #0d0d0d;
+    --dashboard-black-3: #131313;
+
+    --dashboard-red: #e50914;
+    --dashboard-red-light: #ff2634;
+    --dashboard-red-dark: #7d080d;
+
+    --dashboard-white: #f7f7f7;
+    --dashboard-text: #dedede;
+    --dashboard-muted: #777;
+
+    --dashboard-border: rgba(229, 9, 20, .22);
+
+    --dashboard-shadow-dark: #020202;
+    --dashboard-shadow-light: rgba(255, 255, 255, .025);
+
+    --ctf-radius-large: 22px;
+    --ctf-radius-medium: 18px;
+    --ctf-radius-small: 12px;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 85% 8%,
+            rgba(229, 9, 20, .055),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 10% 85%,
+            rgba(229, 9, 20, .025),
+            transparent 28%
+        ),
+        #070707;
+
+    color: #ffffff;
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.ctf-page {
+    width: 100%;
+    min-height: 100vh;
+
+    padding:
+        42px
+        52px
+        90px;
+
+    background:
+        radial-gradient(
+            circle at 92% 5%,
+            rgba(229, 9, 20, .075),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 5% 90%,
+            rgba(229, 9, 20, .025),
+            transparent 25%
+        ),
+        #070707;
+
+    color: #ffffff;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.ctf-header {
+    position: relative;
+
+    width: 100%;
+    min-height: 170px;
+
+    padding:
+        38px
+        38px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .045);
+
+    border-radius:
+        var(--ctf-radius-large);
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515 0%,
+            #101010 48%,
+            #090909 100%
+        );
+
+    box-shadow:
+        14px 14px 32px #020202,
+        -8px -8px 22px rgba(255, 255, 255, .018);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   HEADER RED ACCENT
+   ========================================================= */
+
+.ctf-header::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 36px;
+
+    width: 230px;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--dashboard-red-light),
+            var(--dashboard-red),
+            transparent
+        );
+
+    box-shadow:
+        0 0 16px
+        rgba(229, 9, 20, .55);
+}
+
+
+/* =========================================================
+   HEADER RED GLOW
+   ========================================================= */
+
+.ctf-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    top: -170px;
+    right: -100px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(229, 9, 20, .11),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HEADER CONTENT
+   ========================================================= */
+
+.ctf-header > div {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   KICKER
+   ========================================================= */
+
+.ctf-kicker {
+    display: block;
+
+    color:
+        var(--dashboard-red-light);
+
+    font-size: 11px;
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   MAIN TITLE
+   ========================================================= */
+
+.ctf-header h1 {
+    margin:
+        13px 0 0;
+
+    color:
+        #ffffff !important;
+
+    font-size: 38px;
+    font-weight: 900;
+
+    line-height: 1.08;
+
+    letter-spacing: 1.2px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   HEADER DESCRIPTION
+   ========================================================= */
+
+.ctf-header p {
+    margin:
+        12px 0 0;
+
+    max-width: 650px;
+
+    color:
+        #777 !important;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.ctf-section {
+    position: relative;
+
+    width: 100%;
+
+    margin-top: 42px;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.ctf-section-heading {
+    width: 100%;
+
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 22px;
+}
+
+
+.ctf-section-heading > div:first-child {
+    min-width: 0;
+}
+
+
+/* =========================================================
+   STEP NUMBER
+   ========================================================= */
+
+.ctf-section-heading > div:first-child > span {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    letter-spacing: 3.5px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   SECTION TITLE
+   ========================================================= */
+
+.ctf-section-heading h2 {
+    margin: 0;
+
+    color:
+        #ffffff !important;
+
+    font-size: 26px;
+    font-weight: 900;
+
+    line-height: 1.1;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   EVENT / DOMAIN LABEL
+   ========================================================= */
+
+.ctf-selected-event {
+    flex-shrink: 0;
+
+    padding:
+        11px
+        16px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .055);
+
+    border-radius:
+        11px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #090909
+        );
+
+    box-shadow:
+        6px 6px 14px #020202,
+        -3px -3px 9px
+        rgba(255, 255, 255, .015);
+
+    color:
+        #666 !important;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    letter-spacing: 1.7px;
+
+    text-transform: uppercase;
+}
+
+
+.ctf-selected-event strong {
+    margin-left: 5px;
+
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   STEP 01
+   EVENT GRID
+   LARGE CARDS
+   ========================================================= */
+
+.ctf-event-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 28px;
+}
+
+
+/* =========================================================
+   WORKSHOP / HACKATHON CARD
+   ========================================================= */
+
+.ctf-event-card {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 220px;
+
+    padding:
+        34px;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center !important;
+
+    justify-content: flex-start !important;
+
+    gap: 26px !important;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .055);
+
+    border-radius:
+        var(--ctf-radius-large);
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            #161616 0%,
+            #101010 48%,
+            #090909 100%
+        );
+
+    box-shadow:
+        14px 14px 30px #020202,
+        -9px -9px 22px
+        rgba(255, 255, 255, .018);
+
+    color:
+        #ffffff !important;
+
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease,
+        background .22s ease;
+}
+
+
+/* =========================================================
+   EVENT TOP RED LINE
+   ========================================================= */
+
+.ctf-event-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 38px;
+
+    width: 145px;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--dashboard-red),
+            rgba(229, 9, 20, .35),
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px
+        rgba(229, 9, 20, .35);
+}
+
+
+/* =========================================================
+   EVENT CARD HOVER
+   ========================================================= */
+
+.ctf-event-card:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(229, 9, 20, .38);
+
+    box-shadow:
+        16px 16px 34px #020202,
+        -9px -9px 22px
+        rgba(255, 255, 255, .02),
+        0 0 28px
+        rgba(229, 9, 20, .06);
+}
+
+
+/* =========================================================
+   EVENT ACTIVE
+   ========================================================= */
+
+.ctf-event-card.active {
+    border-color:
+        var(--dashboard-red);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(229, 9, 20, .14),
+            rgba(229, 9, 20, .035) 42%,
+            #090909 100%
+        );
+
+    box-shadow:
+        0 0 30px
+        rgba(229, 9, 20, .10),
+
+        14px 14px 30px #020202,
+
+        inset 0 1px 0
+        rgba(255, 255, 255, .018);
+}
+
+
+/* =========================================================
+   ACTIVE TOP LINE
+   ========================================================= */
+
+.ctf-event-card.active::before {
+    width: 190px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--dashboard-red-light),
+            var(--dashboard-red),
+            transparent
+        );
+
+    box-shadow:
+        0 0 17px
+        rgba(229, 9, 20, .58);
+}
+
+
+/* =========================================================
+   EVENT ICON
+   ========================================================= */
+
+.ctf-card-icon {
+    width: 78px;
+    height: 78px;
+
+    flex:
+        0 0 78px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, .34);
+
+    border-radius: 19px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1b1b1b,
+            #090909
+        );
+
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 25px;
+    font-weight: 900;
+
+    box-shadow:
+        8px 8px 17px #020202,
+        -5px -5px 12px
+        rgba(255, 255, 255, .018);
+}
+
+
+.ctf-event-card.active
+.ctf-card-icon {
+    border-color:
+        rgba(229, 9, 20, .70);
+
+    color:
+        #ffffff !important;
+
+    box-shadow:
+        0 0 20px
+        rgba(229, 9, 20, .13),
+
+        8px 8px 17px #020202,
+
+        -5px -5px 12px
+        rgba(255, 255, 255, .018);
+}
+
+
+/* =========================================================
+   EVENT TEXT WRAPPER
+   THIS FIXES SIDE-BY-SIDE TEXT
+   ========================================================= */
+
+.ctf-event-card > div:last-child {
+    min-width: 0;
+
+    flex:
+        1 1 auto;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+
+    justify-content: center !important;
+}
+
+
+/* =========================================================
+   EVENT TITLE
+   ========================================================= */
+
+.ctf-event-card strong {
+    display: block !important;
+
+    width: 100%;
+
+    margin: 0 !important;
+
+    color:
+        #ffffff !important;
+
+    font-size: 26px !important;
+
+    font-weight: 900 !important;
+
+    line-height: 1.1 !important;
+
+    letter-spacing: 1.5px !important;
+
+    white-space: normal !important;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   EVENT DESCRIPTION
+   ========================================================= */
+
+.ctf-event-card small {
+    display: block !important;
+
+    width: 100%;
+
+    margin:
+        10px 0 0 !important;
+
+    color:
+        #777 !important;
+
+    font-size: 12px !important;
+
+    font-weight: 500 !important;
+
+    line-height: 1.5 !important;
+
+    white-space: normal !important;
+}
+
+
+/* =========================================================
+   STEP 02
+   DOMAIN GRID
+   SMALL CARDS
+   ========================================================= */
+
+.ctf-domain-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+}
+
+
+/* =========================================================
+   DOMAIN CARD
+   ========================================================= */
+
+.ctf-domain-card {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 145px;
+
+    padding: 20px;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+
+    justify-content: center !important;
+
+    gap: 0 !important;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .045);
+
+    border-radius:
+        var(--ctf-radius-medium);
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #101010 50%,
+            #090909
+        );
+
+    box-shadow:
+        9px 9px 20px #020202,
+        -6px -6px 16px
+        rgba(255, 255, 255, .017);
+
+    color:
+        #ffffff !important;
+
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+
+/* =========================================================
+   DOMAIN RED LINE
+   ========================================================= */
+
+.ctf-domain-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 20px;
+
+    width: 70px;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--dashboard-red),
+            transparent
+        );
+
+    opacity: .65;
+}
+
+
+/* =========================================================
+   DOMAIN HOVER
+   ========================================================= */
+
+.ctf-domain-card:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(229, 9, 20, .30);
+
+    box-shadow:
+        11px 11px 23px #020202,
+        -7px -7px 17px
+        rgba(255, 255, 255, .018),
+        0 0 18px
+        rgba(229, 9, 20, .04);
+}
+
+
+/* =========================================================
+   DOMAIN ACTIVE
+   ========================================================= */
+
+.ctf-domain-card.active {
+    border-color:
+        var(--dashboard-red);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(229, 9, 20, .105),
+            rgba(229, 9, 20, .025),
+            #090909
+        );
+
+    box-shadow:
+        0 0 24px
+        rgba(229, 9, 20, .075),
+
+        9px 9px 20px #020202;
+}
+
+
+.ctf-domain-card.active::before {
+    width: 105px;
+
+    opacity: 1;
+
+    box-shadow:
+        0 0 10px
+        rgba(229, 9, 20, .4);
+}
+
+
+/* =========================================================
+   DOMAIN ICON
+   ========================================================= */
+
+.ctf-domain-icon {
+    width: 48px;
+    height: 48px;
+
+    flex:
+        0 0 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 14px;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, .28);
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #090909
+        );
+
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 11px;
+    font-weight: 900;
+
+    box-shadow:
+        5px 5px 11px #020202,
+        -3px -3px 8px
+        rgba(255, 255, 255, .015);
+}
+
+
+.ctf-domain-card.active
+.ctf-domain-icon {
+    border-color:
+        rgba(229, 9, 20, .55);
+
+    color:
+        #ffffff !important;
+
+    box-shadow:
+        0 0 14px
+        rgba(229, 9, 20, .08),
+
+        5px 5px 11px #020202,
+
+        -3px -3px 8px
+        rgba(255, 255, 255, .015);
+}
+
+
+/* =========================================================
+   DOMAIN TEXT WRAPPER
+   ========================================================= */
+
+.ctf-domain-card > div:last-child {
+    min-width: 0;
+
+    width: 100%;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+}
+
+
+/* =========================================================
+   DOMAIN TITLE
+   ========================================================= */
+
+.ctf-domain-card strong {
+    display: block !important;
+
+    width: 100%;
+
+    margin: 0 !important;
+
+    color:
+        #ffffff !important;
+
+    font-size: 16px !important;
+
+    font-weight: 900 !important;
+
+    line-height: 1.2 !important;
+
+    letter-spacing: 1px !important;
+
+    white-space: normal !important;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   DOMAIN DESCRIPTION
+   ========================================================= */
+
+.ctf-domain-card small {
+    display: block !important;
+
+    width: 100%;
+
+    margin:
+        6px 0 0 !important;
+
+    color:
+        #666 !important;
+
+    font-size: 9px !important;
+
+    font-weight: 500 !important;
+
+    line-height: 1.4 !important;
+
+    white-space: normal !important;
+}
+
+
+/* =========================================================
+   STEP 03
+   CATEGORY GRID
+   ========================================================= */
+
+.ctf-category-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+}
+
+
+/* =========================================================
+   CATEGORY CARD
+   ========================================================= */
+
+.ctf-category-card {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 135px;
+
+    padding: 22px;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    justify-content: space-between !important;
+
+    align-items: flex-start !important;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .045);
+
+    border-radius:
+        var(--ctf-radius-medium);
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0a0a0a
+        );
+
+    box-shadow:
+        8px 8px 18px #020202,
+        -6px -6px 14px
+        rgba(255, 255, 255, .017);
+
+    color:
+        #ffffff !important;
+
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+
+.ctf-category-card:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(229, 9, 20, .30);
+}
+
+
+.ctf-category-card.active {
+    border-color:
+        var(--dashboard-red);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(229, 9, 20, .10),
+            #0a0a0a
+        );
+
+    box-shadow:
+        0 0 22px
+        rgba(229, 9, 20, .065),
+
+        8px 8px 18px #020202;
+}
+
+
+/* =========================================================
+   CATEGORY NUMBER
+   ========================================================= */
+
+.ctf-category-number {
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   CATEGORY TEXT WRAPPER
+   ========================================================= */
+
+.ctf-category-card > div:last-child {
+    width: 100%;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+}
+
+
+/* =========================================================
+   CATEGORY TITLE
+   ========================================================= */
+
+.ctf-category-card strong {
+    display: block !important;
+
+    margin:
+        15px 0 0 !important;
+
+    color:
+        #ffffff !important;
+
+    font-size: 16px !important;
+
+    font-weight: 900 !important;
+
+    line-height: 1.2 !important;
+
+    letter-spacing: 1px !important;
+
+    white-space: normal !important;
+}
+
+
+/* =========================================================
+   CATEGORY DESCRIPTION
+   ========================================================= */
+
+.ctf-category-card small {
+    display: block !important;
+
+    margin:
+        6px 0 0 !important;
+
+    color:
+        #666 !important;
+
+    font-size: 9px !important;
+
+    line-height: 1.4 !important;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.ctf-empty-state {
+    width: 100%;
+
+    min-height: 150px;
+
+    padding: 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    border:
+        1px dashed
+        rgba(229, 9, 20, .20);
+
+    border-radius:
+        var(--ctf-radius-medium);
+
+    background:
+        linear-gradient(
+            145deg,
+            #121212,
+            #090909
+        );
+
+    box-shadow:
+        inset 5px 5px 12px #020202,
+        inset -4px -4px 10px
+        rgba(255, 255, 255, .012);
+
+    text-align: center;
+}
+
+
+.ctf-empty-state strong {
+    color:
+        #ffffff;
+
+    font-size: 13px;
+
+    letter-spacing: 1.2px;
+}
+
+
+.ctf-empty-state small {
+    color:
+        #666;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   CHALLENGE HEADER
+   ========================================================= */
+
+.ctf-challenges-header {
+    width: 100%;
+
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 18px;
+}
+
+
+.ctf-challenges-header
+> div:first-child
+> span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+}
+
+
+.ctf-challenges-header h2 {
+    margin: 0;
+
+    color:
+        #ffffff !important;
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.2px;
+}
+
+
+/* =========================================================
+   CHALLENGE COUNT
+   ========================================================= */
+
+.ctf-challenge-count {
+    min-width: 105px;
+
+    padding:
+        12px 16px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, .20);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #141414,
+            #090909
+        );
+
+    box-shadow:
+        5px 5px 12px #020202,
+        -3px -3px 9px
+        rgba(255, 255, 255, .015);
+}
+
+
+.ctf-challenge-count strong {
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 20px;
+
+    font-weight: 900;
+}
+
+
+.ctf-challenge-count small {
+    color:
+        #666 !important;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   CHALLENGE LIST
+   ========================================================= */
+
+.ctf-challenge-list {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+/* =========================================================
+   CHALLENGE CARD
+   ========================================================= */
+
+.ctf-challenge-card {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 110px;
+
+    padding:
+        22px 24px;
+
+    display: grid;
+
+    grid-template-columns:
+        55px
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 20px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .045);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #141414,
+            #090909
+        );
+
+    box-shadow:
+        8px 8px 18px #020202,
+        -5px -5px 12px
+        rgba(255, 255, 255, .015);
+
+    overflow: hidden;
+}
+
+
+.ctf-challenge-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 25px;
+
+    width: 70px;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--dashboard-red),
+            transparent
+        );
+}
+
+
+/* =========================================================
+   CHALLENGE NUMBER
+   ========================================================= */
+
+.ctf-challenge-number {
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   CHALLENGE CONTENT
+   ========================================================= */
+
+.ctf-challenge-content {
+    min-width: 0;
+}
+
+
+.ctf-challenge-content span {
+    color:
+        var(--dashboard-red-light) !important;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.8px;
+}
+
+
+.ctf-challenge-content h3 {
+    margin:
+        5px 0 0;
+
+    color:
+        #ffffff !important;
+
+    font-size: 16px;
+
+    font-weight: 900;
+}
+
+
+.ctf-challenge-content p {
+    margin:
+        5px 0 0;
+
+    color:
+        #666 !important;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   CHALLENGE ACTIONS
+   ========================================================= */
+
+.ctf-challenge-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+}
+
+
+/* =========================================================
+   ENTER KEY / EDIT KEY
+   ========================================================= */
+
+.ctf-key-button {
+    min-width: 115px;
+
+    padding:
+        11px 15px;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, .30);
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #090909
+        );
+
+    color:
+        #ffffff !important;
+
+    font-family: inherit;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    box-shadow:
+        4px 4px 10px #020202,
+        -3px -3px 8px
+        rgba(255, 255, 255, .012);
+
+    transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        color .18s ease;
+}
+
+
+.ctf-key-button:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        var(--dashboard-red);
+
+    color:
+        var(--dashboard-red-light) !important;
+
+    box-shadow:
+        0 0 15px
+        rgba(229, 9, 20, .10),
+
+        4px 4px 10px #020202;
+}
+
+
+.ctf-key-button.has-key {
+    border-color:
+        rgba(229, 9, 20, .55);
+
+    color:
+        var(--dashboard-red-light) !important;
+}
+
+
+/* =========================================================
+   KEY MODAL
+   ========================================================= */
+
+.ctf-key-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    background:
+        rgba(0, 0, 0, .78);
+
+    backdrop-filter:
+        blur(8px);
+}
+
+
+.ctf-key-modal.open {
+    display: flex;
+}
+
+
+/* =========================================================
+   MODAL PANEL
+   ========================================================= */
+
+.ctf-key-modal-content {
+    position: relative;
+
+    width: min(
+        520px,
+        100%
+    );
+
+    padding: 30px;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, .28);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171717,
+            #0b0b0b
+        );
+
+    box-shadow:
+        18px 18px 40px #020202,
+        -8px -8px 24px
+        rgba(255, 255, 255, .018),
+        0 0 40px
+        rgba(229, 9, 20, .08);
+
+    color:
+        #ffffff;
+}
+
+
+.ctf-key-modal-content::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 28px;
+
+    width: 150px;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--dashboard-red-light),
+            var(--dashboard-red),
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px
+        rgba(229, 9, 20, .55);
+}
+
+
+/* =========================================================
+   MODAL TITLE
+   ========================================================= */
+
+.ctf-key-modal-title {
+    margin: 0;
+
+    color:
+        #ffffff !important;
+
+    font-size: 22px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+
+.ctf-key-modal-subtitle {
+    margin:
+        8px 0 0;
+
+    color:
+        #666 !important;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MODAL CLOSE
+   ========================================================= */
+
+.ctf-key-modal-close {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, .25);
+
+    border-radius: 10px;
+
+    background:
+        #101010;
+
+    color:
+        #888;
+
+    cursor: pointer;
+}
+
+
+.ctf-key-modal-close:hover {
+    color:
+        #ffffff;
+
+    border-color:
+        var(--dashboard-red);
+}
+
+
+/* =========================================================
+   MODAL META
+   ========================================================= */
+
+.ctf-key-modal-meta {
+    margin-top: 20px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+.ctf-key-modal-meta span {
+    padding:
+        7px 10px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .045);
+
+    border-radius: 8px;
+
+    background:
+        #0d0d0d;
+
+    color:
+        #777;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: .8px;
+}
+
+
+.ctf-key-modal-meta
+span:first-child,
+.ctf-key-modal-meta
+span:last-child {
+    color:
+        var(--dashboard-red-light);
+}
+
+
+/* =========================================================
+   KEY INPUT LABEL
+   ========================================================= */
+
+.ctf-key-input-label {
+    display: block;
+
+    margin:
+        24px 0 8px;
+
+    color:
+        #888 !important;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .12em;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   KEY INPUT
+   ========================================================= */
+
+.ctf-key-input {
+    width: 100%;
+
+    height: 48px;
+
+    padding:
+        0 15px;
+
+    outline: none;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .07);
+
+    border-radius: 12px;
+
+    color:
+        var(--dashboard-white) !important;
+
+    background:
+        #090909;
+
+    box-shadow:
+        inset 5px 5px 12px #020202,
+        inset -4px -4px 9px
+        rgba(255, 255, 255, .018);
+}
+
+
+.ctf-key-input:focus {
+    border-color:
+        rgba(229, 9, 20, .65);
+
+    box-shadow:
+        inset 5px 5px 12px #020202,
+        0 0 17px
+        rgba(229, 9, 20, .10);
+}
+
+
+.ctf-key-input::placeholder {
+    color:
+        #4f4f4f;
+}
+
+
+/* =========================================================
+   KEY ERROR
+   ========================================================= */
+
+.ctf-key-error {
+    min-height: 18px;
+
+    margin-top: 8px;
+
+    color:
+        #ff4b55 !important;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+   ========================================================= */
+
+.ctf-key-modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 8px;
+}
+
+
+/* =========================================================
+   MODAL CANCEL
+   ========================================================= */
+
+.ctf-modal-cancel {
+    padding:
+        12px 18px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, .06);
+
+    border-radius: 10px;
+
+    color:
+        #888 !important;
+
+    background:
+        #101010;
+
+    font-family: inherit;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+.ctf-modal-cancel:hover {
+    color:
+        #ffffff !important;
+
+    border-color:
+        rgba(255, 255, 255, .15);
+}
+
+
+/* =========================================================
+   MODAL SAVE
+   ========================================================= */
+
+.ctf-modal-save {
+    padding:
+        12px 22px;
+
+    border:
+        1px solid
+        rgba(255, 55, 65, .5);
+
+    border-radius: 10px;
+
+    color:
+        #ffffff !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ed1823,
+            #a90911
+        );
+
+    font-family: inherit;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 18px
+        rgba(229, 9, 20, .15),
+
+        5px 5px 11px #020202;
+}
+
+
+.ctf-modal-save:hover {
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 0 24px
+        rgba(229, 9, 20, .28),
+
+        5px 5px 11px #020202;
+}
+
+
+.ctf-modal-save:disabled {
+    opacity: .55;
+
+    cursor: wait;
+}
+
+
+/* =========================================================
+   SAVE SUCCESS
+   ========================================================= */
+
+.ctf-save-success {
+    animation:
+        ctfSuccessIn .25s ease forwards;
+}
+
+
+@keyframes ctfSuccessIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.ctf-event-card:focus-visible,
+.ctf-domain-card:focus-visible,
+.ctf-category-card:focus-visible,
+.ctf-key-button:focus-visible,
+.ctf-modal-cancel:focus-visible,
+.ctf-modal-save:focus-visible,
+.ctf-key-modal-close:focus-visible {
+
+    outline:
+        1px solid
+        var(--dashboard-red-light);
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — 1200
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .ctf-page {
+        padding:
+            36px
+            32px
+            70px;
+    }
+
+
+    .ctf-domain-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — 900
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .ctf-event-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .ctf-event-card {
+        min-height: 190px;
+    }
+
+
+    .ctf-category-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — 700
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .ctf-page {
+        padding:
+            28px
+            20px
+            55px;
+    }
+
+
+    .ctf-header {
+        min-height: 150px;
+
+        padding:
+            30px
+            24px;
+    }
+
+
+    .ctf-header h1 {
+        font-size: 30px;
+    }
+
+
+    .ctf-section-heading,
+    .ctf-challenges-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .ctf-selected-event {
+        align-self:
+            flex-start;
+    }
+
+
+    .ctf-domain-grid,
+    .ctf-category-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .ctf-challenge-card {
+        grid-template-columns:
+            42px
+            minmax(0, 1fr);
+    }
+
+
+    .ctf-challenge-actions {
+        grid-column:
+            2;
+
+        justify-content:
+            flex-start;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — 500
+   ========================================================= */
+
+@media (max-width: 500px) {
+
+    .ctf-page {
+        padding:
+            20px
+            14px
+            45px;
+    }
+
+
+    .ctf-header {
+        min-height: 145px;
+
+        padding:
+            26px
+            20px;
+    }
+
+
+    .ctf-header h1 {
+        font-size: 26px;
+    }
+
+
+    .ctf-section-heading h2 {
+        font-size: 22px;
+    }
+
+
+    .ctf-event-card {
+        min-height: 170px;
+
+        padding:
+            25px;
+
+        gap: 18px !important;
+    }
+
+
+    .ctf-card-icon {
+        width: 58px;
+        height: 58px;
+
+        flex-basis:
+            58px;
+
+        font-size: 19px;
+    }
+
+
+    .ctf-event-card strong {
+        font-size:
+            20px !important;
+    }
+
+
+    .ctf-event-card small {
+        font-size:
+            10px !important;
+    }
+
+
+    .ctf-domain-card {
+        min-height:
+            125px;
+    }
+
+
+    .ctf-challenge-card {
+        padding:
+            18px;
+    }
+
+
+    .ctf-key-modal {
+        padding:
+            15px;
+    }
+
+
+    .ctf-key-modal-content {
+        padding:
+            25px 20px;
+    }
+
+}
+
+/* =========================================================
+   BACK TO ADMIN DASHBOARD
+   ========================================================= */
+
+.ctf-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    width: fit-content;
+
+    margin-bottom: 24px;
+    padding: 8px 14px 8px 8px;
+
+    text-decoration: none;
+
+    color: #dedede;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #090909
+        );
+
+    border: 1px solid rgba(229, 9, 20, 0.22);
+    border-radius: 12px;
+
+    box-shadow:
+        -5px -5px 12px rgba(255, 255, 255, 0.018),
+         6px  6px 14px rgba(0, 0, 0, 0.75);
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   BACK ARROW
+   ========================================================= */
+
+.ctf-back-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    border: 1px solid rgba(229, 9, 20, 0.35);
+    border-radius: 9px;
+
+    color: #ff2634;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171717,
+            #090909
+        );
+
+    box-shadow:
+        inset 2px 2px 5px rgba(255, 255, 255, 0.025),
+        inset -3px -3px 7px rgba(0, 0, 0, 0.85),
+        0 5px 12px rgba(0, 0, 0, 0.55);
+
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1;
+
+    transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* =========================================================
+   BACK TEXT
+   ========================================================= */
+
+.ctf-back-text {
+    color: #777;
+
+    transition: color 0.25s ease;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.ctf-back-btn:hover {
+    color: #ffffff;
+
+    border-color: rgba(229, 9, 20, 0.65);
+
+    box-shadow:
+        0 0 20px rgba(229, 9, 20, 0.10),
+        -5px -5px 12px rgba(255, 255, 255, 0.02),
+         7px  7px 16px rgba(0, 0, 0, 0.8);
+
+    transform: translateX(-3px);
+}
+
+
+.ctf-back-btn:hover .ctf-back-arrow {
+    color: #ffffff;
+
+    border-color: #e50914;
+
+    box-shadow:
+        0 0 14px rgba(229, 9, 20, 0.22),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.025),
+        inset -3px -3px 7px rgba(0, 0, 0, 0.85);
+}
+
+
+.ctf-back-btn:hover .ctf-back-text {
+    color: #dedede;
+}
+
+
+/* =========================================================
+   ACTIVE / CLICK
+   ========================================================= */
+
+.ctf-back-btn:active {
+    transform: translateX(-3px) scale(0.98);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .ctf-back-btn {
+        margin-bottom: 18px;
+        padding: 7px 12px 7px 7px;
+    }
+
+    .ctf-back-arrow {
+        width: 30px;
+        height: 30px;
+    }
+
+}
+body{
+
+    zoom:1.2;
+}

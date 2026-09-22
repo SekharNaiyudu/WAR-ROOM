@@ -1,0 +1,190 @@
+/* =========================================================
+   WAR ROOM — ADMIN SETTINGS
+   SETTINGS.CSS
+   ========================================================= */
+
+.settings-dashboard-content {
+    min-width: 0;
+}
+
+.settings-dashboard-content .dashboard-header h1 {
+    text-transform: uppercase;
+}
+
+.settings-message {
+    display: none;
+    margin: 18px 0 22px;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.06);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.settings-message.show { display: block; }
+.settings-message.success {
+    color: #7af0a8;
+    background: rgba(39,214,125,.07);
+    border-color: rgba(39,214,125,.18);
+}
+.settings-message.error {
+    color: #ff7b83;
+    background: rgba(229,9,20,.08);
+    border-color: rgba(229,9,20,.22);
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.settings-card {
+    min-width: 0;
+    padding: 26px;
+    border: 1px solid rgba(255,255,255,.055);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #151515, #0b0b0b);
+    box-shadow: 10px 10px 22px #030303, -7px -7px 17px rgba(255,255,255,.018);
+}
+
+.settings-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.settings-card-icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    border: 1px solid rgba(229,9,20,.35);
+    background: #0d0d0d;
+    color: #ff1f2d;
+    font-size: 17px;
+    box-shadow: inset 3px 3px 7px #030303;
+}
+
+.settings-card-heading span {
+    color: #ff1f2d;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.settings-card-heading h2 {
+    margin-top: 7px;
+    color: #fff;
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: .7px;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.settings-field label {
+    color: #8c8c8c;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+
+.settings-field input {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    outline: none;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 9px;
+    background: #0d0d0d;
+    color: #fff;
+    font-size: 11px;
+}
+
+.settings-field input::placeholder {
+    color: #666;
+}
+
+.settings-field input:focus {
+    border-color: rgba(229,9,20,.55);
+    box-shadow: 0 0 0 2px rgba(229,9,20,.06);
+}
+
+.settings-button {
+    width: 100%;
+    min-height: 43px;
+    margin-top: 2px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #e50914;
+    border-radius: 9px;
+    background: linear-gradient(145deg, #ff2634, #b7070e);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    cursor: pointer;
+    box-shadow: 0 0 14px rgba(229,9,20,.14);
+}
+
+.settings-button:hover { filter: brightness(1.08); }
+.settings-button:disabled { opacity: .55; cursor: not-allowed; }
+
+.security-note {
+    margin-top: 20px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 16px;
+    background: linear-gradient(145deg, #121212, #0a0a0a);
+    box-shadow: 8px 8px 18px #030303;
+}
+
+.security-note-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(229,9,20,.12);
+    color: #ff1f2d;
+    font-weight: 900;
+}
+
+.security-note strong {
+    color: #fff;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+}
+
+.security-note p {
+    margin-top: 6px;
+    color: #666;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .settings-grid { grid-template-columns: 1fr; }
+}

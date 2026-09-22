@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WAR ROOM — User Leaderboard</title>
+
+    <link
+    rel="stylesheet"
+    href="/css/user-dashboard.css?v=10"
+>
+
+<link
+    rel="stylesheet"
+    href="/css/user-leaderboard.css?v=10"
+>
+
+</head>
+
+<body>
+
+<main class="user-dashboard">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         SAME USER DASHBOARD SIDEBAR
+         ===================================================== -->
+
+    <aside class="user-sidebar">
+
+        <!-- BRAND -->
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                SQ
+            </div>
+
+            <div class="sidebar-brand-name">
+                Syntho<span>Quest</span>
+            </div>
+
+        </div>
+
+
+        <!-- PANEL LABEL -->
+
+        <div class="sidebar-panel-label">
+
+            WAR ROOM
+
+            <span>
+                USER PANEL
+            </span>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
+
+            <button
+                class="sidebar-item"
+                data-section="home"
+                type="button"
+                onclick="window.location.href='/user/dashboard'"
+            >
+
+                <span class="sidebar-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+            <!-- CTF -->
+
+            <button
+                class="sidebar-item"
+                data-section="ctf"
+                type="button"
+                onclick="window.location.href='/user/ctf'"
+            >
+
+                <span class="sidebar-icon">
+                    ⚔
+                </span>
+
+                <span>
+                    CTF
+                </span>
+
+            </button>
+
+
+            <!-- LEADERBOARD -->
+
+            <button
+                class="sidebar-item active"
+                data-section="leaderboard"
+                type="button"
+            >
+
+                <span class="sidebar-icon">
+                    ♛
+                </span>
+
+                <span>
+                    Leaderboard
+                </span>
+
+            </button>
+
+
+            <!-- LOGOUT -->
+
+            <button
+                class="sidebar-item logout-item"
+                data-section="logout"
+                type="button"
+                id="logoutButton"
+            >
+
+                <span class="sidebar-icon">
+                    ⎋
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <section class="dashboard-content">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="dashboard-header">
+
+            <div class="header-left">
+
+                <div class="header-kicker">
+                    WAR ROOM / USER DASHBOARD
+                </div>
+
+                <h1>
+                    <span id="leaderboardEvent">
+                        WORKSHOP
+                    </span>
+
+                    <span class="header-dash">
+                        —
+                    </span>
+
+                    <span
+                        id="leaderboardDomain"
+                        class="header-domain"
+                    >
+                        CEH
+                    </span>
+                </h1>
+
+                <p id="leaderboardSubtitle">
+                    Ranked participants for the selected Workshop domain.
+                </p>
+
+            </div>
+
+
+            <div class="header-right">
+
+
+                <!-- SEARCH -->
+
+                <div class="dashboard-search">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        id="leaderboardSearch"
+                        type="text"
+                        placeholder="Search participants..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <!-- REFRESH -->
+
+                <button
+                    class="header-action-button"
+                    type="button"
+                    id="refreshLeaderboard"
+                >
+
+                    ↻
+                    <span>
+                        Refresh
+                    </span>
+
+                </button>
+
+
+                <!-- PARTICIPANT STATUS -->
+
+                <div class="header-user">
+
+                    <span class="header-status-dot"></span>
+
+                    <div>
+
+                        <strong>
+                            PARTICIPANT
+                        </strong>
+
+                        <small>
+                            ACTIVE
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             LEADERBOARD PANEL
+             ================================================= -->
+
+        <section class="leaderboard-panel">
+
+
+            <!-- TOP KICKER -->
+
+            <div class="leaderboard-kicker">
+                PERFORMANCE
+            </div>
+
+
+            <!-- TITLE -->
+
+            <div class="leaderboard-heading-row">
+
+                <div>
+
+                    <h2 id="leaderboardTitle">
+                        WORKSHOP — CEH
+                    </h2>
+
+                    <p>
+                        Ranked participants for the selected domain.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- DIVIDER -->
+
+            <div class="leaderboard-divider"></div>
+
+
+            <!-- =================================================
+                 SUMMARY CARDS
+                 ================================================= -->
+
+            <div class="summary-grid">
+
+
+                <!-- TOTAL -->
+
+                <article class="summary-card">
+
+                    <span>
+                        TOTAL
+                    </span>
+
+                    <strong id="totalCount">
+                        0
+                    </strong>
+
+                </article>
+
+
+                <!-- TOP SCORE -->
+
+                <article class="summary-card">
+
+                    <span>
+                        TOP SCORE
+                    </span>
+
+                    <strong id="topScore">
+                        0
+                    </strong>
+
+                </article>
+
+
+                <!-- DOMAIN -->
+
+                <article class="summary-card">
+
+                    <span>
+                        DOMAIN
+                    </span>
+
+                    <strong
+                        id="summaryDomain"
+                        class="summary-domain"
+                    >
+                        CEH
+                    </strong>
+
+                </article>
+
+
+                <!-- EVENT -->
+
+                <article class="summary-card">
+
+                    <span>
+                        EVENT
+                    </span>
+
+                    <strong
+                        id="summaryEvent"
+                        class="summary-event"
+                    >
+                        WORKSHOP
+                    </strong>
+
+                </article>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLE
+                 ================================================= -->
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                RANK
+                            </th>
+
+                            <th>
+                                ACCOUNT NAME
+                            </th>
+
+                            <th>
+                                DOMAIN
+                            </th>
+
+                            <th>
+                                POINTS
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="leaderboardBody"
+                    >
+
+                        <tr>
+
+                            <td colspan="4">
+
+                                <div class="empty-state loading-state">
+                                    Loading leaderboard...
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+    </section>
+
+
+</main>
+
+
+<script
+    src="/js/user-leaderboard.js?v=3"
+></script>
+
+</body>
+
+</html>

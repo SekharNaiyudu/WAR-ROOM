@@ -1,0 +1,2059 @@
+/* =========================================================
+   WAR ROOM
+   HACKATHON TEAM AUTHENTICATION
+   USER-HACKATHON.CSS
+   ========================================================= */
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #020304;
+}
+
+
+/* =========================================================
+   BACKGROUND IMAGE
+   ========================================================= */
+
+.war-room-background {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    z-index: -20;
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
+   BACKGROUND OVERLAY
+   ========================================================= */
+
+.page-bg {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: -10;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.08),
+            rgba(0, 0, 0, 0.18)
+        );
+
+}
+
+
+/* =========================================================
+   BACKGROUND VIGNETTE
+   ========================================================= */
+
+.page-bg::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(0, 0, 0, 0.00) 20%,
+            rgba(0, 0, 0, 0.08) 52%,
+            rgba(0, 0, 0, 0.30) 100%
+        );
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
+   RED ATMOSPHERE
+   ========================================================= */
+
+.page-bg::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    background:
+
+        radial-gradient(
+            circle at 10% 72%,
+            rgba(255, 15, 25, 0.10),
+            transparent 25%
+        ),
+
+        radial-gradient(
+            circle at 90% 72%,
+            rgba(255, 15, 25, 0.10),
+            transparent 25%
+        );
+
+    pointer-events: none;
+
+    animation:
+        atmospherePulse
+        7s
+        ease-in-out
+        infinite
+        alternate;
+
+}
+
+
+/* =========================================================
+   SCANLINES
+   ========================================================= */
+
+.scanlines {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: -5;
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.014) 0,
+            rgba(255, 255, 255, 0.014) 1px,
+            transparent 1px,
+            transparent 5px
+        );
+
+}
+
+
+/* =========================================================
+   MOVING HORIZONTAL LIGHT
+   ========================================================= */
+
+.scanlines::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: -30%;
+
+    left: -25%;
+
+    width: 150%;
+
+    height: 20%;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.01) 20%,
+            rgba(255, 255, 255, 0.04) 42%,
+            rgba(255, 20, 30, 0.055) 50%,
+            rgba(255, 255, 255, 0.025) 62%,
+            transparent 100%
+        );
+
+    filter: blur(8px);
+
+    transform: rotate(-3deg);
+
+    opacity: 0;
+
+    animation:
+        movingHorizontalLight
+        9s
+        linear
+        infinite;
+
+}
+
+
+/* =========================================================
+   MOVING VERTICAL LIGHT
+   ========================================================= */
+
+.scanlines::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: -35%;
+
+    width: 28%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 20, 30, 0) 20%,
+            rgba(255, 20, 30, 0.065) 44%,
+            rgba(255, 255, 255, 0.055) 52%,
+            rgba(255, 20, 30, 0.035) 64%,
+            transparent 100%
+        );
+
+    filter: blur(15px);
+
+    transform: skewX(-12deg);
+
+    opacity: 0;
+
+    animation:
+        movingVerticalLight
+        12s
+        ease-in-out
+        infinite;
+
+}
+
+
+/* =========================================================
+   HORIZONTAL LIGHT ANIMATION
+   ========================================================= */
+
+@keyframes movingHorizontalLight {
+
+    0% {
+
+        transform:
+            translateY(-80vh)
+            rotate(-3deg);
+
+        opacity: 0;
+
+    }
+
+    10% {
+
+        opacity: 0.18;
+
+    }
+
+    30% {
+
+        opacity: 0.40;
+
+    }
+
+    50% {
+
+        opacity: 0.58;
+
+    }
+
+    70% {
+
+        opacity: 0.35;
+
+    }
+
+    90% {
+
+        opacity: 0.12;
+
+    }
+
+    100% {
+
+        transform:
+            translateY(180vh)
+            rotate(-3deg);
+
+        opacity: 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   VERTICAL LIGHT ANIMATION
+   ========================================================= */
+
+@keyframes movingVerticalLight {
+
+    0% {
+
+        left: -35%;
+
+        opacity: 0;
+
+    }
+
+    12% {
+
+        opacity: 0.10;
+
+    }
+
+    30% {
+
+        opacity: 0.30;
+
+    }
+
+    48% {
+
+        opacity: 0.45;
+
+    }
+
+    65% {
+
+        opacity: 0.20;
+
+    }
+
+    82% {
+
+        opacity: 0.08;
+
+    }
+
+    100% {
+
+        left: 115%;
+
+        opacity: 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   ATMOSPHERE ANIMATION
+   ========================================================= */
+
+@keyframes atmospherePulse {
+
+    0% {
+
+        opacity: 0.45;
+
+        transform:
+            scale(1);
+
+    }
+
+    50% {
+
+        opacity: 0.75;
+
+        transform:
+            scale(1.03);
+
+    }
+
+    100% {
+
+        opacity: 0.50;
+
+        transform:
+            scale(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.brand {
+
+    position: fixed;
+
+    top: 30px;
+
+    left: 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    z-index: 20;
+
+}
+
+
+.brand::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -15px;
+
+    width: 46px;
+
+    height: 2px;
+
+    background: #ed0b17;
+
+    box-shadow:
+        0 0 12px
+        rgba(237, 11, 23, 0.55);
+
+}
+
+
+.brand-logo {
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    font-weight: 1000;
+
+    letter-spacing: -1px;
+
+}
+
+
+.brand-name {
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+}
+
+
+.brand-name span {
+
+    color: #ffb000;
+
+}
+
+
+/* =========================================================
+   AUTH PAGE
+   ========================================================= */
+
+.auth-page {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        80px 20px 65px;
+
+}
+
+
+/* =========================================================
+   AUTH CARD
+   ========================================================= */
+
+.auth-card {
+
+    position: relative;
+
+    width: min(600px, 100%);
+
+    max-height:
+        calc(100vh - 80px);
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding:
+        32px 48px 30px;
+
+    border:
+        1px solid
+        rgba(237, 11, 23, 0.72);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(5, 8, 11, 0.91),
+            rgba(1, 3, 5, 0.89)
+        );
+
+    box-shadow:
+
+        0 0 45px
+        rgba(0, 0, 0, 0.42),
+
+        inset 0 0 35px
+        rgba(255, 255, 255, 0.018),
+
+        0 0 18px
+        rgba(229, 9, 20, 0.10);
+
+    backdrop-filter:
+        blur(3px);
+
+    z-index: 5;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(229, 9, 20, 0.50)
+        transparent;
+
+    animation:
+        cardGlow
+        6s
+        ease-in-out
+        infinite;
+
+}
+
+
+/* =========================================================
+   CARD SCROLLBAR
+   ========================================================= */
+
+.auth-card::-webkit-scrollbar {
+
+    width: 5px;
+
+}
+
+
+.auth-card::-webkit-scrollbar-track {
+
+    background: transparent;
+
+}
+
+
+.auth-card::-webkit-scrollbar-thumb {
+
+    background:
+        rgba(229, 9, 20, 0.45);
+
+    border-radius: 10px;
+
+}
+
+
+.auth-card::-webkit-scrollbar-thumb:hover {
+
+    background:
+        rgba(229, 9, 20, 0.75);
+
+}
+
+
+/* =========================================================
+   CARD INNER GLOW
+   ========================================================= */
+
+.auth-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 17px;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255, 20, 30, 0.045),
+            transparent 42%
+        );
+
+}
+
+
+/* =========================================================
+   CARD GLOW
+   ========================================================= */
+
+@keyframes cardGlow {
+
+    0% {
+
+        border-color:
+            rgba(237, 11, 23, 0.52);
+
+        box-shadow:
+
+            0 0 45px
+            rgba(0, 0, 0, 0.42),
+
+            inset 0 0 35px
+            rgba(255, 255, 255, 0.018),
+
+            0 0 18px
+            rgba(229, 9, 20, 0.07);
+
+    }
+
+    50% {
+
+        border-color:
+            rgba(237, 11, 23, 0.80);
+
+        box-shadow:
+
+            0 0 50px
+            rgba(0, 0, 0, 0.45),
+
+            inset 0 0 35px
+            rgba(255, 255, 255, 0.02),
+
+            0 0 25px
+            rgba(229, 9, 20, 0.14);
+
+    }
+
+    100% {
+
+        border-color:
+            rgba(237, 11, 23, 0.52);
+
+        box-shadow:
+
+            0 0 45px
+            rgba(0, 0, 0, 0.42),
+
+            inset 0 0 35px
+            rgba(255, 255, 255, 0.018),
+
+            0 0 18px
+            rgba(229, 9, 20, 0.07);
+
+    }
+
+}
+
+
+/* =========================================================
+   WELCOME LINE
+   ========================================================= */
+
+.welcome-line {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    color: #dddddd;
+
+}
+
+
+.welcome-line span {
+
+    width: 75px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #a00a12
+        );
+
+}
+
+
+.welcome-line span:last-child {
+
+    background:
+        linear-gradient(
+            90deg,
+            #a00a12,
+            transparent
+        );
+
+}
+
+
+.welcome-line p {
+
+    font-size: 11px;
+
+    letter-spacing: 5px;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   WAR ROOM TITLE
+   ========================================================= */
+
+.auth-card h1 {
+
+    margin-top: 10px;
+
+    text-align: center;
+
+    color: #ffffff;
+
+    font-size:
+        clamp(42px, 7vw, 60px);
+
+    line-height: 1;
+
+    letter-spacing: 2px;
+
+    font-weight: 1000;
+
+}
+
+
+.auth-card h1 strong {
+
+    color: #f20b17;
+
+    text-shadow:
+        0 0 15px
+        rgba(242, 11, 23, 0.16);
+
+}
+
+
+/* =========================================================
+   TITLE DIVIDER
+   ========================================================= */
+
+.title-divider {
+
+    margin:
+        17px auto 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 18px;
+
+}
+
+
+.title-divider span {
+
+    width: 110px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #6d080e
+        );
+
+}
+
+
+.title-divider span:last-child {
+
+    background:
+        linear-gradient(
+            90deg,
+            #6d080e,
+            transparent
+        );
+
+}
+
+
+.title-divider b {
+
+    color: #f20b17;
+
+    font-size: 12px;
+
+    text-shadow:
+        0 0 8px
+        rgba(242, 11, 23, 0.35);
+
+}
+
+
+/* =========================================================
+   ACCESS LABEL
+   ========================================================= */
+
+.access-label {
+
+    text-align: center;
+
+    color: #aaaaaa;
+
+    font-size: 9px;
+
+    letter-spacing: 4px;
+
+}
+
+
+.access-label strong {
+
+    color: #f20b17;
+
+    text-shadow:
+        0 0 8px
+        rgba(242, 11, 23, 0.25);
+
+}
+
+
+/* =========================================================
+   DOMAIN BOX
+   ========================================================= */
+
+.domain-box {
+
+    margin-top: 20px;
+
+    min-height: 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding:
+        10px 14px;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, 0.28);
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(229, 9, 20, 0.075),
+            rgba(255, 255, 255, 0.012)
+        );
+
+    box-shadow:
+        inset 0 0 20px
+        rgba(229, 9, 20, 0.025);
+
+}
+
+
+/* =========================================================
+   DOMAIN ICON
+   ========================================================= */
+
+.domain-icon {
+
+    width: 38px;
+
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(229, 9, 20, 0.30);
+
+    border-radius: 9px;
+
+    color: #ff1f2d;
+
+    background: #090b0d;
+
+    font-size: 18px;
+
+    box-shadow:
+
+        inset 3px 3px 7px
+        #000000,
+
+        inset -2px -2px 6px
+        rgba(255, 255, 255, 0.02);
+
+    text-shadow:
+        0 0 8px
+        rgba(255, 31, 45, 0.35);
+
+}
+
+
+/* =========================================================
+   DOMAIN SMALL LABEL
+   ========================================================= */
+
+.domain-box small {
+
+    display: block;
+
+    color: #666666;
+
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   DOMAIN NAME
+   ========================================================= */
+
+.domain-box strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* =========================================================
+   AUTH TABS
+   ========================================================= */
+
+.auth-tabs {
+
+    margin-top: 18px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+}
+
+
+.auth-tab {
+
+    height: 40px;
+
+    border: 0;
+
+    border-bottom:
+        2px solid transparent;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #666666;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+
+}
+
+
+.auth-tab:hover {
+
+    color: #bbbbbb;
+
+}
+
+
+.auth-tab.active {
+
+    color: #ffffff;
+
+    border-bottom-color:
+        #ed0b17;
+
+    text-shadow:
+        0 0 8px
+        rgba(255, 255, 255, 0.08);
+
+}
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+.auth-message {
+
+    display: none;
+
+    margin-top: 12px;
+
+    padding:
+        10px 12px;
+
+    border-radius: 7px;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+
+}
+
+
+.auth-message.show {
+
+    display: block;
+
+}
+
+
+.auth-message.success {
+
+    color: #56df91;
+
+    border:
+        1px solid
+        rgba(39, 214, 125, 0.20);
+
+    background:
+        rgba(39, 214, 125, 0.06);
+
+}
+
+
+.auth-message.error {
+
+    color: #ff6971;
+
+    border:
+        1px solid
+        rgba(255, 31, 45, 0.25);
+
+    background:
+        rgba(255, 31, 45, 0.06);
+
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.auth-form {
+
+    width: 100%;
+
+    margin-top: 16px;
+
+}
+
+
+.auth-form.hidden {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   FIELD
+   ========================================================= */
+
+.field {
+
+    width: 100%;
+
+    margin-bottom: 12px;
+
+}
+
+
+.field label {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #858585;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =========================================================
+   INPUT + SELECT
+   ========================================================= */
+
+.field input,
+.field select {
+
+    width: 100%;
+
+    height: 43px;
+
+    padding:
+        0 13px;
+
+    outline: none;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius: 7px;
+
+    background:
+        rgba(8, 11, 13, 0.94);
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.field input::placeholder {
+
+    color: #4d4d4d;
+
+}
+
+
+.field input:hover,
+.field select:hover {
+
+    border-color:
+        rgba(255, 255, 255, 0.17);
+
+}
+
+
+.field input:focus,
+.field select:focus {
+
+    border-color:
+        rgba(237, 11, 23, 0.75);
+
+    background:
+        rgba(8, 10, 12, 0.98);
+
+    box-shadow:
+
+        0 0 0 2px
+        rgba(237, 11, 23, 0.06),
+
+        0 0 12px
+        rgba(237, 11, 23, 0.06);
+
+}
+
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.field select {
+
+    appearance: auto;
+
+    cursor: pointer;
+
+}
+
+
+.field select option {
+
+    background: #080b0d;
+
+    color: #ffffff;
+
+}
+
+
+/* =========================================================
+   TEAM MEMBERS CONTAINER
+   ========================================================= */
+
+.team-members-container {
+
+    width: 100%;
+
+    margin-top: 2px;
+
+    margin-bottom: 8px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+
+}
+
+
+/* =========================================================
+   TEAM MEMBER FIELD
+   ========================================================= */
+
+.team-member-field {
+
+    width: 100%;
+
+    position: relative;
+
+    padding: 0;
+
+}
+
+
+/* =========================================================
+   TEAM MEMBER LABEL
+   ========================================================= */
+
+.team-member-field label {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #858585;
+
+    font-size: 7px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.7px;
+
+}
+
+
+/* =========================================================
+   TEAM MEMBER INPUT
+   ========================================================= */
+
+.team-member-field input {
+
+    width: 100%;
+
+    height: 40px;
+
+    padding:
+        0 12px;
+
+    outline: none;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+    border-radius: 6px;
+
+    background:
+        rgba(8, 11, 13, 0.92);
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.team-member-field input::placeholder {
+
+    color: #4d4d4d;
+
+}
+
+
+.team-member-field input:hover {
+
+    border-color:
+        rgba(255, 255, 255, 0.15);
+
+}
+
+
+.team-member-field input:focus {
+
+    border-color:
+        rgba(237, 11, 23, 0.70);
+
+    box-shadow:
+
+        0 0 0 2px
+        rgba(237, 11, 23, 0.05),
+
+        0 0 10px
+        rgba(237, 11, 23, 0.04);
+
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+.primary-button {
+
+    width: 100%;
+
+    height: 46px;
+
+    margin-top: 3px;
+
+    border:
+        1px solid
+        #ff1c27;
+
+    border-radius: 6px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff101b,
+            #df0710
+        );
+
+    color: #ffffff;
+
+    font-size: 9px;
+
+    font-weight: 1000;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px
+        rgba(229, 9, 20, 0.14);
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.primary-button span {
+
+    margin-left: 9px;
+
+    font-size: 15px;
+
+}
+
+
+.primary-button:hover {
+
+    filter: brightness(1.12);
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 9px 23px
+        rgba(229, 9, 20, 0.22);
+
+}
+
+
+.primary-button:active {
+
+    transform:
+        translateY(0);
+
+}
+
+
+.primary-button:disabled {
+
+    opacity: 0.55;
+
+    cursor: wait;
+
+    transform: none;
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.back-link {
+
+    display: block;
+
+    margin:
+        16px auto 0;
+
+    padding: 4px 8px;
+
+    border: 0;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #62676b;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        text-shadow 0.2s ease;
+
+}
+
+
+.back-link:hover {
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 8px
+        rgba(255, 255, 255, 0.20);
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+
+    position: fixed;
+
+    bottom: 13px;
+
+    left: 0;
+
+    right: 0;
+
+    z-index: 20;
+
+    text-align: center;
+
+    color: #4e5458;
+
+    font-size: 7px;
+
+    letter-spacing: 4px;
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
+   MOVING WHITE SIDE LIGHTS
+   ========================================================= */
+
+.auth-page::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 3;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            transparent 10%,
+            rgba(255, 255, 255, 0.00) 20%,
+            rgba(255, 255, 255, 0.75) 48%,
+            rgba(210, 235, 255, 0.35) 55%,
+            transparent 72%
+        )
+
+        8% -300px
+        /
+        5px 260px
+        no-repeat,
+
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            transparent 10%,
+            rgba(255, 255, 255, 0.00) 20%,
+            rgba(255, 255, 255, 0.75) 48%,
+            rgba(210, 235, 255, 0.35) 55%,
+            transparent 72%
+        )
+
+        92% -600px
+        /
+        5px 260px
+        no-repeat;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(220, 240, 255, 0.75)
+        );
+
+    opacity: 0.75;
+
+    animation:
+        hackathonSideLights
+        7s
+        linear
+        infinite;
+
+}
+
+
+/* =========================================================
+   SIDE LIGHT MOVEMENT
+   ========================================================= */
+
+@keyframes hackathonSideLights {
+
+    0% {
+
+        background-position:
+            8% -300px,
+            92% -600px;
+
+        opacity: 0;
+
+    }
+
+    15% {
+
+        opacity: 0.65;
+
+    }
+
+    50% {
+
+        background-position:
+            8% 500px,
+            92% 300px;
+
+        opacity: 0.85;
+
+    }
+
+    75% {
+
+        opacity: 0.55;
+
+    }
+
+    100% {
+
+        background-position:
+            8% 1050px,
+            92% 850px;
+
+        opacity: 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .auth-page {
+
+        align-items: center;
+
+        padding:
+            80px 16px 65px;
+
+    }
+
+
+    .auth-card {
+
+        width: min(600px, 100%);
+
+        padding:
+            30px 35px 28px;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .brand {
+
+        top: 22px;
+
+        left: 20px;
+
+        gap: 12px;
+
+    }
+
+
+    .brand-logo {
+
+        font-size: 18px;
+
+    }
+
+
+    .brand-name {
+
+        font-size: 15px;
+
+    }
+
+
+    .auth-page {
+
+        min-height: 100vh;
+
+        align-items: center;
+
+        padding:
+            78px 15px 55px;
+
+    }
+
+
+    .auth-card {
+
+        width: 100%;
+
+        max-height:
+            calc(100vh - 75px);
+
+        padding:
+            28px 24px 25px;
+
+        border-radius: 14px;
+
+    }
+
+
+    .welcome-line {
+
+        gap: 10px;
+
+    }
+
+
+    .welcome-line span {
+
+        width: 45px;
+
+    }
+
+
+    .welcome-line p {
+
+        font-size: 8px;
+
+        letter-spacing: 3px;
+
+    }
+
+
+    .auth-card h1 {
+
+        font-size:
+            clamp(38px, 12vw, 52px);
+
+    }
+
+
+    .title-divider {
+
+        gap: 12px;
+
+    }
+
+
+    .title-divider span {
+
+        width: 65px;
+
+    }
+
+
+    .access-label {
+
+        font-size: 8px;
+
+        letter-spacing: 2.5px;
+
+    }
+
+
+    .domain-box {
+
+        margin-top: 18px;
+
+    }
+
+
+    .field {
+
+        margin-bottom: 11px;
+
+    }
+
+
+    .field input,
+    .field select {
+
+        height: 42px;
+
+    }
+
+
+    .team-member-field input {
+
+        height: 40px;
+
+    }
+
+
+    footer {
+
+        font-size: 6px;
+
+        letter-spacing: 2px;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .brand {
+
+        top: 18px;
+
+        left: 16px;
+
+        gap: 10px;
+
+    }
+
+
+    .brand-logo {
+
+        font-size: 17px;
+
+    }
+
+
+    .brand-name {
+
+        font-size: 14px;
+
+    }
+
+
+    .auth-page {
+
+        padding:
+            65px 10px 45px;
+
+    }
+
+
+    .auth-card {
+
+        padding:
+            25px 18px 22px;
+
+        border-radius: 13px;
+
+    }
+
+
+    .welcome-line {
+
+        gap: 7px;
+
+    }
+
+
+    .welcome-line span {
+
+        width: 30px;
+
+    }
+
+
+    .welcome-line p {
+
+        font-size: 7px;
+
+        letter-spacing: 2px;
+
+    }
+
+
+    .auth-card h1 {
+
+        font-size: 38px;
+
+        letter-spacing: 1px;
+
+    }
+
+
+    .title-divider {
+
+        gap: 9px;
+
+    }
+
+
+    .title-divider span {
+
+        width: 45px;
+
+    }
+
+
+    .domain-box {
+
+        gap: 10px;
+
+        padding:
+            9px 10px;
+
+    }
+
+
+    .domain-icon {
+
+        width: 35px;
+
+        height: 35px;
+
+        font-size: 16px;
+
+    }
+
+
+    .domain-box strong {
+
+        font-size: 10px;
+
+    }
+
+
+    .field input,
+    .field select {
+
+        height: 41px;
+
+        font-size: 10px;
+
+    }
+
+
+    .primary-button {
+
+        height: 44px;
+
+        font-size: 8px;
+
+        letter-spacing: 1.5px;
+
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .page-bg::after,
+    .scanlines::before,
+    .scanlines::after,
+    .auth-card,
+    .auth-page::after {
+
+        animation: none !important;
+
+    }
+
+}

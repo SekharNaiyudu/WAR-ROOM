@@ -1,0 +1,2181 @@
+/* =========================================================
+   SYNTHOQUEST WAR ROOM
+   ACCOUNT MANAGEMENT
+   RED + BLACK NEUMORPHISM
+   ========================================================= */
+
+
+/* =========================================================
+   ROOT
+   ========================================================= */
+
+:root {
+
+    --account-black: #070707;
+    --account-black-2: #0b0b0b;
+    --account-black-3: #121212;
+
+    --account-red: #e50914;
+    --account-red-light: #ff2935;
+    --account-red-dark: #85080d;
+
+    --account-white: #f7f7f7;
+    --account-text: #dddddd;
+    --account-muted: #777777;
+    --account-border: rgba(255,255,255,.045);
+
+    --account-shadow-dark: #020202;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    overflow-x: hidden;
+
+    background: var(--account-black);
+}
+
+
+body {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+/* =========================================================
+   MAIN DASHBOARD
+   ========================================================= */
+
+.admin-dashboard {
+
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            circle at 85% 7%,
+            rgba(229,9,20,.075),
+            transparent 30%
+        ),
+        #070707;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.admin-sidebar {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 315px;
+    min-width: 315px;
+
+    padding: 38px 24px 24px;
+
+    display: flex;
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            180deg,
+            #111111 0%,
+            #080808 100%
+        );
+
+    border-right:
+        1px solid
+        rgba(229,9,20,.18);
+
+    box-shadow:
+        10px 0 28px
+        rgba(0,0,0,.55);
+
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   SIDEBAR BRAND
+   ========================================================= */
+
+.sidebar-brand {
+
+    width: 100%;
+
+    padding:
+        0
+        9px
+        30px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.055);
+}
+
+
+.sidebar-logo {
+
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ef1b27,
+            #92080d
+        );
+
+    color: #fff;
+
+    font-size: 15px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    box-shadow:
+        0 8px 20px
+        rgba(229,9,20,.22);
+}
+
+
+.sidebar-brand-name {
+
+    color: #fff;
+
+    font-size: 20px;
+    font-weight: 900;
+
+    letter-spacing: .2px;
+}
+
+
+.sidebar-brand-name span {
+    color: var(--account-red);
+}
+
+
+/* =========================================================
+   SIDEBAR LABEL
+   ========================================================= */
+
+.sidebar-panel-label {
+
+    margin:
+        34px
+        11px
+        17px;
+
+    color: var(--account-red);
+
+    font-size: 11px;
+    font-weight: 900;
+
+    letter-spacing: 2.8px;
+}
+
+
+.sidebar-panel-label span {
+
+    display: block;
+
+    margin-top: 7px;
+
+    color: #555;
+
+    font-size: 8px;
+
+    letter-spacing: 1.4px;
+}
+
+
+/* =========================================================
+   SIDEBAR NAV
+   ========================================================= */
+
+.sidebar-nav {
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+.sidebar-item {
+
+    width: 100%;
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 0 18px;
+
+    border: 1px solid transparent;
+
+    border-radius: 13px;
+
+    background: transparent;
+
+    color: #666;
+
+    font-family: inherit;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.sidebar-icon {
+
+    width: 25px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    color: #666;
+
+    font-size: 15px;
+}
+
+
+.sidebar-item:hover {
+
+    color: #fff;
+
+    background:
+        rgba(229,9,20,.06);
+
+    border-color:
+        rgba(229,9,20,.15);
+}
+
+
+.sidebar-item:hover .sidebar-icon {
+    color: var(--account-red);
+}
+
+
+.sidebar-item.active {
+
+    color: #fff;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(229,9,20,.15),
+            rgba(229,9,20,.025)
+        );
+
+    border-color:
+        rgba(229,9,20,.30);
+
+    box-shadow:
+        inset 4px 0 0
+        var(--account-red),
+
+        5px 5px 14px
+        #030303;
+}
+
+
+.sidebar-item.active .sidebar-icon {
+    color: var(--account-red);
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.dashboard-content {
+
+    position: relative;
+
+    width: calc(100% - 315px);
+
+    min-width: 0;
+
+    margin-left: 315px;
+
+    padding:
+        43px
+        48px
+        65px;
+
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            circle at 85% 5%,
+            rgba(229,9,20,.07),
+            transparent 30%
+        ),
+        #070707;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.dashboard-header {
+
+    width: 100%;
+
+    min-height: 112px;
+
+    padding-bottom: 27px;
+
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.055);
+}
+
+
+.header-left {
+    min-width: 0;
+}
+
+
+.header-kicker {
+
+    color:
+        var(--account-red-light);
+
+    font-size: 10px;
+    font-weight: 900;
+
+    letter-spacing: 3.5px;
+}
+
+
+.dashboard-header h1 {
+
+    margin:
+        10px 0 0;
+
+    color: #fff;
+
+    font-size: 34px;
+    font-weight: 900;
+
+    line-height: 1.1;
+
+    letter-spacing: 1px;
+}
+
+
+.dashboard-header p {
+
+    margin:
+        10px 0 0;
+
+    color: #777;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   HEADER RIGHT
+   ========================================================= */
+
+.header-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    flex-shrink: 0;
+}
+
+
+.dashboard-search {
+
+    width: 240px;
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 0 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.055);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #090909
+        );
+
+    box-shadow:
+        6px 6px 13px #020202,
+        -4px -4px 10px
+        rgba(255,255,255,.018);
+}
+
+
+.dashboard-search span {
+
+    color: var(--account-red);
+
+    font-size: 19px;
+}
+
+
+.dashboard-search input {
+
+    width: 100%;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 11px;
+}
+
+
+.dashboard-search input::placeholder {
+    color: #555;
+}
+
+
+.header-admin {
+
+    min-width: 205px;
+    height: 52px;
+
+    padding: 0 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    border:
+        1px solid
+        rgba(229,9,20,.25);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #161010,
+            #0a0a0a
+        );
+
+    box-shadow:
+        7px 7px 15px #020202,
+        -5px -5px 11px
+        rgba(255,255,255,.018);
+}
+
+
+.header-status-dot {
+
+    width: 8px;
+    height: 8px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--account-red);
+
+    box-shadow:
+        0 0 9px
+        rgba(229,9,20,.65);
+}
+
+
+.header-admin strong {
+
+    display: block;
+
+    color: #fff;
+
+    font-size: 9px;
+
+    letter-spacing: 1.4px;
+}
+
+
+.header-admin small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #666;
+
+    font-size: 7px;
+
+    letter-spacing: 1.2px;
+}
+
+
+/* =========================================================
+   ACCOUNT MANAGEMENT SECTION
+   ========================================================= */
+
+.account-management-section {
+
+    width: 100%;
+
+    margin-top: 30px;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.account-section-heading {
+
+    margin-bottom: 20px;
+}
+
+
+.account-section-heading span {
+
+    color: #666;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    letter-spacing: 2.7px;
+}
+
+
+.account-section-heading h2 {
+
+    margin:
+        6px 0 0;
+
+    color: #fff;
+
+    font-size: 22px;
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+}
+
+
+.account-section-heading p {
+
+    margin:
+        7px 0 0;
+
+    color: #777;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   EVENT CATEGORY GRID
+   ========================================================= */
+
+.account-event-grid {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap: 20px;
+}
+
+
+.account-event-card {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 190px;
+
+    padding: 23px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255,255,255,.045);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #161616,
+            #0a0a0a
+        );
+
+    color: #fff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    box-shadow:
+        10px 10px 22px #020202,
+        -7px -7px 17px
+        rgba(255,255,255,.018);
+
+    transition: .22s ease;
+}
+
+
+.account-event-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 25px;
+
+    width: 100px;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--account-red),
+            transparent
+        );
+
+    box-shadow:
+        0 0 10px
+        rgba(229,9,20,.35);
+}
+
+
+.account-event-card:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(229,9,20,.28);
+}
+
+
+.account-event-card.active {
+
+    border-color:
+        rgba(229,9,20,.42);
+
+    box-shadow:
+        10px 10px 22px #020202,
+        -7px -7px 17px
+        rgba(255,255,255,.018),
+        0 0 20px
+        rgba(229,9,20,.05);
+}
+
+
+.account-event-top {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.account-event-top > span {
+
+    color: #444;
+
+    font-size: 9px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+.account-event-icon {
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(229,9,20,.30);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0a0a0a
+        );
+
+    color: #fff;
+
+    font-size: 18px;
+
+    box-shadow:
+        6px 6px 13px #020202,
+        -5px -5px 11px
+        rgba(255,255,255,.018);
+}
+
+
+.account-event-content {
+
+    margin-top: 20px;
+}
+
+
+.account-event-content > span {
+
+    color:
+        var(--account-red-light);
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+}
+
+
+.account-event-content h3 {
+
+    margin:
+        6px 0 0;
+
+    color: #fff;
+
+    font-size: 20px;
+    font-weight: 900;
+
+    letter-spacing: 1.2px;
+}
+
+
+.account-event-content p {
+
+    margin:
+        7px 0 0;
+
+    max-width: 480px;
+
+    color: #777;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   DOMAIN SECTION
+   ========================================================= */
+
+.account-domain-section {
+
+    margin-top: 32px;
+}
+
+
+.account-section-title {
+
+    margin-bottom: 17px;
+
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+
+.account-section-title span {
+
+    color: #666;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: 2.5px;
+}
+
+
+.account-section-title h2 {
+
+    margin:
+        6px 0 0;
+
+    color: #fff;
+
+    font-size: 19px;
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   DOMAIN GRID
+   ========================================================= */
+
+.account-domain-grid {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
+
+    gap: 15px;
+}
+
+
+.account-domain-card {
+
+    width: 100%;
+    min-width: 0;
+
+    min-height: 155px;
+
+    padding: 18px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: flex-start;
+
+    gap: 14px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.045);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0a0a0a
+        );
+
+    color: #fff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    box-shadow:
+        8px 8px 18px #020202,
+        -6px -6px 14px
+        rgba(255,255,255,.018);
+
+    transition: .2s ease;
+}
+
+
+.account-domain-card:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(229,9,20,.28);
+}
+
+
+.account-domain-card.active {
+
+    border-color:
+        rgba(229,9,20,.40);
+
+    box-shadow:
+        8px 8px 18px #020202,
+        -6px -6px 14px
+        rgba(255,255,255,.018),
+        0 0 18px
+        rgba(229,9,20,.05);
+}
+
+
+.account-domain-icon {
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(229,9,20,.28);
+
+    border-radius: 12px;
+
+    background: #0d0d0d;
+
+    color: #fff;
+
+    font-size: 16px;
+
+    box-shadow:
+        4px 4px 9px #020202,
+        -3px -3px 7px
+        rgba(255,255,255,.014);
+}
+
+
+.account-domain-card span {
+
+    color:
+        var(--account-red-light);
+
+    font-size: 7px;
+    font-weight: 900;
+
+    letter-spacing: 1.6px;
+}
+
+
+.account-domain-card h3 {
+
+    margin:
+        5px 0 0;
+
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    line-height: 1.25;
+}
+
+
+.account-domain-card p {
+
+    margin:
+        5px 0 0;
+
+    color: #666;
+
+    font-size: 8px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   REGISTERED ACCOUNTS SECTION
+   ========================================================= */
+
+.registered-accounts-section {
+
+    width: 100%;
+
+    margin-top: 28px;
+
+    padding: 22px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.045);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #0a0a0a
+        );
+
+    box-shadow:
+        9px 9px 20px #020202,
+        -7px -7px 16px
+        rgba(255,255,255,.018);
+}
+
+
+/* =========================================================
+   REGISTERED HEADER
+   ========================================================= */
+
+.registered-accounts-header {
+
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 17px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.045);
+}
+
+
+.registered-accounts-header > div:first-child > span {
+
+    color: #666;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: 2.2px;
+}
+
+
+.registered-accounts-header h2 {
+
+    margin:
+        6px 0 0;
+
+    color: #fff;
+
+    font-size: 18px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+.registered-accounts-header p {
+
+    margin:
+        6px 0 0;
+
+    color: #666;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   ACCOUNT ACTIONS
+   ========================================================= */
+
+.account-list-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    flex-shrink: 0;
+}
+
+
+.account-table-search {
+
+    width: 210px;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 12px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.055);
+
+    border-radius: 10px;
+
+    background: #0c0c0c;
+
+    box-shadow:
+        inset 3px 3px 7px #020202,
+        inset -3px -3px 7px
+        rgba(255,255,255,.012);
+}
+
+
+.account-table-search span {
+
+    color: var(--account-red);
+
+    font-size: 15px;
+}
+
+
+.account-table-search input {
+
+    width: 100%;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 9px;
+}
+
+
+.account-table-search input::placeholder {
+    color: #555;
+}
+
+
+.account-action-btn {
+
+    height: 40px;
+
+    padding:
+        0
+        13px;
+
+    border:
+        1px solid
+        rgba(229,9,20,.22);
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171010,
+            #0b0b0b
+        );
+
+    color:
+        var(--account-red-light);
+
+    font-family: inherit;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    box-shadow:
+        4px 4px 9px #020202,
+        -3px -3px 7px
+        rgba(255,255,255,.014);
+
+    transition: .2s ease;
+}
+
+
+.account-action-btn:hover {
+
+    color: #fff;
+
+    border-color:
+        rgba(229,9,20,.42);
+}
+
+
+/* =========================================================
+   ACCOUNT STATISTICS
+   ========================================================= */
+
+.account-stats-grid {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap: 10px;
+
+    margin-top: 17px;
+}
+
+
+.account-stat-card {
+
+    min-width: 0;
+
+    padding: 14px 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.035);
+
+    border-radius: 11px;
+
+    background: #0c0c0c;
+
+    box-shadow:
+        inset 3px 3px 7px #020202,
+        inset -3px -3px 7px
+        rgba(255,255,255,.012);
+}
+
+
+.account-stat-card span {
+
+    display: block;
+
+    color: #555;
+
+    font-size: 7px;
+    font-weight: 900;
+
+    letter-spacing: 1.4px;
+}
+
+
+.account-stat-card strong {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color:
+        var(--account-red-light);
+
+    font-size: 22px;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.account-table-wrapper {
+
+    width: 100%;
+
+    margin-top: 17px;
+
+    overflow-x: auto;
+
+    border:
+        1px solid
+        rgba(255,255,255,.035);
+
+    border-radius: 12px;
+
+    background: #090909;
+}
+
+
+.account-table {
+
+    width: 100%;
+
+    min-width: 900px;
+
+    border-collapse: collapse;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.account-table thead {
+
+    background:
+        linear-gradient(
+            180deg,
+            #151515,
+            #101010
+        );
+}
+
+
+.account-table th {
+
+    padding:
+        14px
+        12px;
+
+    color: #666;
+
+    font-size: 7px;
+    font-weight: 900;
+
+    letter-spacing: 1.3px;
+
+    text-align: left;
+
+    white-space: nowrap;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.05);
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.account-table td {
+
+    padding:
+        13px
+        12px;
+
+    color: #bbb;
+
+    font-size: 8px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.035);
+
+    white-space: nowrap;
+}
+
+
+.account-table tbody tr {
+
+    transition: .15s ease;
+}
+
+
+.account-table tbody tr:hover {
+
+    background:
+        rgba(229,9,20,.025);
+}
+
+
+.account-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* =========================================================
+   EMPTY ACCOUNTS
+   ========================================================= */
+
+.empty-accounts {
+
+    min-height: 190px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.empty-accounts > span {
+
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(229,9,20,.25);
+
+    border-radius: 13px;
+
+    color: var(--account-red);
+
+    font-size: 17px;
+
+    background: #0d0d0d;
+}
+
+
+.empty-accounts strong {
+
+    margin-top: 12px;
+
+    color: #aaa;
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+}
+
+
+.empty-accounts small {
+
+    margin-top: 5px;
+
+    color: #555;
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.account-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 7px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+.account-status::before {
+
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #777;
+}
+
+
+.account-status.active {
+    color: #e50914;
+}
+
+
+.account-status.active::before {
+
+    background: #e50914;
+
+    box-shadow:
+        0 0 7px
+        rgba(229,9,20,.55);
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.delete-account-btn {
+
+    height: 30px;
+
+    padding:
+        0
+        10px;
+
+    border:
+        1px solid
+        rgba(229,9,20,.20);
+
+    border-radius: 7px;
+
+    background:
+        rgba(229,9,20,.05);
+
+    color:
+        var(--account-red-light);
+
+    font-family: inherit;
+
+    font-size: 7px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.delete-account-btn:hover {
+
+    color: #fff;
+
+    background:
+        rgba(229,9,20,.15);
+
+    border-color:
+        rgba(229,9,20,.45);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1400px) {
+
+    .account-domain-grid {
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+}
+
+
+@media (max-width: 1150px) {
+
+    .admin-sidebar {
+
+        width: 235px;
+        min-width: 235px;
+    }
+
+
+    .dashboard-content {
+
+        width: calc(100% - 235px);
+
+        margin-left: 235px;
+
+        padding:
+            28px
+            25px
+            50px;
+    }
+
+
+    .header-right {
+
+        flex-wrap: wrap;
+
+        justify-content: flex-end;
+    }
+
+
+    .dashboard-search {
+
+        width: 180px;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .account-event-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .registered-accounts-header {
+
+        flex-direction: column;
+    }
+
+
+    .account-list-actions {
+
+        width: 100%;
+    }
+
+
+    .account-table-search {
+
+        flex: 1;
+
+        width: auto;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .admin-sidebar {
+
+        position: relative;
+
+        width: 100%;
+        min-width: 0;
+
+        height: auto;
+
+        padding: 18px;
+    }
+
+
+    .admin-dashboard {
+
+        display: block;
+    }
+
+
+    .dashboard-content {
+
+        width: 100%;
+
+        margin-left: 0;
+
+        padding:
+            20px
+            18px
+            40px;
+    }
+
+
+    .sidebar-nav {
+
+        flex-direction: row;
+
+        overflow-x: auto;
+    }
+
+
+    .sidebar-item {
+
+        min-width: 120px;
+    }
+
+
+    .dashboard-header {
+
+        flex-direction: column;
+    }
+
+
+    .header-right {
+
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+
+    .dashboard-search {
+
+        width: 100%;
+    }
+
+
+    .account-domain-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .account-stats-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .account-list-actions {
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .account-table-search {
+
+        width: 100%;
+    }
+
+
+    .account-action-btn {
+
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   120% PAGE SCALE
+   ========================================================= */
+
+body {
+    zoom: 1.2;
+}
+
+/* =========================================================
+   DELETE BUTTONS
+   ========================================================= */
+
+.delete-account-btn {
+
+    padding: 7px 11px;
+
+    border: 1px solid
+        rgba(229,9,20,.25);
+
+    border-radius: 7px;
+
+    background:
+        rgba(229,9,20,.08);
+
+    color: #ff2634;
+
+    font-family: inherit;
+
+    font-size: 7px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.delete-account-btn:hover {
+
+    color: #fff;
+
+    background:
+        #e50914;
+
+    border-color:
+        #e50914;
+
+}
+
+
+.account-delete-all-btn {
+
+    height: 38px;
+
+    padding: 0 14px;
+
+    border: 1px solid
+        rgba(229,9,20,.35);
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #250b0d,
+            #0d0d0d
+        );
+
+    color: #ff2634;
+
+    font-family: inherit;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.account-delete-all-btn:hover {
+
+    color: #fff;
+
+    background:
+        #e50914;
+
+    box-shadow:
+        0 0 15px
+        rgba(229,9,20,.25);
+
+}
+
+
+/* =========================================================
+   ACCOUNT STATUS
+   ========================================================= */
+
+.account-status {
+
+    display: inline-block;
+
+    padding: 5px 8px;
+
+    border-radius: 6px;
+
+    font-size: 6px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+.account-status-active {
+
+    color: #ff2634;
+
+    background:
+        rgba(229,9,20,.08);
+
+    border: 1px solid
+        rgba(229,9,20,.15);
+}
+
+
+.account-status-inactive {
+
+    color: #777;
+
+    background: #111;
+
+    border: 1px solid
+        rgba(255,255,255,.05);
+}
+
+
+.account-name {
+
+    display: block;
+
+    color: #eee;
+
+    font-size: 9px;
+}
+
+
+.account-members {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #666;
+
+    font-size: 7px;
+}
+
+
+.team-members-text {
+
+    color: #777;
+
+    font-size: 8px;
+
+}
+/* =========================================================
+   ACCOUNT TABLE — FIXED CARD + INTERNAL SCROLL
+   ========================================================= */
+
+.accounts-table-wrapper {
+    max-height: 360px;
+    overflow-y: auto;
+    overflow-x: auto;
+
+    border-radius: 14px;
+}
+
+
+/* KEEP TABLE INSIDE CARD */
+
+.accounts-table-wrapper table {
+    width: 100%;
+    min-width: 900px;
+}
+
+
+/* FIXED HEADER WHILE SCROLLING */
+
+.accounts-table-wrapper thead th {
+    position: sticky;
+    top: 0;
+
+    z-index: 5;
+
+    background: #111111;
+}
+
+
+/* CUSTOM VERTICAL SCROLLBAR */
+
+.accounts-table-wrapper::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+
+.accounts-table-wrapper::-webkit-scrollbar-track {
+    background: #080808;
+    border-radius: 10px;
+}
+
+
+.accounts-table-wrapper::-webkit-scrollbar-thumb {
+    background: #e50914;
+    border-radius: 10px;
+}
+
+
+.accounts-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #ff2634;
+}
+
+
+/* FIREFOX */
+
+.accounts-table-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #e50914 #080808;
+}
+
+
+/* KEEP EMPTY STATE CENTERED */
+
+.empty-accounts {
+    min-height: 220px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+.account-table-wrapper {
+    width: 100%;
+    height: 320px;
+    max-height: 320px;
+
+    overflow-y: auto;
+    overflow-x: auto;
+
+    position: relative;
+    border-radius: 16px;
+}
+
+.account-table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+}
+
+.account-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #111111;
+}
+
+.account-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.account-table-wrapper::-webkit-scrollbar-track {
+    background: #080808;
+}
+
+.account-table-wrapper::-webkit-scrollbar-thumb {
+    background: #e50914;
+    border-radius: 10px;
+}
+
+.account-table-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #e50914 #080808;
+}
+
+/* =========================================================
+   LOGOUT — FULL RED BUTTON
+   ========================================================= */
+
+.sidebar-item[data-section="logout"] {
+
+    margin-top: 14px;
+
+    border: 1px solid #e50914;
+
+    border-radius: 12px;
+
+    background: #e50914;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 14px rgba(229,9,20,.18),
+        5px 5px 12px #020202;
+
+    transition:
+        .2s ease;
+
+}
+
+
+/* LOGOUT ICON */
+
+.sidebar-item[data-section="logout"] .sidebar-icon {
+
+    color: #ffffff;
+
+}
+
+
+/* HOVER */
+
+.sidebar-item[data-section="logout"]:hover {
+
+    background: #ff1f2d;
+
+    border-color: #ff1f2d;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 20px rgba(229,9,20,.30),
+        6px 6px 14px #020202;
+
+    transform: translateY(-1px);
+
+}
+
+
+/* HOVER ICON */
+
+.sidebar-item[data-section="logout"]:hover .sidebar-icon {
+
+    color: #ffffff;
+
+}
+
+
+/* CLICK */
+
+.sidebar-item[data-section="logout"]:active {
+
+    transform: translateY(1px);
+
+}

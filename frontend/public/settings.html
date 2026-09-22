@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAR ROOM — Admin Settings</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/settings.css?v=2">
+    <link rel="stylesheet" href="/css/warroom-modal.css?v=2">
+</head>
+<body>
+<main class="admin-dashboard">
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-logo">SQ</div>
+            <div class="sidebar-brand-name">Syntho<span>Quest</span></div>
+        </div>
+        <div class="sidebar-panel-label">
+            WAR ROOM
+            <span>ADMIN CONTROL PANEL</span>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="sidebar-item" data-section="home" type="button" onclick="window.location.href='/admin/dashboard'">
+                <span class="sidebar-icon">▣</span><span>Dashboard</span>
+            </button>
+            <button class="sidebar-item" data-section="workshop" type="button" onclick="window.location.href='/admin/workshop'">
+                <span class="sidebar-icon">⚔</span><span>Workshop</span>
+            </button>
+            <button class="sidebar-item" data-section="hackathon" type="button" onclick="window.location.href='/admin/hackathon'">
+                <span class="sidebar-icon">◈</span><span>Hackathon</span>
+            </button>
+            <button class="sidebar-item" data-section="leaderboard" type="button" onclick="window.location.href='/admin/leaderboard'">
+                <span class="sidebar-icon">♛</span><span>Leaderboard</span>
+            </button>
+            <button class="sidebar-item" data-section="accounts" type="button" onclick="window.location.href='/admin/accounts'">
+                <span class="sidebar-icon">♙</span><span>Account Management</span>
+            </button>
+            <button class="sidebar-item active" data-section="settings" type="button" onclick="window.location.href='/admin/settings'">
+                <span class="sidebar-icon">⚙</span><span>Settings</span>
+            </button>
+            <button class="sidebar-item" data-section="logout" type="button" id="logoutButton">
+                <span class="sidebar-icon">⎋</span><span>Logout</span>
+            </button>
+        </nav>
+    </aside>
+
+    <section class="dashboard-content settings-dashboard-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="header-kicker">WAR ROOM / ADMIN SETTINGS</div>
+                <h1>Admin Settings</h1>
+                <p>Manage your administrator username and password securely.</p>
+            </div>
+            <div class="header-right">
+                <div class="dashboard-search">
+                    <span>⌕</span>
+                    <input type="text" placeholder="Search..." id="settingsSearch">
+                </div>
+                <button class="header-icon-button" type="button">🔔</button>
+                <button class="header-icon-button" type="button">✉</button>
+                <div class="header-admin">
+                    <span class="header-status-dot"></span>
+                    <div><strong>ADMINISTRATOR</strong><small id="adminUsernameDisplay">FULL ACCESS</small></div>
+                </div>
+            </div>
+        </header>
+
+        <div id="settingsMessage" class="settings-message" aria-live="polite"></div>
+
+        <div class="settings-grid">
+            <section class="settings-card">
+                <div class="settings-card-heading">
+                    <div class="settings-card-icon">◉</div>
+                    <div><span>ACCOUNT IDENTITY</span><h2>CHANGE USERNAME</h2></div>
+                </div>
+                <form id="usernameForm" class="settings-form" novalidate>
+                    <div class="settings-field">
+                        <label for="currentUsername">CURRENT USERNAME</label>
+                        <input id="currentUsername" type="text" autocomplete="username" placeholder="Enter current username" required>
+                    </div>
+                    <div class="settings-field">
+                        <label for="newUsername">NEW USERNAME</label>
+                        <input id="newUsername" type="text" autocomplete="username" placeholder="Enter new username" minlength="3" required>
+                    </div>
+                    <div class="settings-field">
+                        <label for="confirmUsername">CONFIRM USERNAME</label>
+                        <input id="confirmUsername" type="text" autocomplete="username" placeholder="Confirm new username" minlength="3" required>
+                    </div>
+                    <button class="settings-button" id="changeUsernameButton" type="submit">CHANGE USERNAME <span>→</span></button>
+                </form>
+            </section>
+
+            <section class="settings-card">
+                <div class="settings-card-heading">
+                    <div class="settings-card-icon">🔐</div>
+                    <div><span>ACCOUNT SECURITY</span><h2>CHANGE PASSWORD</h2></div>
+                </div>
+                <form id="passwordForm" class="settings-form" novalidate>
+                    <div class="settings-field">
+                        <label for="currentPassword">CURRENT PASSWORD</label>
+                        <input id="currentPassword" type="password" autocomplete="current-password" placeholder="Enter current password" required>
+                    </div>
+                    <div class="settings-field">
+                        <label for="newPassword">NEW PASSWORD</label>
+                        <input id="newPassword" type="password" autocomplete="new-password" placeholder="Enter new password" minlength="6" required>
+                    </div>
+                    <div class="settings-field">
+                        <label for="confirmPassword">CONFIRM PASSWORD</label>
+                        <input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Confirm new password" minlength="6" required>
+                    </div>
+                    <button class="settings-button" id="changePasswordButton" type="submit">CHANGE PASSWORD <span>→</span></button>
+                </form>
+            </section>
+        </div>
+
+        <section class="security-note">
+            <div class="security-note-icon">!</div>
+            <div><strong>SECURITY NOTICE</strong><p>Current credentials are verified by the server before any administrator credential change is accepted.</p></div>
+        </section>
+    </section>
+</main>
+    <script src="/js/warroom-modal.js?v=2"></script>
+<script src="/js/settings.js?v=2"></script>
+</body>
+</html>
