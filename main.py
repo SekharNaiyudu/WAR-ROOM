@@ -4259,7 +4259,7 @@ async def get_user_leaderboard(
 
                 ORDER BY
                     points DESC,
-                    u.name COLLATE NOCASE ASC,
+                    LOWER(u.name) ASC,
                     u.id ASC
                 """,
                 (
@@ -4383,7 +4383,7 @@ async def get_user_leaderboard(
 
                 ORDER BY
                     points DESC,
-                    ht.team_name COLLATE NOCASE ASC,
+                    LOWER(ht.team_name) ASC,
                     ht.id ASC
                 """,
                 (
@@ -4734,7 +4734,7 @@ async def get_admin_leaderboard(
                 WHERE {" AND ".join(where)}
                 ORDER BY
                     points DESC,
-                    u.name COLLATE NOCASE ASC,
+                    LOWER(u.name) ASC,
                     u.id ASC
                 """,
                 tuple(params)
@@ -4780,7 +4780,7 @@ async def get_admin_leaderboard(
                 WHERE {" AND ".join(where)}
                 ORDER BY
                     points DESC,
-                    ht.team_name COLLATE NOCASE ASC,
+                    LOWER(ht.team_name) ASC,
                     ht.id ASC
                 """,
                 tuple(params)
