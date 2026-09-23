@@ -42,6 +42,162 @@ load_dotenv()
 
 
 # =========================================================
+# PERSISTENT DATABASE COMPATIBILITY LAYER
+# =========================================================
+# On Vercel, all user/event data must live in Neon PostgreSQL.
+# Local development keeps using SQLite. This wrapper preserves
+# the existing SQL-heavy WAR ROOM code while adapting the small
+# SQLite differences used by the project (placeholders,
+# AUTOINCREMENT, PRAGMA, and lastrowid).
+# =========================================================
+
+PERSISTENT_DATABASE_URL = (
+    os.environ.get("DATABASE_URL", "").strip()
+    or
+    os.environ.get("POSTGRES_URL", "").strip()
+)
+
+USE_PERSISTENT_DATABASE = bool(PERSISTENT_DATABASE_URL)
+
+
+if psycopg is not None:
+    DB_INTEGRITY_ERRORS = (
+        sqlite3.IntegrityError,
+        psycopg.errors.UniqueViolation,
+        psycopg.errors.ForeignKeyViolation,
+        psycopg.errors.CheckViolation,
+    )
+else:
+    DB_INTEGRITY_ERRORS = (sqlite3.IntegrityError,)
+
+
+class PersistentCursor:
+
+    def __init__(self, cursor):
+        self._cursor = cursor
+        self.lastrowid = None
+
+    @staticmethod
+    def _adapt_sql(sql):
+        sql = str(sql)
+
+        if sql.strip().upper().startswith("PRAGMA"):
+            return None
+
+        # Existing WAR ROOM SQL uses SQLite ? placeholders.
+        # psycopg uses %s.
+        sql = sql.replace("?", "%s")
+
+        # PostgreSQL uses SERIAL/BIGSERIAL instead of SQLite
+        # AUTOINCREMENT primary keys.
+        sql = re.sub(
+            r"INTEGER\s+PRIMARY\s+KEY\s+AUTOINCREMENT",
+            "BIGSERIAL PRIMARY KEY",
+            sql,
+            flags=re.IGNORECASE,
+        )
+
+        return sql
+
+    def execute(self, sql, params=None):
+        adapted = self._adapt_sql(sql)
+
+        if adapted is None:
+            self.lastrowid = None
+            return self
+
+        self._cursor.execute(adapted, params)
+        self.lastrowid = None
+
+        # The current project reads lastrowid only after INSERTs into
+        # users and hackathon_teams. Recover the generated PostgreSQL
+        # sequence value without changing the surrounding application.
+        match = re.search(
+            r"INSERT\s+INTO\s+([A-Za-z_][A-Za-z0-9_]*)",
+            adapted,
+            flags=re.IGNORECASE,
+        )
+
+        if match:
+            table_name = match.group(1)
+            try:
+                self._cursor.execute(
+                    "SELECT currval(pg_get_serial_sequence(%s, %s)) AS id",
+                    (table_name, "id"),
+                )
+                row = self._cursor.fetchone()
+                if row:
+                    try:
+                        self.lastrowid = row["id"]
+                    except Exception:
+                        self.lastrowid = row[0]
+            except Exception:
+                self.lastrowid = None
+
+        return self
+
+    def executemany(self, sql, params_seq):
+        adapted = self._adapt_sql(sql)
+        if adapted is None:
+            return self
+        self._cursor.executemany(adapted, params_seq)
+        return self
+
+    def fetchone(self):
+        return self._cursor.fetchone()
+
+    def fetchall(self):
+        return self._cursor.fetchall()
+
+    def __getattr__(self, name):
+        return getattr(self._cursor, name)
+
+
+class PersistentConnection:
+
+    def __init__(self, connection):
+        self._connection = connection
+
+    def cursor(self):
+        return PersistentCursor(
+            self._connection.cursor()
+        )
+
+    def execute(self, sql, params=None):
+        cursor = self.cursor()
+        cursor.execute(sql, params)
+        return cursor
+
+    def commit(self):
+        return self._connection.commit()
+
+    def rollback(self):
+        return self._connection.rollback()
+
+    def close(self):
+        return self._connection.close()
+
+    def __getattr__(self, name):
+        return getattr(self._connection, name)
+
+
+def connect_persistent_database():
+    if psycopg is None:
+        raise RuntimeError(
+            "PostgreSQL support is not installed. "
+            "Add psycopg[binary] to requirements.txt."
+        )
+
+    return PersistentConnection(
+        psycopg.connect(
+            PERSISTENT_DATABASE_URL,
+            row_factory=dict_row,
+        )
+    )
+
+
+
+# =========================================================
 # WAR ROOM FASTAPI APPLICATION
 # =========================================================
 
@@ -597,6 +753,11 @@ def verify_password(
 
 def get_user_db():
 
+    # Vercel/Neon: persistent database for users, registrations,
+    # sessions, CTF submissions, points and leaderboard data.
+    if USE_PERSISTENT_DATABASE:
+        return connect_persistent_database()
+
     connection = sqlite3.connect(
         USER_DATABASE
     )
@@ -612,6 +773,9 @@ def get_user_db():
 
 # =========================================================
 # INITIALIZE USER DATABASE
+# =========================================================
+# On Vercel this creates the same WAR ROOM user/event tables in
+# Neon PostgreSQL. Local runs continue to use SQLite.
 # =========================================================
 
 def initialize_user_database():
@@ -862,11 +1026,7 @@ initialize_user_database()
 
 def get_persistent_admin_database_url():
 
-    return (
-        os.environ.get("DATABASE_URL", "").strip()
-        or
-        os.environ.get("POSTGRES_URL", "").strip()
-    )
+    return PERSISTENT_DATABASE_URL
 
 
 def use_persistent_admin_database():
@@ -1969,7 +2129,7 @@ async def workshop_register(
         raise
 
 
-    except sqlite3.IntegrityError:
+    except DB_INTEGRITY_ERRORS:
 
         connection.rollback()
 
@@ -2789,7 +2949,7 @@ async def hackathon_register(
         raise
 
 
-    except sqlite3.IntegrityError:
+    except DB_INTEGRITY_ERRORS:
 
         connection.rollback()
 
