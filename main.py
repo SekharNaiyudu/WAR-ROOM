@@ -1184,12 +1184,58 @@ initialize_admin_credentials()
 
 
 # =========================================================
-# SAVE STATE
+# PERSISTENT SYSTEM STATE
+# =========================================================
+# On Vercel, Admin ON/OFF settings are stored in Neon PostgreSQL.
+# Local development continues to use war_room_state.json.
 # =========================================================
 
 def save_state(
     state
 ):
+
+    if USE_PERSISTENT_DATABASE:
+
+        connection = get_user_db()
+
+        try:
+
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS war_room_system_state (
+                    id INTEGER PRIMARY KEY,
+                    state_json TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                )
+                """
+            )
+
+            cursor.execute(
+                """
+                INSERT INTO war_room_system_state
+                    (id, state_json, updated_at)
+                VALUES
+                    (1, ?, ?)
+                ON CONFLICT (id)
+                DO UPDATE SET
+                    state_json = EXCLUDED.state_json,
+                    updated_at = EXCLUDED.updated_at
+                """,
+                (
+                    json.dumps(state),
+                    datetime.now(timezone.utc).isoformat()
+                )
+            )
+
+            connection.commit()
+
+        finally:
+
+            connection.close()
+
+        return
 
     with open(
         DATA_FILE,
@@ -1204,48 +1250,113 @@ def save_state(
         )
 
 
-# =========================================================
-# LOAD STATE
-# =========================================================
-
 def load_state():
 
-    if not DATA_FILE.exists():
+    if USE_PERSISTENT_DATABASE:
 
-        state = copy.deepcopy(
-            DEFAULT_STATE
-        )
+        connection = get_user_db()
 
-        save_state(
-            state
-        )
+        try:
 
-        return state
+            cursor = connection.cursor()
 
-
-    try:
-
-        with open(
-            DATA_FILE,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
-            state = json.load(
-                file
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS war_room_system_state (
+                    id INTEGER PRIMARY KEY,
+                    state_json TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                )
+                """
             )
 
-    except Exception:
+            cursor.execute(
+                """
+                SELECT state_json
+                FROM war_room_system_state
+                WHERE id = 1
+                LIMIT 1
+                """
+            )
 
-        state = copy.deepcopy(
-            DEFAULT_STATE
-        )
+            row = cursor.fetchone()
 
-        save_state(
-            state
-        )
+            if row:
 
-        return state
+                try:
+                    state = json.loads(
+                        row["state_json"]
+                    )
+
+                except Exception:
+                    state = copy.deepcopy(
+                        DEFAULT_STATE
+                    )
+
+            else:
+
+                state = copy.deepcopy(
+                    DEFAULT_STATE
+                )
+
+                cursor.execute(
+                    """
+                    INSERT INTO war_room_system_state
+                        (id, state_json, updated_at)
+                    VALUES
+                        (1, ?, ?)
+                    """,
+                    (
+                        json.dumps(state),
+                        datetime.now(
+                            timezone.utc
+                        ).isoformat()
+                    )
+                )
+
+                connection.commit()
+
+        finally:
+
+            connection.close()
+
+    else:
+
+        if not DATA_FILE.exists():
+
+            state = copy.deepcopy(
+                DEFAULT_STATE
+            )
+
+            save_state(
+                state
+            )
+
+            return state
+
+        try:
+
+            with open(
+                DATA_FILE,
+                "r",
+                encoding="utf-8"
+            ) as file:
+
+                state = json.load(
+                    file
+                )
+
+        except Exception:
+
+            state = copy.deepcopy(
+                DEFAULT_STATE
+            )
+
+            save_state(
+                state
+            )
+
+            return state
 
 
     changed = False
@@ -1414,6 +1525,9 @@ def load_state():
     ] = (
         home["forensics_hackathon"]
     )
+
+
+
 
 
     if changed:
