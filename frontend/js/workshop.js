@@ -395,6 +395,7 @@ async function uploadToolkit() {
         );
 
         return false;
+
     }
 
 
@@ -414,6 +415,7 @@ async function uploadToolkit() {
         );
 
         return false;
+
     }
 
 
@@ -426,22 +428,17 @@ async function uploadToolkit() {
         fileInput.value = "";
 
         return false;
+
     }
 
 
-    /* -----------------------------------------------------
-       FORM DATA
-       ----------------------------------------------------- */
-
-    const formData =
-        new FormData();
-
-
-    formData.append(
-        "file",
-        file
-    );
-
+    /*
+     * IMPORTANT:
+     * Do NOT send the ZIP through FastAPI/Vercel Functions.
+     * Vercel Functions have a request-body limit. This flow
+     * asks the server for a short-lived Blob PUT URL and then
+     * uploads the file directly from the browser to Vercel Blob.
+     */
 
     try {
 
@@ -450,7 +447,7 @@ async function uploadToolkit() {
         );
 
         console.log(
-            "UPLOADING WORKSHOP TOOLKIT"
+            "UPLOADING WORKSHOP TOOLKIT DIRECTLY TO BLOB"
         );
 
         console.log(
@@ -464,69 +461,223 @@ async function uploadToolkit() {
         );
 
         console.log(
+            "SIZE:",
+            file.size
+        );
+
+        console.log(
             "===================================="
         );
 
 
         /* -------------------------------------------------
-           API REQUEST
+           1. GET SHORT-LIVED SIGNED PUT URL
            ------------------------------------------------- */
 
-        const response =
+        const presignResponse =
             await fetch(
-                "/api/toolkit/upload?event_type=workshop&item=" +
-                encodeURIComponent(
-                    selectedDomain
-                ),
+                "/api/toolkit/blob-presign",
                 {
                     method: "POST",
-                    body: formData
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        event_type:
+                            "workshop",
+
+                        item:
+                            selectedDomain,
+
+                        filename:
+                            file.name,
+
+                        content_type:
+                            file.type ||
+                            "application/zip",
+
+                        size:
+                            file.size
+
+                    })
+
                 }
             );
 
 
-        /* -------------------------------------------------
-           RESPONSE
-           ------------------------------------------------- */
-
-        let result = null;
-
+        let presignData = {};
 
         try {
 
-            result =
-                await response.json();
+            presignData =
+                await presignResponse.json();
 
         } catch (error) {
 
-            result = null;
+            presignData = {};
 
         }
 
 
-        /* -------------------------------------------------
-           ERROR
-           ------------------------------------------------- */
-
-        if (!response.ok) {
+        if (!presignResponse.ok) {
 
             throw new Error(
-                result &&
-                result.detail
-                    ? result.detail
-                    : "Toolkit upload failed."
+                presignData.detail ||
+                presignData.message ||
+                "Unable to prepare toolkit upload."
+            );
+
+        }
+
+
+        if (
+            !presignData.presigned_url ||
+            !presignData.pathname
+        ) {
+
+            throw new Error(
+                "The server did not return a valid Blob upload URL."
             );
 
         }
 
 
         /* -------------------------------------------------
-           SUCCESS
+           2. DIRECT BROWSER -> VERCEL BLOB UPLOAD
            ------------------------------------------------- */
 
+        WarRoomAlert(
+            "Uploading toolkit..."
+        );
+
+
+        const blobResponse =
+            await fetch(
+                presignData.presigned_url,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            file.type ||
+                            "application/zip"
+                    },
+
+                    body:
+                        file
+                }
+            );
+
+
+        if (!blobResponse.ok) {
+
+            let blobMessage =
+                "Large toolkit upload failed.";
+
+            try {
+
+                const blobText =
+                    await blobResponse.text();
+
+                if (blobText) {
+
+                    blobMessage =
+                        blobText;
+                }
+
+            } catch (error) {
+                /* Keep default message. */
+            }
+
+            throw new Error(
+                blobMessage
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           3. SAVE ONLY METADATA IN NEON
+           ------------------------------------------------- */
+
+        const completeResponse =
+            await fetch(
+                "/api/toolkit/blob-complete",
+                {
+                    method: "POST",
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        event_type:
+                            "workshop",
+
+                        item:
+                            selectedDomain,
+
+                        filename:
+                            presignData.filename ||
+                            file.name,
+
+                        pathname:
+                            presignData.pathname,
+
+                        blob_url:
+                            presignData.blob_url,
+
+                        download_url:
+                            presignData.download_url,
+
+                        content_type:
+                            file.type ||
+                            "application/zip"
+
+                    })
+
+                }
+            );
+
+
+        let completeData = {};
+
+        try {
+
+            completeData =
+                await completeResponse.json();
+
+        } catch (error) {
+
+            completeData = {};
+
+        }
+
+
+        if (!completeResponse.ok) {
+
+            throw new Error(
+                completeData.detail ||
+                completeData.message ||
+                "Toolkit was uploaded but its metadata could not be saved."
+            );
+
+        }
+
+
         console.log(
-            "TOOLKIT UPLOADED:",
-            result
+            "WORKSHOP TOOLKIT UPLOADED:",
+            completeData
         );
 
 
@@ -586,7 +737,6 @@ async function uploadToolkit() {
     }
 
 }
-
 
 /* =========================================================
    CONFIRM UPLOAD

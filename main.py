@@ -5100,6 +5100,25 @@ async def admin_login_api(
     )
 
 # =========================================================
+# ADMIN AUTH CHECK API
+# =========================================================
+# Used by the small Vercel Blob presign function to verify
+# the existing HttpOnly administrator session cookie without
+# exposing that cookie to browser JavaScript.
+# =========================================================
+
+@app.get("/api/admin/auth-check")
+async def admin_auth_check(
+    admin_username: str = Depends(require_admin)
+):
+
+    return {
+        "success": True,
+        "username": admin_username
+    }
+
+
+# =========================================================
 # ADMIN LOGOUT API
 # =========================================================
 
@@ -7398,32 +7417,20 @@ async def upload_toolkit(
 # =========================================================
 
 @app.post("/api/toolkit/blob-complete")
-async def toolkit_blob_complete(request: Request):
+async def toolkit_blob_complete(
+    request: Request,
+    admin_username: str = Depends(require_admin)
+):
 
-    expected_secret = os.environ.get(
-        "WAR_ROOM_BLOB_CALLBACK_SECRET",
-        ""
-    ).strip()
-
-    received_secret = request.headers.get(
-        "x-war-room-blob-secret",
-        ""
-    ).strip()
-
-    if not expected_secret or not received_secret:
-        raise HTTPException(
-            status_code=401,
-            detail="Blob callback authentication is not configured."
-        )
-
-    if not hmac.compare_digest(
-        expected_secret,
-        received_secret
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid blob callback authentication."
-        )
+    # The completion request is made by the authenticated
+    # administrator after the browser has finished uploading
+    # the ZIP directly to Vercel Blob. The admin session cookie
+    # is HttpOnly, so the browser sends it automatically.
+    #
+    # Do not require a browser-visible secret here. The old
+    # callback-secret mechanism could not be used safely by the
+    # static frontend because that secret must never be exposed
+    # to the browser.
 
     try:
         payload = await request.json()

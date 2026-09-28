@@ -792,46 +792,245 @@ async function uploadToolkit() {
     }
 
 
-    const formData =
-        new FormData();
-
-
-    formData.append(
-        "file",
-        file
-    );
-
+    /*
+     * IMPORTANT:
+     * The ZIP is uploaded directly from the browser to Vercel
+     * Blob through a short-lived signed PUT URL.
+     *
+     * It is NOT sent through the FastAPI/Vercel Function, so
+     * large toolkit files do not hit the Vercel request limit.
+     */
 
     try {
 
-        const response =
+        console.log(
+            "===================================="
+        );
+
+        console.log(
+            "UPLOADING HACKATHON TOOLKIT DIRECTLY TO BLOB"
+        );
+
+        console.log(
+            "DOMAIN:",
+            selectedDomain
+        );
+
+        console.log(
+            "FILE:",
+            file.name
+        );
+
+        console.log(
+            "SIZE:",
+            file.size
+        );
+
+        console.log(
+            "===================================="
+        );
+
+
+        /* -------------------------------------------------
+           1. GET SHORT-LIVED SIGNED PUT URL
+           ------------------------------------------------- */
+
+        const presignResponse =
             await fetch(
-                `/api/toolkit/upload?event_type=hackathon&item=${encodeURIComponent(selectedDomain)}`,
+                "/api/toolkit/blob-presign",
                 {
                     method: "POST",
-                    body: formData
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        event_type:
+                            "hackathon",
+
+                        item:
+                            selectedDomain,
+
+                        filename:
+                            file.name,
+
+                        content_type:
+                            file.type ||
+                            "application/zip",
+
+                        size:
+                            file.size
+
+                    })
+
                 }
             );
 
 
-        const data =
-            await response
-                .json()
-                .catch(
-                    function() {
+        let presignData = {};
 
-                        return {};
+        try {
 
-                    }
-                );
+            presignData =
+                await presignResponse.json();
+
+        } catch (error) {
+
+            presignData = {};
+
+        }
 
 
-        if (!response.ok) {
+        if (!presignResponse.ok) {
 
             throw new Error(
-                data.detail ||
-                data.message ||
-                "Toolkit upload failed."
+                presignData.detail ||
+                presignData.message ||
+                "Unable to prepare toolkit upload."
+            );
+
+        }
+
+
+        if (
+            !presignData.presigned_url ||
+            !presignData.pathname
+        ) {
+
+            throw new Error(
+                "The server did not return a valid Blob upload URL."
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           2. DIRECT BROWSER -> VERCEL BLOB UPLOAD
+           ------------------------------------------------- */
+
+        WarRoomAlert(
+            "Uploading toolkit..."
+        );
+
+
+        const blobResponse =
+            await fetch(
+                presignData.presigned_url,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            file.type ||
+                            "application/zip"
+                    },
+
+                    body:
+                        file
+                }
+            );
+
+
+        if (!blobResponse.ok) {
+
+            let blobMessage =
+                "Large toolkit upload failed.";
+
+            try {
+
+                const blobText =
+                    await blobResponse.text();
+
+                if (blobText) {
+
+                    blobMessage =
+                        blobText;
+                }
+
+            } catch (error) {
+                /* Keep default message. */
+            }
+
+            throw new Error(
+                blobMessage
+            );
+
+        }
+
+
+        /* -------------------------------------------------
+           3. SAVE ONLY METADATA IN NEON
+           ------------------------------------------------- */
+
+        const completeResponse =
+            await fetch(
+                "/api/toolkit/blob-complete",
+                {
+                    method: "POST",
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        event_type:
+                            "hackathon",
+
+                        item:
+                            selectedDomain,
+
+                        filename:
+                            presignData.filename ||
+                            file.name,
+
+                        pathname:
+                            presignData.pathname,
+
+                        blob_url:
+                            presignData.blob_url,
+
+                        download_url:
+                            presignData.download_url,
+
+                        content_type:
+                            file.type ||
+                            "application/zip"
+
+                    })
+
+                }
+            );
+
+
+        let completeData = {};
+
+        try {
+
+            completeData =
+                await completeResponse.json();
+
+        } catch (error) {
+
+            completeData = {};
+
+        }
+
+
+        if (!completeResponse.ok) {
+
+            throw new Error(
+                completeData.detail ||
+                completeData.message ||
+                "Toolkit was uploaded but its metadata could not be saved."
             );
 
         }
@@ -839,7 +1038,7 @@ async function uploadToolkit() {
 
         console.log(
             "HACKATHON TOOLKIT UPLOADED:",
-            data
+            completeData
         );
 
 
@@ -875,7 +1074,6 @@ async function uploadToolkit() {
     }
 
 }
-
 
 /* =========================================================
    LOAD TOOLKITS
