@@ -5,11 +5,12 @@ from fastapi import (
     File,
     Depends,
     Cookie,
-    Response
+    Response,
+    Request
 )
 
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 from pydantic import BaseModel
 
@@ -959,6 +960,43 @@ def initialize_user_database():
                 account_id,
                 event_type,
                 domain
+            )
+
+        )
+        """
+    )
+
+
+    # =====================================================
+    # PERSISTENT TOOLKIT METADATA
+    # =====================================================
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS toolkit_files (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            event_type TEXT NOT NULL,
+
+            item TEXT NOT NULL,
+
+            filename TEXT NOT NULL,
+
+            pathname TEXT NOT NULL,
+
+            blob_url TEXT NOT NULL,
+
+            download_url TEXT NOT NULL,
+
+            content_type TEXT,
+
+            uploaded_at TEXT NOT NULL,
+
+            UNIQUE(
+                event_type,
+                item,
+                filename
             )
 
         )
@@ -6871,7 +6909,7 @@ async def old_admin_leaderboard_page():
         "leaderboard.html"
     )
 
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 
 @app.get("/admin/accounts")
@@ -7287,6 +7325,14 @@ def get_toolkit_directory(
 # =========================================================
 # TOOLKIT UPLOAD
 # =========================================================
+# IMPORTANT:
+# Large toolkit files must NOT travel through the FastAPI
+# Vercel Function. The browser uses /api/toolkit/blob-upload
+# for direct-to-Vercel-Blob multipart uploads.
+#
+# This legacy endpoint is intentionally kept for local/small
+# uploads so existing local development behavior is preserved.
+# =========================================================
 
 @app.post("/api/toolkit/upload")
 async def upload_toolkit(
@@ -7301,169 +7347,397 @@ async def upload_toolkit(
         item
     )
 
-
     if not file.filename:
-
         raise HTTPException(
             status_code=400,
-            detail=(
-                "No file selected."
-            )
+            detail="No file selected."
         )
 
-
-    safe_filename = Path(
-        file.filename
-    ).name
-
+    safe_filename = Path(file.filename).name
 
     if not safe_filename:
-
         raise HTTPException(
             status_code=400,
-            detail=(
-                "Invalid filename."
-            )
+            detail="Invalid filename."
         )
 
-
-    if not safe_filename.lower().endswith(
-        ".zip"
-    ):
-
+    if not safe_filename.lower().endswith(".zip"):
         raise HTTPException(
             status_code=400,
-            detail=(
-                "Only ZIP toolkit files "
-                "are allowed."
-            )
+            detail="Only ZIP toolkit files are allowed."
         )
 
-
-    destination = (
-        directory /
-        safe_filename
-    )
-
+    destination = directory / safe_filename
 
     try:
-
-        with open(
-            destination,
-            "wb"
-        ) as buffer:
-
-            shutil.copyfileobj(
-                file.file,
-                buffer
-            )
-
-
+        with open(destination, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
     except Exception as error:
-
         raise HTTPException(
             status_code=500,
-            detail=(
-                f"Toolkit upload failed: "
-                f"{error}"
+            detail=f"Toolkit upload failed: {error}"
+        )
+    finally:
+        await file.close()
+
+    return {
+        "success": True,
+        "message": "Toolkit uploaded successfully.",
+        "event": event_type,
+        "item": item,
+        "filename": safe_filename,
+        "download_url": (
+            "/api/toolkit/download/"
+            f"{event_type}/{item}/{safe_filename}"
+        )
+    }
+
+
+# =========================================================
+# VERCEL BLOB UPLOAD COMPLETION CALLBACK
+# =========================================================
+
+@app.post("/api/toolkit/blob-complete")
+async def toolkit_blob_complete(request: Request):
+
+    expected_secret = os.environ.get(
+        "WAR_ROOM_BLOB_CALLBACK_SECRET",
+        ""
+    ).strip()
+
+    received_secret = request.headers.get(
+        "x-war-room-blob-secret",
+        ""
+    ).strip()
+
+    if not expected_secret or not received_secret:
+        raise HTTPException(
+            status_code=401,
+            detail="Blob callback authentication is not configured."
+        )
+
+    if not hmac.compare_digest(
+        expected_secret,
+        received_secret
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid blob callback authentication."
+        )
+
+    try:
+        payload = await request.json()
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid blob callback payload."
+        )
+
+    event_type = str(
+        payload.get("event_type", "")
+    ).strip().lower()
+
+    item = str(
+        payload.get("item", "")
+    ).strip().lower()
+
+    filename = Path(
+        str(payload.get("filename", ""))
+    ).name
+
+    pathname = str(
+        payload.get("pathname", "")
+    ).strip()
+
+    blob_url = str(
+        payload.get("blob_url", "")
+    ).strip()
+
+    download_url = str(
+        payload.get("download_url", blob_url)
+    ).strip()
+
+    content_type = str(
+        payload.get("content_type", "application/zip")
+    ).strip()
+
+    if event_type not in {"workshop", "hackathon"}:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid event type."
+        )
+
+    valid_items = (
+        WORKSHOP_DOMAINS
+        if event_type == "workshop"
+        else HACKATHON_DOMAINS
+    )
+
+    if item not in valid_items:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid toolkit domain."
+        )
+
+    if (
+        not filename
+        or not filename.lower().endswith(".zip")
+        or not pathname
+        or not blob_url
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid toolkit metadata."
+        )
+
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO toolkit_files
+                (
+                    event_type,
+                    item,
+                    filename,
+                    pathname,
+                    blob_url,
+                    download_url,
+                    content_type,
+                    uploaded_at
+                )
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (
+                event_type,
+                item,
+                filename
+            )
+            DO UPDATE SET
+                pathname = excluded.pathname,
+                blob_url = excluded.blob_url,
+                download_url = excluded.download_url,
+                content_type = excluded.content_type,
+                uploaded_at = excluded.uploaded_at
+            """,
+            (
+                event_type,
+                item,
+                filename,
+                pathname,
+                blob_url,
+                download_url,
+                content_type,
+                datetime.now(timezone.utc).isoformat()
             )
         )
 
+        connection.commit()
 
     finally:
-
-        await file.close()
-
+        connection.close()
 
     return {
-
-        "success":
-            True,
-
-        "message":
-            "Toolkit uploaded successfully.",
-
-        "event":
-            event_type,
-
-        "item":
-            item,
-
-        "filename":
-            safe_filename,
-
-        "download_url":
-            (
-                "/api/toolkit/download/"
-                f"{event_type}/"
-                f"{item}/"
-                f"{safe_filename}"
-            )
-
+        "success": True
     }
+
+
+# =========================================================
+# DELETE BLOB METADATA CALLBACK
+# =========================================================
+
+@app.post("/api/toolkit/blob-delete-metadata")
+async def toolkit_blob_delete_metadata(request: Request):
+
+    expected_secret = os.environ.get(
+        "WAR_ROOM_BLOB_CALLBACK_SECRET",
+        ""
+    ).strip()
+
+    received_secret = request.headers.get(
+        "x-war-room-blob-secret",
+        ""
+    ).strip()
+
+    if (
+        not expected_secret
+        or not received_secret
+        or not hmac.compare_digest(
+            expected_secret,
+            received_secret
+        )
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid blob callback authentication."
+        )
+
+    try:
+        payload = await request.json()
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid payload."
+        )
+
+    event_type = str(
+        payload.get("event_type", "")
+    ).strip().lower()
+
+    item = str(
+        payload.get("item", "")
+    ).strip().lower()
+
+    filename = Path(
+        str(payload.get("filename", ""))
+    ).name
+
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            DELETE FROM toolkit_files
+            WHERE event_type = ?
+              AND item = ?
+              AND filename = ?
+            """,
+            (
+                event_type,
+                item,
+                filename
+            )
+        )
+
+        connection.commit()
+
+    finally:
+        connection.close()
+
+    return {
+        "success": True
+    }
+
+
+# =========================================================
+# TOOLKIT METADATA HELPERS
+# =========================================================
+
+def get_blob_toolkits(
+    event_type: str,
+    item: str
+):
+
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                filename,
+                pathname,
+                blob_url,
+                download_url,
+                content_type,
+                uploaded_at
+            FROM toolkit_files
+            WHERE event_type = ?
+              AND item = ?
+            ORDER BY LOWER(filename) ASC
+            """,
+            (
+                event_type,
+                item
+            )
+        )
+
+        return cursor.fetchall()
+
+    finally:
+        connection.close()
+
+
+def toolkit_file_records(
+    event_type: str,
+    item: str
+):
+    """Return durable Blob records plus bundled/local files."""
+
+    records = {}
+
+    # Durable Vercel Blob metadata.
+    try:
+        for row in get_blob_toolkits(
+            event_type,
+            item
+        ):
+            records[row["filename"]] = {
+                "filename": row["filename"],
+                "download_url": row["download_url"] or row["blob_url"],
+                "blob_url": row["blob_url"],
+                "storage": "blob"
+            }
+    except Exception:
+        # Local-only development must continue to work even when
+        # a developer is running without the new metadata table.
+        pass
+
+    # Existing repository/runtime files remain supported.
+    try:
+        directory = get_toolkit_directory(
+            event_type,
+            item
+        )
+
+        for file in directory.iterdir():
+            if file.is_file() and file.name not in records:
+                records[file.name] = {
+                    "filename": file.name,
+                    "download_url": (
+                        "/api/toolkit/download/"
+                        f"{event_type}/{item}/{quote(file.name)}"
+                    ),
+                    "storage": "local"
+                }
+    except Exception:
+        pass
+
+    return sorted(
+        records.values(),
+        key=lambda value: value["filename"].lower()
+    )
 
 
 # =========================================================
 # LIST TOOLKITS
 # =========================================================
 
-@app.get(
-    "/api/toolkit/{event_type}/{item}"
-)
+@app.get("/api/toolkit/{event_type}/{item}")
 async def list_toolkit(
     event_type: str,
     item: str
 ):
 
-    directory = get_toolkit_directory(
+    # Validate the same way as the existing directory helper.
+    get_toolkit_directory(
         event_type,
         item
     )
 
-
-    files = []
-
-
-    for file in directory.iterdir():
-
-        if file.is_file():
-
-            files.append({
-
-                "filename":
-                    file.name,
-
-                "download_url":
-                    (
-                        "/api/toolkit/download/"
-                        f"{event_type}/"
-                        f"{item}/"
-                        f"{file.name}"
-                    )
-
-            })
-
-
-    files.sort(
-        key=lambda value:
-            value["filename"].lower()
-    )
-
-
     return {
-
-        "success":
-            True,
-
-        "event":
+        "success": True,
+        "event": event_type,
+        "item": item,
+        "files": toolkit_file_records(
             event_type,
-
-        "item":
-            item,
-
-        "files":
-            files
-
+            item
+        )
     }
 
 
@@ -7481,46 +7755,64 @@ async def download_toolkit(
     filename: str
 ):
 
+    safe_filename = Path(filename).name
+
+    if not safe_filename or safe_filename != filename:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid toolkit filename."
+        )
+
+    # First prefer the durable Vercel Blob record.
+    try:
+        connection = get_user_db()
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT download_url, blob_url
+                FROM toolkit_files
+                WHERE event_type = ?
+                  AND item = ?
+                  AND filename = ?
+                LIMIT 1
+                """,
+                (
+                    event_type,
+                    item,
+                    safe_filename
+                )
+            )
+            row = cursor.fetchone()
+        finally:
+            connection.close()
+
+        if row:
+            return RedirectResponse(
+                url=(row["download_url"] or row["blob_url"]),
+                status_code=307
+            )
+    except Exception:
+        pass
+
+    # Backward-compatible local/bundled toolkit.
     directory = get_toolkit_directory(
         event_type,
         item
     )
 
+    file_path = directory / safe_filename
 
-    safe_filename = Path(
-        filename
-    ).name
-
-
-    file_path = (
-        directory /
-        safe_filename
-    )
-
-
-    if not file_path.exists():
-
+    if not file_path.exists() or not file_path.is_file():
         raise HTTPException(
             status_code=404,
-            detail=(
-                "Toolkit file not found."
-            )
+            detail="Toolkit file not found."
         )
-
-
-    if not file_path.is_file():
-
-        raise HTTPException(
-            status_code=404,
-            detail=(
-                "Toolkit file not found."
-            )
-        )
-
 
     return FileResponse(
         file_path,
-        filename=safe_filename
+        filename=safe_filename,
+        media_type="application/zip"
     )
 
 
@@ -7538,45 +7830,19 @@ async def get_current_user_toolkit(
     )
 
     if not user:
-
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired user session."
         )
 
-    directory = get_toolkit_directory(
-        "workshop",
-        user["domain"]
-    )
-
-    files = []
-
-    for file in directory.iterdir():
-
-        if file.is_file() and file.suffix.lower() == ".zip":
-
-            files.append({
-
-                "filename": file.name,
-
-                "download_url": (
-                    "/api/user/toolkit/download/"
-                    f"{quote(file.name)}"
-                    "?session_token="
-                    f"{quote(session_token)}"
-                )
-
-            })
-
-    files.sort(
-        key=lambda value: value["filename"].lower()
-    )
-
     return {
         "success": True,
         "event": "workshop",
         "domain": user["domain"],
-        "files": files
+        "files": toolkit_file_records(
+            "workshop",
+            user["domain"]
+        )
     }
 
 
@@ -7595,28 +7861,53 @@ async def download_current_user_toolkit(
     )
 
     if not user:
-
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired user session."
         )
 
-    directory = get_toolkit_directory(
-        "workshop",
-        user["domain"]
-    )
-
     safe_filename = Path(filename).name
 
-    if (
-        not safe_filename
-        or safe_filename != filename
-    ):
-
+    if not safe_filename or safe_filename != filename:
         raise HTTPException(
             status_code=400,
             detail="Invalid toolkit filename."
         )
+
+    try:
+        connection = get_user_db()
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT download_url, blob_url
+                FROM toolkit_files
+                WHERE event_type = 'workshop'
+                  AND item = ?
+                  AND filename = ?
+                LIMIT 1
+                """,
+                (
+                    user["domain"],
+                    safe_filename
+                )
+            )
+            row = cursor.fetchone()
+        finally:
+            connection.close()
+
+        if row:
+            return RedirectResponse(
+                url=(row["download_url"] or row["blob_url"]),
+                status_code=307
+            )
+    except Exception:
+        pass
+
+    directory = get_toolkit_directory(
+        "workshop",
+        user["domain"]
+    )
 
     file_path = directory / safe_filename
 
@@ -7625,7 +7916,6 @@ async def download_current_user_toolkit(
         or not file_path.is_file()
         or file_path.suffix.lower() != ".zip"
     ):
-
         raise HTTPException(
             status_code=404,
             detail="Toolkit file not found."
@@ -7652,45 +7942,19 @@ async def get_current_hackathon_toolkit(
     )
 
     if not team:
-
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired Hackathon session."
         )
 
-    directory = get_toolkit_directory(
-        "hackathon",
-        team["domain"]
-    )
-
-    files = []
-
-    for file in directory.iterdir():
-
-        if file.is_file() and file.suffix.lower() == ".zip":
-
-            files.append({
-
-                "filename": file.name,
-
-                "download_url": (
-                    "/api/hackathon/toolkit/download/"
-                    f"{quote(file.name)}"
-                    "?session_token="
-                    f"{quote(session_token)}"
-                )
-
-            })
-
-    files.sort(
-        key=lambda value: value["filename"].lower()
-    )
-
     return {
         "success": True,
         "event": "hackathon",
         "domain": team["domain"],
-        "files": files
+        "files": toolkit_file_records(
+            "hackathon",
+            team["domain"]
+        )
     }
 
 
@@ -7709,28 +7973,53 @@ async def download_current_hackathon_toolkit(
     )
 
     if not team:
-
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired Hackathon session."
         )
 
-    directory = get_toolkit_directory(
-        "hackathon",
-        team["domain"]
-    )
-
     safe_filename = Path(filename).name
 
-    if (
-        not safe_filename
-        or safe_filename != filename
-    ):
-
+    if not safe_filename or safe_filename != filename:
         raise HTTPException(
             status_code=400,
             detail="Invalid toolkit filename."
         )
+
+    try:
+        connection = get_user_db()
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                SELECT download_url, blob_url
+                FROM toolkit_files
+                WHERE event_type = 'hackathon'
+                  AND item = ?
+                  AND filename = ?
+                LIMIT 1
+                """,
+                (
+                    team["domain"],
+                    safe_filename
+                )
+            )
+            row = cursor.fetchone()
+        finally:
+            connection.close()
+
+        if row:
+            return RedirectResponse(
+                url=(row["download_url"] or row["blob_url"]),
+                status_code=307
+            )
+    except Exception:
+        pass
+
+    directory = get_toolkit_directory(
+        "hackathon",
+        team["domain"]
+    )
 
     file_path = directory / safe_filename
 
@@ -7739,7 +8028,6 @@ async def download_current_hackathon_toolkit(
         or not file_path.is_file()
         or file_path.suffix.lower() != ".zip"
     ):
-
         raise HTTPException(
             status_code=404,
             detail="Toolkit file not found."
@@ -7767,372 +8055,68 @@ async def delete_toolkit(
     admin_username: str = Depends(require_admin)
 ):
 
+    safe_filename = Path(filename).name
+
+    if not safe_filename or safe_filename != filename:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid filename."
+        )
+
+    # For Blob-backed files, the browser now uses the dedicated
+    # /api/toolkit/blob-delete Node function. Keep this route for
+    # legacy/local files.
     directory = get_toolkit_directory(
         event_type,
         item
     )
 
+    file_path = directory / safe_filename
 
-    safe_filename = Path(
-        filename
-    ).name
-
-
-    if not safe_filename:
-
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "Invalid filename."
+    if file_path.exists() and file_path.is_file():
+        try:
+            file_path.unlink()
+        except Exception as error:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Toolkit delete failed: {error}"
             )
-        )
-
-
-    file_path = (
-        directory /
-        safe_filename
-    )
-
-
-    if not file_path.exists():
-
-        raise HTTPException(
-            status_code=404,
-            detail=(
-                "Toolkit file not found."
-            )
-        )
-
-
-    if not file_path.is_file():
-
-        raise HTTPException(
-            status_code=404,
-            detail=(
-                "Toolkit file not found."
-            )
-        )
-
-
-    try:
-
-        file_path.unlink()
-
-    except Exception as error:
-
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                f"Toolkit delete failed: "
-                f"{error}"
-            )
-        )
-
-
-    return {
-
-        "success":
-            True,
-
-        "message":
-            "Toolkit deleted successfully.",
-
-        "event":
-            event_type,
-
-        "item":
-            item,
-
-        "filename":
-            safe_filename
-
-    }
-
-
-# =========================================================
-# WORKSHOP DOMAIN STATUS
-# =========================================================
-
-@app.get(
-    "/api/workshop/{domain}/status"
-)
-async def workshop_domain_status(
-    domain: str
-):
-
-    domain = (
-        domain
-        .strip()
-        .lower()
-    )
-
-
-    if domain not in WORKSHOP_DOMAINS:
-
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "Invalid Workshop domain."
-            )
-        )
-
-
-    state = load_state()
-
-
-    return {
-
-        "success":
-            True,
-
-        "domain":
-            domain,
-
-        "enabled":
-            state["workshop"][
-                domain
-            ]
-
-    }
-
-
-# =========================================================
-# ALL WORKSHOP STATUS
-# =========================================================
-
-@app.get(
-    "/api/workshop/status"
-)
-async def workshop_status():
-
-    state = load_state()
-
-
-    return {
-
-        "success":
-            True,
-
-        "event":
-            state["workshop"][
-                "event"
-            ],
-
-        "domains": {
-
-            "ceh":
-                state["workshop"][
-                    "ceh"
-                ],
-
-            "vapt":
-                state["workshop"][
-                    "vapt"
-                ],
-
-            "soc":
-                state["workshop"][
-                    "soc"
-                ],
-
-            "forensics":
-                state["workshop"][
-                    "forensics"
-                ]
-
-        }
-
-    }
-
-
-# =========================================================
-# WORKSHOP PARTICIPANTS
-# =========================================================
-
-@app.get(
-    "/api/workshop/{domain}/participants"
-)
-async def get_workshop_participants(
-    domain: str
-):
-
-    domain = (
-        domain
-        .strip()
-        .lower()
-    )
-
-
-    if domain not in WORKSHOP_DOMAINS:
-
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "Invalid Workshop domain."
-            )
-        )
-
-
-    connection = get_user_db()
-
-
-    try:
-
-        cursor = connection.cursor()
-
-
-        cursor.execute(
-            """
-            SELECT
-
-                u.id,
-
-                u.name,
-
-                u.email,
-
-                u.phone,
-
-                wr.status,
-
-                wr.registered_at
-
-            FROM workshop_registrations wr
-
-            INNER JOIN users u
-                ON u.id = wr.user_id
-
-            WHERE wr.domain = ?
-
-            ORDER BY
-                wr.registered_at DESC
-            """,
-            (
-                domain,
-            )
-        )
-
-
-        rows = cursor.fetchall()
-
-
-        participants = []
-
-
-        for row in rows:
-
-            participants.append({
-
-                "id":
-                    row["id"],
-
-                "name":
-                    row["name"],
-
-                "email":
-                    row["email"],
-
-                "phone":
-                    row["phone"],
-
-                "status":
-                    row["status"],
-
-                "registered_at":
-                    row["registered_at"]
-
-            })
-
 
         return {
-
-            "success":
-                True,
-
-            "domain":
-                domain,
-
-            "total":
-                len(participants),
-
-            "participants":
-                participants
-
+            "success": True,
+            "message": "Toolkit deleted successfully.",
+            "event": event_type,
+            "item": item,
+            "filename": safe_filename
         }
 
-
-    finally:
-
-        connection.close()
+    raise HTTPException(
+        status_code=404,
+        detail="Toolkit file is stored in Vercel Blob. Use the Blob delete endpoint."
+    )
 
 
 # =========================================================
 # WORKSHOP TOOLKIT SUMMARY
 # =========================================================
 
-@app.get(
-    "/api/workshop/toolkits"
-)
+@app.get("/api/workshop/toolkits")
 async def workshop_toolkit_summary():
 
     result = {}
 
-
     for domain in WORKSHOP_DOMAINS:
-
-        directory = (
-            WORKSHOP_TOOLKIT_DIR /
+        result[domain] = toolkit_file_records(
+            "workshop",
             domain
         )
 
-
-        directory.mkdir(
-            parents=True,
-            exist_ok=True
-        )
-
-
-        result[domain] = []
-
-
-        for file in directory.iterdir():
-
-            if file.is_file():
-
-                result[domain].append({
-
-                    "filename":
-                        file.name,
-
-                    "download_url":
-                        (
-                            "/api/toolkit/download/"
-                            f"workshop/"
-                            f"{domain}/"
-                            f"{file.name}"
-                        )
-
-                })
-
-
-        result[domain].sort(
-            key=lambda value:
-                value["filename"].lower()
-        )
-
-
     return {
-
-        "success":
-            True,
-
-        "toolkits":
-            result
-
+        "success": True,
+        "toolkits": result
     }
 
 
-# =========================================================
 # HACKATHON PARTICIPANTS
 # =========================================================
 
