@@ -380,6 +380,356 @@ function setupDropZone() {
    UPLOAD TOOLKIT
    ========================================================= */
 
+
+/* =========================================================
+   R2 UPLOAD PROGRESS
+   ========================================================= */
+
+let toolkitUploadProgressElement = null;
+
+function formatToolkitUploadBytes(bytes) {
+
+    const value = Number(bytes || 0);
+
+    if (value < 1024) {
+        return value + " B";
+    }
+
+    if (value < 1024 * 1024) {
+        return (value / 1024).toFixed(1) + " KB";
+    }
+
+    if (value < 1024 * 1024 * 1024) {
+        return (value / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+    return (value / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+}
+
+
+function showToolkitUploadProgress(fileName) {
+
+    hideToolkitUploadProgress();
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.id =
+        "warRoomToolkitUploadProgress";
+
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(0, 0, 0, 0.78);
+        backdrop-filter: blur(8px);
+    `;
+
+    const card =
+        document.createElement("div");
+
+    card.style.cssText = `
+        width: min(560px, 92vw);
+        padding: 28px;
+        border: 1px solid rgba(255, 40, 40, 0.65);
+        border-radius: 18px;
+        background: #111;
+        box-shadow: 0 0 40px rgba(255, 0, 0, 0.22);
+        color: #fff;
+        font-family: Arial, sans-serif;
+    `;
+
+    card.innerHTML = `
+        <div style="
+            font-size:12px;
+            letter-spacing:2px;
+            color:#ff5555;
+            font-weight:700;
+            margin-bottom:8px;
+        ">
+            WAR ROOM
+        </div>
+
+        <div style="
+            font-size:20px;
+            font-weight:800;
+            margin-bottom:8px;
+        ">
+            Uploading Toolkit
+        </div>
+
+        <div id="warRoomToolkitUploadFileName" style="
+            font-size:13px;
+            color:#bdbdbd;
+            word-break:break-all;
+            margin-bottom:20px;
+        "></div>
+
+        <div style="
+            width:100%;
+            height:14px;
+            border-radius:999px;
+            overflow:hidden;
+            background:#2a2a2a;
+            border:1px solid #3a3a3a;
+        ">
+            <div id="warRoomToolkitUploadBar" style="
+                width:0%;
+                height:100%;
+                border-radius:999px;
+                background:linear-gradient(90deg,#e50914,#ff4b4b);
+                transition:width .15s linear;
+            "></div>
+        </div>
+
+        <div id="warRoomToolkitUploadPercent" style="
+            margin-top:14px;
+            font-size:28px;
+            font-weight:800;
+        ">
+            0%
+        </div>
+
+        <div id="warRoomToolkitUploadDetails" style="
+            margin-top:5px;
+            font-size:13px;
+            color:#aaa;
+        ">
+            0 B / 0 B
+        </div>
+    `;
+
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    const nameElement =
+        document.getElementById(
+            "warRoomToolkitUploadFileName"
+        );
+
+    if (nameElement) {
+        nameElement.textContent =
+            fileName || "Toolkit.zip";
+    }
+
+    toolkitUploadProgressElement =
+        overlay;
+}
+
+
+function updateToolkitUploadProgress(
+    loaded,
+    total
+) {
+
+    const overlay =
+        toolkitUploadProgressElement ||
+        document.getElementById(
+            "warRoomToolkitUploadProgress"
+        );
+
+    if (!overlay) {
+        return;
+    }
+
+    const safeTotal =
+        Number(total || 0);
+
+    const safeLoaded =
+        Number(loaded || 0);
+
+    const percent =
+        safeTotal > 0
+            ? Math.min(
+                100,
+                Math.max(
+                    0,
+                    (safeLoaded / safeTotal) * 100
+                )
+            )
+            : 0;
+
+    const bar =
+        document.getElementById(
+            "warRoomToolkitUploadBar"
+        );
+
+    const percentElement =
+        document.getElementById(
+            "warRoomToolkitUploadPercent"
+        );
+
+    const details =
+        document.getElementById(
+            "warRoomToolkitUploadDetails"
+        );
+
+    if (bar) {
+        bar.style.width =
+            percent.toFixed(1) + "%";
+    }
+
+    if (percentElement) {
+        percentElement.textContent =
+            Math.round(percent) + "%";
+    }
+
+    if (details) {
+        details.textContent =
+            formatToolkitUploadBytes(
+                safeLoaded
+            ) +
+            " / " +
+            formatToolkitUploadBytes(
+                safeTotal
+            );
+    }
+}
+
+
+function hideToolkitUploadProgress() {
+
+    const overlay =
+        toolkitUploadProgressElement ||
+        document.getElementById(
+            "warRoomToolkitUploadProgress"
+        );
+
+    if (overlay) {
+        overlay.remove();
+    }
+
+    toolkitUploadProgressElement =
+        null;
+}
+
+
+function uploadFileToR2WithProgress(
+    presignedUrl,
+    file,
+    onProgress
+) {
+
+    return new Promise(
+        function(resolve, reject) {
+
+            const xhr =
+                new XMLHttpRequest();
+
+            xhr.open(
+                "PUT",
+                presignedUrl,
+                true
+            );
+
+            xhr.setRequestHeader(
+                "Content-Type",
+                "application/zip"
+            );
+
+            xhr.upload.addEventListener(
+                "progress",
+                function(event) {
+
+                    if (
+                        event.lengthComputable &&
+                        typeof onProgress === "function"
+                    ) {
+
+                        onProgress(
+                            event.loaded,
+                            event.total
+                        );
+
+                    }
+
+                }
+            );
+
+            xhr.addEventListener(
+                "load",
+                function() {
+
+                    if (
+                        xhr.status >= 200 &&
+                        xhr.status < 300
+                    ) {
+
+                        resolve({
+                            ok: true,
+                            status: xhr.status,
+                            responseText:
+                                xhr.responseText || ""
+                        });
+
+                        return;
+                    }
+
+                    reject(
+                        new Error(
+                            xhr.responseText ||
+                            (
+                                "Cloudflare R2 upload failed " +
+                                "(HTTP " +
+                                xhr.status +
+                                "). Check the R2 bucket CORS policy and try again."
+                            )
+                        )
+                    );
+
+                }
+            );
+
+            xhr.addEventListener(
+                "error",
+                function() {
+
+                    reject(
+                        new Error(
+                            "Network error while uploading to Cloudflare R2. Check the R2 bucket CORS policy and your internet connection."
+                        )
+                    );
+
+                }
+            );
+
+            xhr.addEventListener(
+                "abort",
+                function() {
+
+                    reject(
+                        new Error(
+                            "Toolkit upload was cancelled."
+                        )
+                    );
+
+                }
+            );
+
+            xhr.addEventListener(
+                "timeout",
+                function() {
+
+                    reject(
+                        new Error(
+                            "Toolkit upload timed out. Please try again."
+                        )
+                    );
+
+                }
+            );
+
+            xhr.send(file);
+
+        }
+    );
+}
+
+
 async function uploadToolkit() {
 
     const fileInput =
@@ -447,7 +797,7 @@ async function uploadToolkit() {
         );
 
         console.log(
-            "UPLOADING WORKSHOP TOOLKIT DIRECTLY TO BLOB"
+            "UPLOADING WORKSHOP TOOLKIT DIRECTLY TO R2"
         );
 
         console.log(
@@ -476,7 +826,7 @@ async function uploadToolkit() {
 
         const presignResponse =
             await fetch(
-                "/api/toolkit/blob-presign",
+                "/api/toolkit/r2-presign",
                 {
                     method: "POST",
 
@@ -542,62 +892,49 @@ async function uploadToolkit() {
         ) {
 
             throw new Error(
-                "The server did not return a valid Blob upload URL."
+                "The server did not return a valid R2 upload URL."
             );
 
         }
 
 
         /* -------------------------------------------------
-           2. DIRECT BROWSER -> VERCEL BLOB UPLOAD
+           2. DIRECT BROWSER -> CLOUDFLARE R2 UPLOAD
            ------------------------------------------------- */
 
-        WarRoomAlert(
-            "Uploading toolkit..."
+        showToolkitUploadProgress(file.name);
+
+        updateToolkitUploadProgress(
+            0,
+            file.size
         );
 
+        let r2UploadResponse;
 
-        const blobResponse =
-            await fetch(
-                presignData.presigned_url,
-                {
-                    method: "PUT",
+        try {
 
-                    headers: {
-                        "Content-Type":
-                            file.type ||
-                            "application/zip"
-                    },
+            r2UploadResponse =
+                await uploadFileToR2WithProgress(
+                    presignData.presigned_url,
+                    file,
+                    function(
+                        loaded,
+                        total
+                    ) {
 
-                    body:
-                        file
-                }
-            );
+                        updateToolkitUploadProgress(
+                            loaded,
+                            total
+                        );
 
+                    }
+                );
 
-        if (!blobResponse.ok) {
+        } catch (uploadError) {
 
-            let blobMessage =
-                "Large toolkit upload failed.";
+            hideToolkitUploadProgress();
 
-            try {
-
-                const blobText =
-                    await blobResponse.text();
-
-                if (blobText) {
-
-                    blobMessage =
-                        blobText;
-                }
-
-            } catch (error) {
-                /* Keep default message. */
-            }
-
-            throw new Error(
-                blobMessage
-            );
+            throw uploadError;
 
         }
 
@@ -608,7 +945,7 @@ async function uploadToolkit() {
 
         const completeResponse =
             await fetch(
-                "/api/toolkit/blob-complete",
+                "/api/toolkit/r2-complete",
                 {
                     method: "POST",
 
@@ -675,6 +1012,8 @@ async function uploadToolkit() {
         }
 
 
+        hideToolkitUploadProgress();
+
         console.log(
             "WORKSHOP TOOLKIT UPLOADED:",
             completeData
@@ -719,6 +1058,8 @@ async function uploadToolkit() {
 
 
     } catch (error) {
+
+        hideToolkitUploadProgress();
 
         console.error(
             "TOOLKIT UPLOAD ERROR:",
@@ -1208,15 +1549,12 @@ async function deleteToolkit(filename) {
         const response =
             await fetch(
                 "/api/toolkit/workshop/" +
-                encodeURIComponent(
-                    selectedDomain
-                ) +
+                encodeURIComponent(selectedDomain) +
                 "/" +
-                encodeURIComponent(
-                    filename
-                ),
+                encodeURIComponent(filename),
                 {
                     method: "DELETE",
+                    credentials: "include",
                     cache: "no-store"
                 }
             );
@@ -2294,14 +2632,15 @@ async function loadParticipants() {
 
         const response =
             await fetch(
-                "/api/workshop/" +
+                "/api/admin/accounts/workshop/" +
                 encodeURIComponent(
                     selectedDomain
                 ) +
-                "/participants?time=" +
+                "?time=" +
                 Date.now(),
                 {
                     method: "GET",
+                    credentials: "include",
                     cache: "no-store"
                 }
             );
@@ -2349,9 +2688,9 @@ async function loadParticipants() {
         participantsData =
             data &&
             Array.isArray(
-                data.participants
+                data.accounts
             )
-                ? data.participants
+                ? data.accounts
                 : [];
 
 

@@ -43,6 +43,118 @@ load_dotenv()
 
 
 # =========================================================
+# CLOUDFLARE R2 TOOLKIT STORAGE
+# =========================================================
+# Large toolkit ZIP files are uploaded directly from the browser to
+# Cloudflare R2 using short-lived S3 presigned URLs. This keeps the
+# file bytes out of Vercel/FastAPI request bodies.
+# =========================================================
+
+R2_ACCOUNT_ID = os.environ.get("R2_ACCOUNT_ID", "").strip()
+R2_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID", "").strip()
+R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY", "").strip()
+R2_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME", "").strip()
+R2_ENDPOINT_URL = os.environ.get(
+    "R2_ENDPOINT_URL",
+    f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+).strip()
+R2_PRESIGN_SECONDS = int(
+    os.environ.get("R2_PRESIGN_SECONDS", "900")
+)
+
+
+def r2_is_configured():
+    return bool(
+        R2_ACCOUNT_ID
+        and R2_ACCESS_KEY_ID
+        and R2_SECRET_ACCESS_KEY
+        and R2_BUCKET_NAME
+        and R2_ENDPOINT_URL
+    )
+
+
+def get_r2_client():
+    if not r2_is_configured():
+        raise RuntimeError(
+            "Cloudflare R2 is not configured. Set R2_ACCOUNT_ID, "
+            "R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET_NAME."
+        )
+
+    try:
+        import boto3
+    except ImportError as error:
+        raise RuntimeError(
+            "boto3 is required for Cloudflare R2 storage. "
+            "Add boto3 to requirements.txt."
+        ) from error
+
+    return boto3.client(
+        "s3",
+        endpoint_url=R2_ENDPOINT_URL,
+        aws_access_key_id=R2_ACCESS_KEY_ID,
+        aws_secret_access_key=R2_SECRET_ACCESS_KEY,
+        region_name="auto",
+    )
+
+
+def r2_object_key(event_type, item, filename):
+    safe_event = str(event_type or "").strip().lower()
+    safe_item = str(item or "").strip().lower()
+    safe_filename = Path(str(filename or "")).name
+    token = secrets.token_hex(8)
+    return (
+        f"war-room/toolkits/{safe_event}/{safe_item}/"
+        f"{token}-{safe_filename}"
+    )
+
+
+def r2_presigned_put_url(key, content_type="application/zip"):
+    client = get_r2_client()
+    return client.generate_presigned_url(
+        "put_object",
+        Params={
+            "Bucket": R2_BUCKET_NAME,
+            "Key": key,
+            "ContentType": content_type,
+        },
+        ExpiresIn=R2_PRESIGN_SECONDS,
+    )
+
+
+def r2_presigned_get_url(key, filename):
+    client = get_r2_client()
+    return client.generate_presigned_url(
+        "get_object",
+        Params={
+            "Bucket": R2_BUCKET_NAME,
+            "Key": key,
+            "ResponseContentType": "application/zip",
+            "ResponseContentDisposition": (
+                f'attachment; filename="{Path(filename).name}"'
+            ),
+        },
+        ExpiresIn=R2_PRESIGN_SECONDS,
+    )
+
+
+def r2_object_exists(key):
+    client = get_r2_client()
+    client.head_object(
+        Bucket=R2_BUCKET_NAME,
+        Key=key,
+    )
+    return True
+
+
+def r2_delete_object(key):
+    client = get_r2_client()
+    client.delete_object(
+        Bucket=R2_BUCKET_NAME,
+        Key=key,
+    )
+
+
+# =========================================================
 # PERSISTENT DATABASE COMPATIBILITY LAYER
 # =========================================================
 # On Vercel, all user/event data must live in Neon PostgreSQL.
@@ -751,8 +863,42 @@ def verify_password(
 # =========================================================
 # USER DATABASE CONNECTION
 # =========================================================
+# Do not connect to Neon while the Vercel function module is importing.
+# A serverless function must be able to serve static pages even if the
+# database is temporarily unavailable. Database schema creation is done
+# lazily on the first database operation.
+# =========================================================
+
+_USER_DATABASE_INITIALIZED = False
+_USER_DATABASE_INITIALIZING = False
+
 
 def get_user_db():
+
+    global _USER_DATABASE_INITIALIZED
+    global _USER_DATABASE_INITIALIZING
+
+    if (
+        not _USER_DATABASE_INITIALIZED
+        and not _USER_DATABASE_INITIALIZING
+    ):
+        _USER_DATABASE_INITIALIZING = True
+        try:
+            initialize_user_database()
+
+            # These CTF tables used to be created at module import time.
+            # Create them only after the base database has been initialized,
+            # keeping the Vercel module import free of database connections.
+            if 'ensure_ctf_answer_key_table' in globals():
+                ensure_ctf_answer_key_table()
+            if 'ensure_user_ctf_submission_table' in globals():
+                ensure_user_ctf_submission_table()
+
+            _USER_DATABASE_INITIALIZED = True
+        finally:
+            _USER_DATABASE_INITIALIZING = False
+
+
 
     # Vercel/Neon: persistent database for users, registrations,
     # sessions, CTF submissions, points and leaderboard data.
@@ -1052,10 +1198,9 @@ def initialize_user_database():
 
 
 # =========================================================
-# INITIALIZE DATABASE
+# DATABASE INITIALIZATION
 # =========================================================
-
-initialize_user_database()
+# Deferred until the first database operation.
 
 
 # =========================================================
@@ -1218,7 +1363,7 @@ def initialize_admin_credentials():
         connection.close()
 
 
-initialize_admin_credentials()
+# Admin credentials are initialized lazily on the first admin-auth operation.
 
 
 # =========================================================
@@ -4516,6 +4661,28 @@ ADMIN_SESSION_MAX_AGE = (
     60 * 60 * 8
 )
 
+_ADMIN_CREDENTIALS_INITIALIZED = False
+_ADMIN_CREDENTIALS_INITIALIZING = False
+
+
+def ensure_admin_credentials_initialized():
+
+    global _ADMIN_CREDENTIALS_INITIALIZED
+    global _ADMIN_CREDENTIALS_INITIALIZING
+
+    if _ADMIN_CREDENTIALS_INITIALIZED:
+        return
+
+    if _ADMIN_CREDENTIALS_INITIALIZING:
+        return
+
+    _ADMIN_CREDENTIALS_INITIALIZING = True
+    try:
+        initialize_admin_credentials()
+        _ADMIN_CREDENTIALS_INITIALIZED = True
+    finally:
+        _ADMIN_CREDENTIALS_INITIALIZING = False
+
 
 def create_admin_session(
     username: str
@@ -5052,6 +5219,8 @@ async def admin_login_api(
     response: Response
 ):
 
+    ensure_admin_credentials_initialized()
+
     ADMIN_USERNAME, ADMIN_PASSWORD_HASH = get_admin_credentials()
 
 
@@ -5115,6 +5284,240 @@ async def admin_auth_check(
     return {
         "success": True,
         "username": admin_username
+    }
+
+
+# =========================================================
+# DIRECT-TO-R2 TOOLKIT UPLOAD
+# =========================================================
+
+
+class ToolkitStoragePresignRequest(BaseModel):
+    event_type: str
+    item: str
+    filename: str
+    content_type: str = "application/zip"
+    size: int = 0
+
+
+@app.post("/api/toolkit/r2-presign")
+# Backward-compatible route for any cached frontend still using the old path.
+@app.post("/api/toolkit/blob-presign")
+async def presign_toolkit_upload(
+    payload: ToolkitStoragePresignRequest,
+    admin_username: str = Depends(require_admin)
+):
+
+    event_type = str(payload.event_type or "").strip().lower()
+    item = str(payload.item or "").strip().lower()
+    filename = Path(str(payload.filename or "").strip()).name
+
+    valid_domains = (
+        WORKSHOP_DOMAINS
+        if event_type == "workshop"
+        else HACKATHON_DOMAINS
+        if event_type == "hackathon"
+        else set()
+    )
+
+    if item not in valid_domains:
+        raise HTTPException(status_code=400, detail="Invalid toolkit domain.")
+
+    if (
+        not filename
+        or filename != str(payload.filename).strip()
+        or not filename.lower().endswith(".zip")
+    ):
+        raise HTTPException(status_code=400, detail="Only ZIP toolkit files are allowed.")
+
+    size = int(payload.size or 0)
+    if size <= 0:
+        raise HTTPException(status_code=400, detail="Invalid toolkit file size.")
+
+    # R2 single PUT supports up to 5 GiB per object. For larger individual
+    # files, multipart upload can be added without changing the database model.
+    if size > 5 * 1024 * 1024 * 1024:
+        raise HTTPException(
+            status_code=413,
+            detail="This toolkit is larger than 5 GiB. Multipart R2 upload is required for this file."
+        )
+
+    try:
+        key = r2_object_key(event_type, item, filename)
+        presigned_url = r2_presigned_put_url(key, "application/zip")
+    except Exception as error:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Unable to prepare R2 upload: {error}"
+        )
+
+    download_url = (
+        "/api/toolkit/download/"
+        f"{event_type}/{item}/{quote(filename)}"
+    )
+
+    return {
+        "success": True,
+        "filename": filename,
+        "pathname": key,
+        "storage_key": key,
+        "presigned_url": presigned_url,
+        "blob_url": f"r2://{R2_BUCKET_NAME}/{key}",
+        "download_url": download_url,
+        "content_type": "application/zip",
+        "size": size,
+        "storage": "r2"
+    }
+
+
+class ToolkitStorageCompleteRequest(BaseModel):
+    event_type: str
+    item: str
+    filename: str
+    pathname: str
+    blob_url: str = ""
+    download_url: str = ""
+    content_type: str = "application/zip"
+
+
+@app.post("/api/toolkit/r2-complete")
+# Backward-compatible route for any cached frontend still using the old path.
+@app.post("/api/toolkit/blob-complete")
+async def complete_toolkit_upload(
+    payload: ToolkitStorageCompleteRequest,
+    admin_username: str = Depends(require_admin)
+):
+
+    event_type = str(payload.event_type or "").strip().lower()
+    item = str(payload.item or "").strip().lower()
+    filename = Path(str(payload.filename or "").strip()).name
+    pathname = str(payload.pathname or "").strip()
+
+    valid_domains = (
+        WORKSHOP_DOMAINS
+        if event_type == "workshop"
+        else HACKATHON_DOMAINS
+        if event_type == "hackathon"
+        else set()
+    )
+
+    if item not in valid_domains:
+        raise HTTPException(status_code=400, detail="Invalid toolkit domain.")
+
+    if (
+        not filename
+        or filename != str(payload.filename).strip()
+        or not filename.lower().endswith(".zip")
+    ):
+        raise HTTPException(status_code=400, detail="Only ZIP toolkit files are allowed.")
+
+    expected_prefix = f"war-room/toolkits/{event_type}/{item}/"
+    if not pathname.startswith(expected_prefix):
+        raise HTTPException(status_code=400, detail="Invalid R2 object path.")
+
+    try:
+        r2_object_exists(pathname)
+    except Exception as error:
+        raise HTTPException(
+            status_code=400,
+            detail=f"The toolkit upload could not be verified in R2: {error}"
+        )
+
+    download_url = (
+        "/api/toolkit/download/"
+        f"{event_type}/{item}/{quote(filename)}"
+    )
+    storage_uri = f"r2://{R2_BUCKET_NAME}/{pathname}"
+    now = datetime.now(timezone.utc).isoformat()
+
+    connection = get_user_db()
+    try:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            SELECT id
+            FROM toolkit_files
+            WHERE event_type = ?
+              AND item = ?
+              AND filename = ?
+            LIMIT 1
+            """,
+            (event_type, item, filename)
+        )
+        existing = cursor.fetchone()
+
+        if existing:
+            cursor.execute(
+                """
+                UPDATE toolkit_files
+                SET pathname = ?,
+                    blob_url = ?,
+                    download_url = ?,
+                    content_type = ?,
+                    uploaded_at = ?
+                WHERE id = ?
+                """,
+                (
+                    pathname,
+                    storage_uri,
+                    download_url,
+                    "application/zip",
+                    now,
+                    existing["id"]
+                )
+            )
+        else:
+            cursor.execute(
+                """
+                INSERT INTO toolkit_files
+                    (
+                        event_type,
+                        item,
+                        filename,
+                        pathname,
+                        blob_url,
+                        download_url,
+                        content_type,
+                        uploaded_at
+                    )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    event_type,
+                    item,
+                    filename,
+                    pathname,
+                    storage_uri,
+                    download_url,
+                    "application/zip",
+                    now
+                )
+            )
+
+        connection.commit()
+
+    except DB_INTEGRITY_ERRORS as error:
+        connection.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail=f"Toolkit metadata already exists or conflicts: {error}"
+        )
+    except Exception as error:
+        connection.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Toolkit metadata save failed: {error}"
+        )
+    finally:
+        connection.close()
+
+    return {
+        "success": True,
+        "event_type": event_type,
+        "item": item,
+        "filename": filename,
+        "download_url": download_url,
+        "storage": "r2"
     }
 
 
@@ -5838,6 +6241,28 @@ async def get_admin_accounts(
     finally:
 
         connection.close()
+
+
+# =========================================================
+# ADMIN ACCOUNT PARTICIPANTS COMPATIBILITY ROUTE
+# =========================================================
+# Older cached workshop pages used /participants. Keep this GET route
+# so those pages do not receive a 405 while the current frontend uses
+# the canonical /api/admin/accounts/{event_type}/{domain} endpoint.
+
+@app.get(
+    "/api/admin/accounts/{event_type}/{domain}/participants"
+)
+async def get_admin_account_participants_compat(
+    event_type: str,
+    domain: str,
+    admin_username: str = Depends(require_admin)
+):
+    return await get_admin_accounts(
+        event_type,
+        domain,
+        admin_username
+    )
 
 
 # =========================================================
@@ -7036,7 +7461,7 @@ async def update_system_state(
             "forensics_hackathon"
 
         }
-        
+
         # =====================================================
         # HOME CONTROL ALIASES
         # =====================================================
@@ -7413,145 +7838,6 @@ async def upload_toolkit(
 
 
 # =========================================================
-# VERCEL BLOB UPLOAD COMPLETION CALLBACK
-# =========================================================
-
-@app.post("/api/toolkit/blob-complete")
-async def toolkit_blob_complete(
-    request: Request,
-    admin_username: str = Depends(require_admin)
-):
-
-    # The completion request is made by the authenticated
-    # administrator after the browser has finished uploading
-    # the ZIP directly to Vercel Blob. The admin session cookie
-    # is HttpOnly, so the browser sends it automatically.
-    #
-    # Do not require a browser-visible secret here. The old
-    # callback-secret mechanism could not be used safely by the
-    # static frontend because that secret must never be exposed
-    # to the browser.
-
-    try:
-        payload = await request.json()
-    except Exception:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid blob callback payload."
-        )
-
-    event_type = str(
-        payload.get("event_type", "")
-    ).strip().lower()
-
-    item = str(
-        payload.get("item", "")
-    ).strip().lower()
-
-    filename = Path(
-        str(payload.get("filename", ""))
-    ).name
-
-    pathname = str(
-        payload.get("pathname", "")
-    ).strip()
-
-    blob_url = str(
-        payload.get("blob_url", "")
-    ).strip()
-
-    download_url = str(
-        payload.get("download_url", blob_url)
-    ).strip()
-
-    content_type = str(
-        payload.get("content_type", "application/zip")
-    ).strip()
-
-    if event_type not in {"workshop", "hackathon"}:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid event type."
-        )
-
-    valid_items = (
-        WORKSHOP_DOMAINS
-        if event_type == "workshop"
-        else HACKATHON_DOMAINS
-    )
-
-    if item not in valid_items:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid toolkit domain."
-        )
-
-    if (
-        not filename
-        or not filename.lower().endswith(".zip")
-        or not pathname
-        or not blob_url
-    ):
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid toolkit metadata."
-        )
-
-    connection = get_user_db()
-
-    try:
-        cursor = connection.cursor()
-
-        cursor.execute(
-            """
-            INSERT INTO toolkit_files
-                (
-                    event_type,
-                    item,
-                    filename,
-                    pathname,
-                    blob_url,
-                    download_url,
-                    content_type,
-                    uploaded_at
-                )
-            VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT (
-                event_type,
-                item,
-                filename
-            )
-            DO UPDATE SET
-                pathname = excluded.pathname,
-                blob_url = excluded.blob_url,
-                download_url = excluded.download_url,
-                content_type = excluded.content_type,
-                uploaded_at = excluded.uploaded_at
-            """,
-            (
-                event_type,
-                item,
-                filename,
-                pathname,
-                blob_url,
-                download_url,
-                content_type,
-                datetime.now(timezone.utc).isoformat()
-            )
-        )
-
-        connection.commit()
-
-    finally:
-        connection.close()
-
-    return {
-        "success": True
-    }
-
-
-# =========================================================
 # DELETE BLOB METADATA CALLBACK
 # =========================================================
 
@@ -7674,11 +7960,10 @@ def toolkit_file_records(
     event_type: str,
     item: str
 ):
-    """Return durable Blob records plus bundled/local files."""
+    """Return durable R2 records plus bundled/local files."""
 
     records = {}
 
-    # Durable Vercel Blob metadata.
     try:
         for row in get_blob_toolkits(
             event_type,
@@ -7686,16 +7971,17 @@ def toolkit_file_records(
         ):
             records[row["filename"]] = {
                 "filename": row["filename"],
-                "download_url": row["download_url"] or row["blob_url"],
+                "download_url": (
+                    "/api/toolkit/download/"
+                    f"{event_type}/{item}/{quote(row['filename'])}"
+                ),
                 "blob_url": row["blob_url"],
-                "storage": "blob"
+                "storage": "r2"
             }
     except Exception:
-        # Local-only development must continue to work even when
-        # a developer is running without the new metadata table.
+        # Local-only development continues to work without R2/Neon metadata.
         pass
 
-    # Existing repository/runtime files remain supported.
     try:
         directory = get_toolkit_directory(
             event_type,
@@ -7719,6 +8005,31 @@ def toolkit_file_records(
         records.values(),
         key=lambda value: value["filename"].lower()
     )
+
+
+def _toolkit_storage_redirect(row, filename):
+    pathname = str(row["pathname"] or "").strip()
+
+    if pathname.startswith("war-room/toolkits/") and r2_is_configured():
+        try:
+            return RedirectResponse(
+                url=r2_presigned_get_url(
+                    pathname,
+                    filename
+                ),
+                status_code=307
+            )
+        except Exception:
+            pass
+
+    download_url = str(row["download_url"] or "").strip()
+    if download_url and not download_url.startswith("r2://"):
+        return RedirectResponse(
+            url=download_url,
+            status_code=307
+        )
+
+    return None
 
 
 # =========================================================
@@ -7777,7 +8088,7 @@ async def download_toolkit(
             cursor = connection.cursor()
             cursor.execute(
                 """
-                SELECT download_url, blob_url
+                SELECT pathname, download_url, blob_url
                 FROM toolkit_files
                 WHERE event_type = ?
                   AND item = ?
@@ -7795,10 +8106,12 @@ async def download_toolkit(
             connection.close()
 
         if row:
-            return RedirectResponse(
-                url=(row["download_url"] or row["blob_url"]),
-                status_code=307
+            redirect = _toolkit_storage_redirect(
+                row,
+                safe_filename
             )
+            if redirect:
+                return redirect
     except Exception:
         pass
 
@@ -7887,7 +8200,7 @@ async def download_current_user_toolkit(
             cursor = connection.cursor()
             cursor.execute(
                 """
-                SELECT download_url, blob_url
+                SELECT pathname, download_url, blob_url
                 FROM toolkit_files
                 WHERE event_type = 'workshop'
                   AND item = ?
@@ -7904,10 +8217,12 @@ async def download_current_user_toolkit(
             connection.close()
 
         if row:
-            return RedirectResponse(
-                url=(row["download_url"] or row["blob_url"]),
-                status_code=307
+            redirect = _toolkit_storage_redirect(
+                row,
+                safe_filename
             )
+            if redirect:
+                return redirect
     except Exception:
         pass
 
@@ -7999,7 +8314,7 @@ async def download_current_hackathon_toolkit(
             cursor = connection.cursor()
             cursor.execute(
                 """
-                SELECT download_url, blob_url
+                SELECT pathname, download_url, blob_url
                 FROM toolkit_files
                 WHERE event_type = 'hackathon'
                   AND item = ?
@@ -8016,10 +8331,12 @@ async def download_current_hackathon_toolkit(
             connection.close()
 
         if row:
-            return RedirectResponse(
-                url=(row["download_url"] or row["blob_url"]),
-                status_code=307
+            redirect = _toolkit_storage_redirect(
+                row,
+                safe_filename
             )
+            if redirect:
+                return redirect
     except Exception:
         pass
 
@@ -8048,6 +8365,98 @@ async def download_current_hackathon_toolkit(
 
 
 # =========================================================
+# BLOB TOOLKIT METADATA LOOKUP
+# =========================================================
+# Used by the Vercel Blob delete function to resolve the durable
+# Blob pathname from Neon without exposing database credentials
+# to browser JavaScript.
+# =========================================================
+
+@app.get(
+    "/api/toolkit/blob-metadata/"
+    "{event_type}/{item}/{filename}"
+)
+async def get_toolkit_blob_metadata(
+    event_type: str,
+    item: str,
+    filename: str,
+    admin_username: str = Depends(require_admin)
+):
+    event_type = str(event_type or "").strip().lower()
+    item = str(item or "").strip().lower()
+    safe_filename = Path(str(filename or "")).name
+
+    valid_domains = (
+        WORKSHOP_DOMAINS
+        if event_type == "workshop"
+        else HACKATHON_DOMAINS
+        if event_type == "hackathon"
+        else set()
+    )
+
+    if item not in valid_domains:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid toolkit domain."
+        )
+
+    if (
+        not safe_filename
+        or safe_filename != str(filename)
+        or not safe_filename.lower().endswith(".zip")
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid toolkit filename."
+        )
+
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                pathname,
+                blob_url,
+                download_url
+            FROM toolkit_files
+            WHERE event_type = ?
+              AND item = ?
+              AND filename = ?
+            LIMIT 1
+            """,
+            (
+                event_type,
+                item,
+                safe_filename
+            )
+        )
+
+        row = cursor.fetchone()
+
+        if not row:
+            raise HTTPException(
+                status_code=404,
+                detail="Toolkit Blob metadata not found."
+            )
+
+        return {
+            "success": True,
+            "event_type": event_type,
+            "item": item,
+            "filename": safe_filename,
+            "pathname": row["pathname"],
+            "blob_url": row["blob_url"],
+            "download_url": row["download_url"]
+        }
+
+    finally:
+        connection.close()
+
+
+# =========================================================
 # DELETE TOOLKIT
 # =========================================================
 
@@ -8070,9 +8479,58 @@ async def delete_toolkit(
             detail="Invalid filename."
         )
 
-    # For Blob-backed files, the browser now uses the dedicated
-    # /api/toolkit/blob-delete Node function. Keep this route for
-    # legacy/local files.
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            SELECT pathname
+            FROM toolkit_files
+            WHERE event_type = ?
+              AND item = ?
+              AND filename = ?
+            LIMIT 1
+            """,
+            (event_type, item, safe_filename)
+        )
+        row = cursor.fetchone()
+
+        if row:
+            pathname = str(row["pathname"] or "").strip()
+
+            if pathname.startswith("war-room/toolkits/") and r2_is_configured():
+                try:
+                    r2_delete_object(pathname)
+                except Exception as error:
+                    raise HTTPException(
+                        status_code=502,
+                        detail=f"Unable to delete toolkit from R2: {error}"
+                    )
+
+            cursor.execute(
+                """
+                DELETE FROM toolkit_files
+                WHERE event_type = ?
+                  AND item = ?
+                  AND filename = ?
+                """,
+                (event_type, item, safe_filename)
+            )
+            connection.commit()
+
+            return {
+                "success": True,
+                "message": "Toolkit deleted successfully.",
+                "event": event_type,
+                "item": item,
+                "filename": safe_filename,
+                "storage": "r2" if pathname.startswith("war-room/toolkits/") else "local"
+            }
+
+    finally:
+        connection.close()
+
     directory = get_toolkit_directory(
         event_type,
         item
@@ -8094,12 +8552,32 @@ async def delete_toolkit(
             "message": "Toolkit deleted successfully.",
             "event": event_type,
             "item": item,
-            "filename": safe_filename
+            "filename": safe_filename,
+            "storage": "local"
         }
 
     raise HTTPException(
         status_code=404,
-        detail="Toolkit file is stored in Vercel Blob. Use the Blob delete endpoint."
+        detail="Toolkit file not found."
+    )
+
+
+class ToolkitDeleteRequest(BaseModel):
+    event_type: str
+    item: str
+    filename: str
+
+
+@app.post("/api/toolkit/blob-delete")
+async def delete_toolkit_legacy_route(
+    payload: ToolkitDeleteRequest,
+    admin_username: str = Depends(require_admin)
+):
+    return await delete_toolkit(
+        payload.event_type,
+        payload.item,
+        payload.filename,
+        admin_username
     )
 
 
@@ -8712,7 +9190,7 @@ def ensure_ctf_answer_key_table():
         connection.close()
 
 
-ensure_ctf_answer_key_table()
+# Created lazily by get_user_db().
 
 
 class CTFAnswerKeyRequest(BaseModel):
@@ -9487,7 +9965,7 @@ def ensure_user_ctf_submission_table():
         connection.close()
 
 
-ensure_user_ctf_submission_table()
+# Created lazily by get_user_db().
 
 
 
@@ -9642,7 +10120,8 @@ def repair_existing_vapt_ctf_scores():
         connection.close()
 
 
-repair_existing_vapt_ctf_scores()
+# Existing score repair is intentionally not executed during module import.
+# It can be run explicitly when needed without taking down the whole serverless function.
 
 
 def validate_user_ctf_request(
