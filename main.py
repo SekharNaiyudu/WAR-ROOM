@@ -4311,6 +4311,10 @@ async def get_user_leaderboard(
     # VAPT totals.
     repair_existing_vapt_ctf_scores()
 
+    # Synchronize solved CTF scores into the canonical
+    # account_data domain consumed by the leaderboard.
+    sync_all_ctf_scores_to_leaderboards()
+
     connection = get_user_db()
 
     try:
@@ -4899,6 +4903,10 @@ async def get_admin_leaderboard(
             status_code=400,
             detail="Invalid Hackathon domain."
         )
+
+    # Synchronize solved CTF scores before reading account_data.
+    repair_existing_vapt_ctf_scores()
+    sync_all_ctf_scores_to_leaderboards()
 
     connection = get_user_db()
 
@@ -9766,7 +9774,7 @@ USER_CTF_EVENT = "workshop"
 USER_CTF_CHALLENGE_COUNTS = {
     # Workshop / CEH
     "steganography": 20,
-    "wireshark": 7,
+    "wireshark": 11,
     "event-logs": 10,
 
     # Workshop / VAPT
@@ -10174,6 +10182,303 @@ def repair_existing_vapt_ctf_scores():
 # Existing score repair is intentionally not executed during module import.
 # It can be run explicitly when needed without taking down the whole serverless function.
 
+# =========================================================
+# CTF -> LEADERBOARD SCORE SYNCHRONIZATION
+# =========================================================
+# CTF submissions use normalized domains, while account_data
+# uses the event-specific domains consumed by the leaderboards.
+# For example:
+#
+#     CTF domain:        ceh
+#     Hackathon account: ceh_hackathon
+#
+# The answer-key and submission tables remain unchanged. This
+# layer only synchronizes the verified CTF score into the exact
+# account_data row read by both leaderboard APIs.
+# =========================================================
+
+
+def get_ctf_leaderboard_domain(
+    event: str,
+    domain: str
+) -> str:
+    """Return the canonical account_data domain for a leaderboard."""
+
+    event = str(event or "").strip().lower()
+    domain = str(domain or "").strip().lower()
+
+    if event == "hackathon":
+
+        if domain.endswith("_hackathon"):
+            return domain
+
+        return domain + "_hackathon"
+
+    return domain
+
+
+def _calculate_ctf_account_total(rows) -> tuple[int, int]:
+    """
+    Return the stored CTF total and the current server-side CTF
+    total. The stored value lets us preserve non-CTF points.
+    """
+
+    stored_total = 0
+    corrected_total = 0
+
+    for row in rows:
+
+        stored_total += int(
+            row["points_awarded"] or 0
+        )
+
+        corrected_total += get_user_ctf_points(
+            str(row["domain"] or "").strip().lower(),
+            str(row["category"] or "").strip().lower()
+        )
+
+    return stored_total, corrected_total
+
+
+def sync_ctf_account_to_leaderboard(
+    cursor,
+    account_type: str,
+    account_id: int,
+    event: str,
+    ctf_domain: str,
+    now: str | None = None
+):
+    """
+    Synchronize one solved CTF account into account_data.
+
+    CTF submission rows keep their normalized domain. The
+    leaderboard row uses the canonical event domain.
+    """
+
+    account_type = str(account_type or "").strip().lower()
+    event = str(event or "").strip().lower()
+    ctf_domain = normalize_user_ctf_domain(event, ctf_domain)
+
+    leaderboard_domain = get_ctf_leaderboard_domain(
+        event,
+        ctf_domain
+    )
+
+    if account_type not in {"user", "team"}:
+        return 0
+
+    cursor.execute(
+        """
+        SELECT
+            domain,
+            category,
+            points_awarded
+        FROM ctf_user_submissions
+        WHERE user_id = ?
+          AND event = ?
+          AND domain = ?
+          AND correct = 1
+        """,
+        (
+            account_id,
+            event,
+            ctf_domain
+        )
+    )
+
+    ctf_rows = cursor.fetchall()
+
+    if not ctf_rows:
+        return 0
+
+    stored_ctf_total, corrected_ctf_total = (
+        _calculate_ctf_account_total(ctf_rows)
+    )
+
+    cursor.execute(
+        """
+        SELECT points
+        FROM account_data
+        WHERE account_type = ?
+          AND account_id = ?
+          AND event_type = ?
+          AND domain = ?
+        LIMIT 1
+        """,
+        (
+            account_type,
+            account_id,
+            event,
+            leaderboard_domain
+        )
+    )
+
+    account_row = cursor.fetchone()
+
+    current_total = (
+        int(account_row["points"] or 0)
+        if account_row
+        else 0
+    )
+
+    non_ctf_total = max(
+        0,
+        current_total - stored_ctf_total
+    )
+
+    corrected_account_total = (
+        non_ctf_total + corrected_ctf_total
+    )
+
+    if now is None:
+        now = datetime.now(timezone.utc).isoformat()
+
+    if account_row:
+
+        cursor.execute(
+            """
+            UPDATE account_data
+            SET
+                points = ?,
+                updated_at = ?
+            WHERE account_type = ?
+              AND account_id = ?
+              AND event_type = ?
+              AND domain = ?
+            """,
+            (
+                corrected_account_total,
+                now,
+                account_type,
+                account_id,
+                event,
+                leaderboard_domain
+            )
+        )
+
+    else:
+
+        cursor.execute(
+            """
+            INSERT INTO account_data (
+                account_type,
+                account_id,
+                event_type,
+                domain,
+                points,
+                data_json,
+                created_at,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, '{}', ?, ?)
+            """,
+            (
+                account_type,
+                account_id,
+                event,
+                leaderboard_domain,
+                corrected_account_total,
+                now,
+                now
+            )
+        )
+
+    return corrected_account_total
+
+
+def sync_all_ctf_scores_to_leaderboards():
+    """
+    Synchronize every correctly solved CTF account before a
+    leaderboard is rendered. Existing solved challenges are
+    repaired automatically; users do not need to resubmit them.
+    """
+
+    connection = get_user_db()
+
+    try:
+
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                user_id,
+                event,
+                domain
+            FROM ctf_user_submissions
+            WHERE correct = 1
+            GROUP BY
+                user_id,
+                event,
+                domain
+            """
+        )
+
+        account_groups = cursor.fetchall()
+
+        if not account_groups:
+            return
+
+        now = datetime.now(timezone.utc).isoformat()
+
+        for group in account_groups:
+
+            account_id = int(group["user_id"])
+            event = str(group["event"] or "").strip().lower()
+            ctf_domain = str(group["domain"] or "").strip().lower()
+
+            account_type = (
+                "team"
+                if event == "hackathon"
+                else "user"
+            )
+
+            sync_ctf_account_to_leaderboard(
+                cursor,
+                account_type,
+                account_id,
+                event,
+                ctf_domain,
+                now
+            )
+
+        connection.commit()
+
+    except DB_INTEGRITY_ERRORS:
+        connection.rollback()
+
+    except Exception:
+        connection.rollback()
+
+    finally:
+        connection.close()
+
+
+# =========================================================
+# LEADERBOARD SCORE GUARANTEE
+# =========================================================
+# Both user and admin leaderboard APIs synchronize solved CTF
+# scores before selecting account_data.
+#
+# Current Hackathon CEH challenge set:
+#
+#     Steganography       20
+#     Wireshark           11
+#     Detecting Phishing  20
+#     SQL Injection        1
+#     Event Logs          10
+#     Burp Suite           3
+#                         ---
+#                         65 challenges
+#
+# Maximum CEH score: 65 x 10 = 650 points.
+#
+# The browser never supplies the score. The backend calculates
+# it from the verified answer and server-side scoring map.
+# =========================================================
+
+
+
 
 def validate_user_ctf_request(
     event: str,
@@ -10538,6 +10843,13 @@ async def submit_user_ctf_answer(
         challenge_number
     )
 
+    # CTF keys/submissions use the normalized domain. The
+    # leaderboard account_data row uses the canonical event domain.
+    leaderboard_domain = get_ctf_leaderboard_domain(
+        event,
+        domain
+    )
+
     ensure_ctf_answer_key_table()
     ensure_user_ctf_submission_table()
 
@@ -10809,7 +11121,7 @@ async def submit_user_ctf_answer(
                 account_type,
                 account_id,
                 event,
-                domain
+                leaderboard_domain
             )
         )
 
@@ -10847,7 +11159,7 @@ async def submit_user_ctf_answer(
                     account_type,
                     account_id,
                     event,
-                    domain
+                    leaderboard_domain
                 )
             )
 
@@ -10871,13 +11183,24 @@ async def submit_user_ctf_answer(
                     account_type,
                     account_id,
                     event,
-                    domain,
+                    leaderboard_domain,
                     corrected_ctf_total,
                     now,
                     now
                 )
             )
 
+
+        # Final synchronization guarantees that both leaderboards
+        # read the same persisted CTF score.
+        sync_ctf_account_to_leaderboard(
+            cursor,
+            account_type,
+            account_id,
+            event,
+            domain,
+            now
+        )
 
         connection.commit()
 
