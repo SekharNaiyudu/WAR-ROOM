@@ -9,7 +9,7 @@
    CTF EVENT
    ========================================================= */
 
-const CTF_EVENT = "workshop";
+const CTF_EVENT = (sessionStorage.getItem("user_event") || "workshop").trim().toLowerCase();
 
 
 /* =========================================================
@@ -22,10 +22,10 @@ const DOMAIN_CONFIG = {
 
         title: "CEH",
 
-        displayTitle: "WORKSHOP / CEH",
+        displayTitle: "CEH",
 
         description:
-            "Workshop · CEH · Capture The Flag",
+            "CEH · Capture The Flag",
 
         submissionTitle:
             "SUBMIT ANSWER",
@@ -55,7 +55,7 @@ const DOMAIN_CONFIG = {
                 title: "WIRESHARK",
                 description:
                     "Network traffic analysis challenges",
-                count: 7
+                count: 11
             },
 
             "event-logs": {
@@ -63,6 +63,77 @@ const DOMAIN_CONFIG = {
                 description:
                     "Windows event investigation challenges",
                 count: 10
+            }
+
+        }
+
+    },
+
+
+    /* =====================================================
+       HACKATHON / CEH
+       ===================================================== */
+
+    hackathon_ceh: {
+
+        title: "CEH",
+
+        displayTitle: "HACKATHON / CEH",
+
+        description:
+            "Hackathon · CEH · Capture The Flag",
+
+        submissionTitle:
+            "SUBMIT ANSWER",
+
+        submissionLabel:
+            "ENTER ANSWER",
+
+        submitButton:
+            "SUBMIT ANSWER",
+
+        challengeButton:
+            "ENTER KEY",
+
+        challengeLabel:
+            "CHALLENGES",
+
+        categories: {
+
+            steganography: {
+                title: "STEGANOGRAPHY",
+                description: "Hidden data & image-based challenges",
+                count: 20
+            },
+
+            wireshark: {
+                title: "WIRESHARK",
+                description: "Network traffic analysis challenges",
+                count: 11
+            },
+
+            "detecting-phishing": {
+                title: "DETECTING PHISHING",
+                description: "Phishing identification and analysis challenges",
+                count: 20
+            },
+
+            "sql-injection": {
+                title: "SQL INJECTION",
+                description: "SQL injection identification challenges",
+                count: 1
+            },
+
+            "event-logs": {
+                title: "EVENT LOGS",
+                description: "Windows event investigation challenges",
+                count: 10
+            },
+
+            "burp-suite": {
+                title: "BURP SUITE",
+                description: "Web security testing challenges",
+                count: 3
             }
 
         }
@@ -165,20 +236,27 @@ function sessionToken() {
 
     return (
 
-        sessionStorage.getItem(
-            "user_session_token"
-        ) ||
+        CTF_EVENT === "hackathon"
+            ? sessionStorage.getItem("hackathon_session_token")
+            : (sessionStorage.getItem("user_session_token") || sessionStorage.getItem("workshop_session_token"))
 
-        sessionStorage.getItem(
-            "workshop_session_token"
-        ) ||
-
-        ""
+        || ""
 
     ).trim();
 
 }
 
+
+
+function getApiDomain() {
+
+    if (CTF_EVENT === "hackathon" && currentDomain === "ceh_hackathon") {
+        return "ceh_hackathon";
+    }
+
+    return currentDomain;
+
+}
 
 /* =========================================================
    DOM HELPER
@@ -217,6 +295,10 @@ function escapeHtml(value) {
    ========================================================= */
 
 function getDomainConfig() {
+
+    if (CTF_EVENT === "hackathon" && currentDomain === "ceh_hackathon") {
+        return DOMAIN_CONFIG.hackathon_ceh || null;
+    }
 
     return (
         DOMAIN_CONFIG[currentDomain] ||

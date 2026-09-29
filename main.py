@@ -9048,56 +9048,73 @@ async def admin_ctf():
 
 CTF_CHALLENGE_COUNTS = {
 
-    # WORKSHOP / CEH categories
-    "steganography":
-        20,
+    # Default / Workshop CEH counts.  Hackathon CEH has its own
+    # event-specific counts below so Workshop is not disturbed.
+    "steganography": 20,
+    "wireshark": 7,
+    "event-logs": 10,
 
-    "wireshark":
-        7,
+    # Workshop / VAPT categories
+    "test-cases": 1,
+    "url-redirection": 1,
+    "broken-link-hijack": 1,
+    "file-upload": 1,
+    "error-bypass": 1,
 
-    "event-logs":
-        10,
+    # Hackathon / CEH categories
+    "detecting-phishing": 20,
+    "sql-injection": 1,
+    "burp-suite": 3
+}
 
-    # WORKSHOP / VAPT categories
-    # Each VAPT category intentionally contains one flag.
-    "test-cases":
-        1,
 
-    "url-redirection":
-        1,
+CTF_EVENT_CHALLENGE_COUNTS = {
 
-    "broken-link-hijack":
-        1,
+    "workshop": {
+        "steganography": 20,
+        "wireshark": 7,
+        "event-logs": 10,
+        "test-cases": 1,
+        "url-redirection": 1,
+        "broken-link-hijack": 1,
+        "file-upload": 1,
+        "error-bypass": 1
+    },
 
-    "file-upload":
-        1,
-
-    "error-bypass":
-        1
+    "hackathon": {
+        "steganography": 20,
+        "wireshark": 11,
+        "detecting-phishing": 20,
+        "sql-injection": 1,
+        "event-logs": 10,
+        "burp-suite": 3
+    }
 }
 
 
 CTF_VAPT_CATEGORIES = {
-
     "test-cases",
-
     "url-redirection",
-
     "broken-link-hijack",
-
     "file-upload",
-
     "error-bypass"
 }
 
 
 CTF_CEH_CATEGORIES = {
-
     "steganography",
-
     "wireshark",
-
     "event-logs"
+}
+
+
+CTF_HACKATHON_CEH_CATEGORIES = {
+    "steganography",
+    "wireshark",
+    "detecting-phishing",
+    "sql-injection",
+    "event-logs",
+    "burp-suite"
 }
 
 
@@ -9125,23 +9142,17 @@ CTF_VALID_DOMAINS = {
 
 
 CTF_VALID_CATEGORIES = {
-
     "steganography",
-
     "wireshark",
-
+    "detecting-phishing",
+    "sql-injection",
     "event-logs",
-
+    "burp-suite",
     "test-cases",
-
     "url-redirection",
-
     "broken-link-hijack",
-
     "file-upload",
-
     "error-bypass"
-
 }
 
 
@@ -9261,8 +9272,8 @@ def validate_ctf_key_request(
         )
 
 
-    # Workshop / VAPT has its own five one-flag categories.
-    # Workshop / CEH keeps the existing three category structure.
+    # Keep Workshop CTF unchanged and add the requested Hackathon / CEH
+    # categories independently.
     if event == "workshop":
 
         if domain == "vapt" and category not in CTF_VAPT_CATEGORIES:
@@ -9277,6 +9288,14 @@ def validate_ctf_key_request(
                 detail="Invalid CEH CTF category."
             )
 
+    elif event == "hackathon":
+
+        if domain != "ceh" or category not in CTF_HACKATHON_CEH_CATEGORIES:
+            raise HTTPException(
+                status_code=400,
+                detail="Hackathon CTF currently supports CEH categories only."
+            )
+
 
     if not answer_key:
 
@@ -9286,7 +9305,10 @@ def validate_ctf_key_request(
         )
 
 
-    maximum = CTF_CHALLENGE_COUNTS.get(
+    maximum = CTF_EVENT_CHALLENGE_COUNTS.get(
+        event,
+        {}
+    ).get(
         category,
         0
     )
@@ -9741,54 +9763,66 @@ async def delete_ctf_answer_key(
 
 USER_CTF_EVENT = "workshop"
 
-# Workshop / CEH keeps the existing 37-challenge structure.
-# Workshop / VAPT contains five categories with one flag each.
 USER_CTF_CHALLENGE_COUNTS = {
-
-    # CEH
+    # Workshop / CEH
     "steganography": 20,
     "wireshark": 7,
     "event-logs": 10,
 
-    # VAPT
+    # Workshop / VAPT
     "test-cases": 1,
     "url-redirection": 1,
     "broken-link-hijack": 1,
     "file-upload": 1,
-    "error-bypass": 1
+    "error-bypass": 1,
+
+    # Hackathon / CEH
+    "detecting-phishing": 20,
+    "sql-injection": 1,
+    "burp-suite": 3
 }
 
+USER_CTF_EVENT_CATEGORIES = {
+    "workshop": {
+        "ceh": [
+            "steganography",
+            "wireshark",
+            "event-logs"
+        ],
+        "vapt": [
+            "test-cases",
+            "url-redirection",
+            "broken-link-hijack",
+            "file-upload",
+            "error-bypass"
+        ],
+        "soc": [],
+        "forensics": [],
+        "digital-forensics": []
+    },
 
-USER_CTF_DOMAIN_CATEGORIES = {
-
-    "ceh": [
-        "steganography",
-        "wireshark",
-        "event-logs"
-    ],
-
-    "vapt": [
-        "test-cases",
-        "url-redirection",
-        "broken-link-hijack",
-        "file-upload",
-        "error-bypass"
-    ],
-
-    # These domains are intentionally kept empty until their
-    # CTF categories are configured.
-    "soc": [],
-    "forensics": [],
-    "digital-forensics": []
+    "hackathon": {
+        "ceh": [
+            "steganography",
+            "wireshark",
+            "detecting-phishing",
+            "sql-injection",
+            "event-logs",
+            "burp-suite"
+        ]
+    }
 }
 
+# Backward-compatible workshop mapping used by older helper calls.
+USER_CTF_DOMAIN_CATEGORIES = USER_CTF_EVENT_CATEGORIES["workshop"]
 
 USER_CTF_CATEGORY_NAMES = {
-
     "steganography": "STEGANOGRAPHY",
     "wireshark": "WIRESHARK",
+    "detecting-phishing": "DETECTING PHISHING",
+    "sql-injection": "SQL INJECTION",
     "event-logs": "EVENT LOGS",
-
+    "burp-suite": "BURP SUITE",
     "test-cases": "TEST CASES",
     "url-redirection": "URL REDIRECTION",
     "broken-link-hijack": "BROKEN LINK HIJACK",
@@ -9882,33 +9916,50 @@ class UserCTFSubmitRequest(BaseModel):
 
 
 
-def get_user_ctf_categories(domain: str):
+def normalize_user_ctf_domain(event: str, domain: str):
 
-    domain = str(
-        domain or ""
-    ).strip().lower()
+    event = str(event or "").strip().lower()
+    domain = str(domain or "").strip().lower()
+
+    if event == "hackathon" and domain.endswith("_hackathon"):
+        domain = domain[:-len("_hackathon")]
+
+    return domain
+
+
+def get_user_ctf_categories(domain: str, event: str = "workshop"):
+
+    event = str(event or "workshop").strip().lower()
+    domain = normalize_user_ctf_domain(event, domain)
 
     return list(
-        USER_CTF_DOMAIN_CATEGORIES.get(
+        USER_CTF_EVENT_CATEGORIES.get(
+            event,
+            {}
+        ).get(
             domain,
             []
         )
     )
 
 
-
-def get_user_ctf_challenge_counts(domain: str):
+def get_user_ctf_challenge_counts(domain: str, event: str = "workshop"):
 
     categories = get_user_ctf_categories(
-        domain
+        domain,
+        event
+    )
+
+    event_counts = CTF_EVENT_CHALLENGE_COUNTS.get(
+        str(event or "workshop").strip().lower(),
+        {}
     )
 
     return {
-        category:
-            USER_CTF_CHALLENGE_COUNTS.get(
-                category,
-                0
-            )
+        category: event_counts.get(
+            category,
+            USER_CTF_CHALLENGE_COUNTS.get(category, 0)
+        )
         for category in categories
     }
 
@@ -10131,68 +10182,60 @@ def validate_user_ctf_request(
     challenge_number: int
 ):
 
-    event = str(
-        event or ""
-    ).strip().lower()
+    event = str(event or "").strip().lower()
+    domain = normalize_user_ctf_domain(event, domain)
+    category = str(category or "").strip().lower()
 
-    domain = str(
-        domain or ""
-    ).strip().lower()
-
-    category = str(
-        category or ""
-    ).strip().lower()
-
-    if event != USER_CTF_EVENT:
-
+    if event not in {"workshop", "hackathon"}:
         raise HTTPException(
             status_code=400,
-            detail="User CTF is available for Workshop only."
-        )
-
-    if domain not in USER_CTF_DOMAIN_CATEGORIES:
-
-        raise HTTPException(
-            status_code=403,
-            detail="Invalid Workshop CTF domain."
+            detail="Invalid CTF event."
         )
 
     allowed_categories = get_user_ctf_categories(
-        domain
+        domain,
+        event
     )
 
-    if category not in allowed_categories:
+    if not allowed_categories:
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "No CTF categories are configured for "
+                + event.upper()
+                + " / "
+                + domain.upper()
+                + "."
+            )
+        )
 
+    if category not in allowed_categories:
         raise HTTPException(
             status_code=400,
             detail=(
                 "Invalid CTF category for "
+                + event.upper()
+                + " / "
                 + domain.upper()
-                + " Workshop users."
+                + "."
             )
         )
 
-    maximum = USER_CTF_CHALLENGE_COUNTS.get(
+    maximum = CTF_EVENT_CHALLENGE_COUNTS.get(
+        event,
+        {}
+    ).get(
         category,
         0
     )
 
-    if (
-        challenge_number < 1
-        or challenge_number > maximum
-    ):
-
+    if challenge_number < 1 or challenge_number > maximum:
         raise HTTPException(
             status_code=400,
             detail="Invalid challenge number."
         )
 
-    return (
-        event,
-        domain,
-        category,
-        challenge_number
-    )
+    return event, domain, category, challenge_number
 
 
 # =========================================================
@@ -10254,48 +10297,55 @@ async def get_user_ctf_progress(
     session_token: str
 ):
 
-    session_token = str(
-        session_token or ""
-    ).strip()
+    session_token = str(session_token or "").strip()
 
     if not session_token:
-
         raise HTTPException(
             status_code=401,
             detail="User session is required."
         )
 
-    user = get_current_workshop_user(
-        session_token
-    )
-
-    if not user:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or expired user session."
+    # A Hackathon token is stored separately from Workshop user tokens.
+    team = get_current_hackathon_user(session_token)
+    if team:
+        ctf_event = "hackathon"
+        account_type = "team"
+        account_id = int(team["id"])
+        display_domain = str(team["domain"] or "").strip().lower()
+        actual_domain = normalize_user_ctf_domain(
+            ctf_event,
+            display_domain
+        )
+    else:
+        user = get_current_workshop_user(session_token)
+        if not user:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid or expired user session."
+            )
+        ctf_event = "workshop"
+        account_type = "user"
+        account_id = int(user["id"])
+        display_domain = str(user["domain"] or "").strip().lower()
+        actual_domain = normalize_user_ctf_domain(
+            ctf_event,
+            display_domain
         )
 
-    actual_domain = str(
-        user["domain"] or ""
-    ).strip().lower()
-
     categories = get_user_ctf_categories(
-        actual_domain
+        actual_domain,
+        ctf_event
     )
-
     challenge_counts = get_user_ctf_challenge_counts(
-        actual_domain
+        actual_domain,
+        ctf_event
     )
 
-    # A Workshop domain without configured CTF categories is
-    # still a valid login, but it has no available CTF yet.
-    if actual_domain not in USER_CTF_DOMAIN_CATEGORIES:
-
+    if not categories:
         return {
             "success": True,
-            "event": USER_CTF_EVENT,
-            "domain": actual_domain,
+            "event": ctf_event,
+            "domain": display_domain,
             "available": False,
             "categories": [],
             "challenge_counts": {},
@@ -10305,116 +10355,61 @@ async def get_user_ctf_progress(
         }
 
     ensure_user_ctf_submission_table()
-
     connection = get_user_db()
-
     try:
-
         cursor = connection.cursor()
-
-        if categories:
-
-            placeholders = ",".join(
-                "?" for _ in categories
-            )
-
-            cursor.execute(
-                f"""
-                SELECT
-                    category,
-                    challenge_number,
-                    correct,
-                    points_awarded,
-                    solved_at
-                FROM ctf_user_submissions
-                WHERE user_id = ?
-                  AND event = ?
-                  AND domain = ?
-                  AND correct = 1
-                  AND category IN ({placeholders})
-                ORDER BY category, challenge_number
-                """,
-                (
-                    user["id"],
-                    USER_CTF_EVENT,
-                    actual_domain,
-                    *categories
-                )
-            )
-
-        else:
-
-            rows = []
-
-            return {
-                "success": True,
-                "event": USER_CTF_EVENT,
-                "domain": actual_domain,
-                "available": False,
-                "categories": [],
-                "challenge_counts": {},
-                "solved": {},
-                "solved_count": 0,
-                "points": 0
-            }
-
+        placeholders = ",".join("?" for _ in categories)
+        cursor.execute(
+            f"""
+            SELECT category, challenge_number, correct, points_awarded, solved_at
+            FROM ctf_user_submissions
+            WHERE user_id = ?
+              AND event = ?
+              AND domain = ?
+              AND correct = 1
+              AND category IN ({placeholders})
+            ORDER BY category, challenge_number
+            """,
+            (account_id, ctf_event, actual_domain, *categories)
+        )
         rows = cursor.fetchall()
 
         solved = {}
-
         total_points = 0
-
         for row in rows:
-
-            challenge_key = (
-                f"{row['category']}-"
-                f"{row['challenge_number']}"
-            )
-
             current_score = get_user_ctf_points(
                 actual_domain,
                 row["category"]
             )
-
+            challenge_key = f"{row['category']}-{row['challenge_number']}"
             solved[challenge_key] = {
                 "category": row["category"],
                 "challenge_number": row["challenge_number"],
                 "solved_at": row["solved_at"],
                 "points": current_score
             }
-
             total_points += current_score
 
         return {
             "success": True,
-            "event": USER_CTF_EVENT,
-            "domain": actual_domain,
+            "event": ctf_event,
+            "domain": display_domain,
             "available": True,
             "categories": categories,
             "category_names": {
-                category:
-                    USER_CTF_CATEGORY_NAMES.get(
-                        category,
-                        category.upper()
-                    )
+                category: USER_CTF_CATEGORY_NAMES.get(category, category.upper())
                 for category in categories
             },
             "challenge_counts": challenge_counts,
             "points_per_category": {
-                category:
-                    get_user_ctf_points(
-                        actual_domain,
-                        category
-                    )
+                category: get_user_ctf_points(actual_domain, category)
                 for category in categories
             },
             "solved": solved,
             "solved_count": len(solved),
             "points": total_points
         }
-
     finally:
-
         connection.close()
 
 
@@ -10505,24 +10500,31 @@ async def submit_user_ctf_answer(
             detail="Answer is required."
         )
 
-    user = get_current_workshop_user(
-        session_token
-    )
+    team = get_current_hackathon_user(session_token)
+    user = None
 
-    if not user:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or expired user session."
+    if team:
+        account_type = "team"
+        account_id = int(team["id"])
+        actual_event = "hackathon"
+        actual_domain = normalize_user_ctf_domain(
+            actual_event,
+            team["domain"]
         )
-
-    # IMPORTANT:
-    # Never trust the domain sent by the browser.
-    # Always use the domain stored in the authenticated
-    # Workshop registration.
-    actual_domain = str(
-        user["domain"] or ""
-    ).strip().lower()
+    else:
+        user = get_current_workshop_user(session_token)
+        if not user:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid or expired user session."
+            )
+        account_type = "user"
+        account_id = int(user["id"])
+        actual_event = "workshop"
+        actual_domain = normalize_user_ctf_domain(
+            actual_event,
+            user["domain"]
+        )
 
     (
         event,
@@ -10530,7 +10532,7 @@ async def submit_user_ctf_answer(
         category,
         challenge_number
     ) = validate_user_ctf_request(
-        request.event,
+        actual_event,
         actual_domain,
         request.category,
         challenge_number
@@ -10607,7 +10609,7 @@ async def submit_user_ctf_answer(
             LIMIT 1
             """,
             (
-                user["id"],
+                account_id,
                 event,
                 domain,
                 category,
@@ -10670,7 +10672,7 @@ async def submit_user_ctf_answer(
                     last_attempt_at = excluded.last_attempt_at
                 """,
                 (
-                    user["id"],
+                    account_id,
                     event,
                     domain,
                     category,
@@ -10739,7 +10741,7 @@ async def submit_user_ctf_answer(
                 last_attempt_at = excluded.last_attempt_at
             """,
             (
-                user["id"],
+                account_id,
                 event,
                 domain,
                 category,
@@ -10771,7 +10773,7 @@ async def submit_user_ctf_answer(
               AND correct = 1
             """,
             (
-                user["id"],
+                account_id,
                 event,
                 domain
             )
@@ -10804,8 +10806,8 @@ async def submit_user_ctf_answer(
             LIMIT 1
             """,
             (
-                "user",
-                user["id"],
+                account_type,
+                account_id,
                 event,
                 domain
             )
@@ -10842,8 +10844,8 @@ async def submit_user_ctf_answer(
                 (
                     corrected_total,
                     now,
-                    "user",
-                    user["id"],
+                    account_type,
+                    account_id,
                     event,
                     domain
                 )
@@ -10866,8 +10868,8 @@ async def submit_user_ctf_answer(
                 VALUES (?, ?, ?, ?, ?, '{}', ?, ?)
                 """,
                 (
-                    "user",
-                    user["id"],
+                    account_type,
+                    account_id,
                     event,
                     domain,
                     corrected_ctf_total,

@@ -20,26 +20,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const challengeCounts = {
 
-        /* CEH */
+        workshop: {
+            steganography: 20,
+            wireshark: 7,
+            "event-logs": 10,
+            "test-cases": 1,
+            "url-redirection": 1,
+            "broken-link-hijack": 1,
+            "file-upload": 1,
+            "error-bypass": 1
+        },
 
-        steganography: 20,
-
-        wireshark: 7,
-
-        "event-logs": 10,
-
-
-        /* VAPT */
-
-        "test-cases": 1,
-
-        "url-redirection": 1,
-
-        "broken-link-hijack": 1,
-
-        "file-upload": 1,
-
-        "error-bypass": 1
+        hackathon: {
+            steganography: 20,
+            wireshark: 11,
+            "detecting-phishing": 20,
+            "sql-injection": 1,
+            "event-logs": 10,
+            "burp-suite": 3
+        }
 
     };
 
@@ -75,7 +74,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         hackathon: {
 
-            ceh: [],
+            ceh: [
+                "steganography",
+                "wireshark",
+                "detecting-phishing",
+                "sql-injection",
+                "event-logs",
+                "burp-suite"
+            ],
 
             vapt: [],
 
@@ -102,8 +108,17 @@ document.addEventListener("DOMContentLoaded", function () {
         wireshark:
             "WIRESHARK",
 
+        "detecting-phishing":
+            "DETECTING PHISHING",
+
+        "sql-injection":
+            "SQL INJECTION",
+
         "event-logs":
             "EVENT LOGS",
+
+        "burp-suite":
+            "BURP SUITE",
 
 
         /* VAPT */
@@ -140,8 +155,17 @@ document.addEventListener("DOMContentLoaded", function () {
         wireshark:
             "7 Challenges",
 
+        "detecting-phishing":
+            "20 Challenges",
+
+        "sql-injection":
+            "1 Challenge",
+
         "event-logs":
             "10 Challenges",
+
+        "burp-suite":
+            "3 Challenges",
 
 
         /* VAPT */
@@ -447,9 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         return (
-            challengeCounts[
-                selectedCategory
-            ] || 0
+            challengeCounts[selectedEvent]?.[selectedCategory] || 0
         );
 
     }
@@ -560,6 +582,18 @@ document.addEventListener("DOMContentLoaded", function () {
     /* =====================================================
        RENDER CATEGORIES
        ===================================================== */
+
+    function getCategoryDescription(category) {
+
+        if (selectedEvent === "hackathon") {
+            const count = getCount();
+            return count === 1 ? "1 Challenge" : `${count} Challenges`;
+        }
+
+        return categoryDescriptions[category] || "Challenges";
+
+    }
+
 
     function renderCategories() {
 
@@ -697,9 +731,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         <small>
                             ${
-                                categoryDescriptions[
+                                getCategoryDescription(
                                     category
-                                ] ||
+                                ) ||
                                 "1 Flag"
                             }
                         </small>
