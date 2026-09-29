@@ -586,8 +586,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function getCategoryDescription(category) {
 
         if (selectedEvent === "hackathon") {
-            const count = getCount();
-            return count === 1 ? "1 Challenge" : `${count} Challenges`;
+            const count =
+                challengeCounts[selectedEvent]?.[category] || 0;
+
+            return count === 1
+                ? "1 Challenge"
+                : `${count} Challenges`;
         }
 
         return categoryDescriptions[category] || "Challenges";

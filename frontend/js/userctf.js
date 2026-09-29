@@ -55,7 +55,7 @@ const DOMAIN_CONFIG = {
                 title: "WIRESHARK",
                 description:
                     "Network traffic analysis challenges",
-                count: 11
+                count: 7
             },
 
             "event-logs": {
@@ -536,12 +536,29 @@ async function loadProgress() {
          * points
          */
 
-        const backendDomain =
+        let backendDomain =
             String(
                 data.domain || ""
             )
                 .trim()
                 .toLowerCase();
+
+        /*
+         * Backend stores Hackathon CEH as "ceh_hackathon".
+         * The frontend keeps a separate UI key, "hackathon_ceh".
+         * Normalize both forms here so the user CTF loads the
+         * correct Hackathon CEH categories instead of showing
+         * "CTF is not available for your registered domain."
+         */
+        if (
+            CTF_EVENT === "hackathon" &&
+            (
+                backendDomain === "ceh_hackathon" ||
+                backendDomain === "ceh"
+            )
+        ) {
+            backendDomain = "hackathon_ceh";
+        }
 
 
         if (
@@ -1947,7 +1964,7 @@ async function submitAnswer() {
                             CTF_EVENT,
 
                         domain:
-                            currentDomain,
+                            getApiDomain(),
 
                         category:
                             currentChallenge.category,
