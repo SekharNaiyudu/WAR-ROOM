@@ -448,6 +448,171 @@ body {
 
 
 /* =========================================================
+   SOCIAL MEDIA
+   ========================================================= */
+
+.sidebar-social {
+
+    width: 100%;
+
+    margin-top: 16px;
+
+    padding:
+        0 9px;
+
+}
+
+
+.sidebar-social-label {
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #555;
+
+    font-size: 7px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.8px;
+
+    text-align: center;
+
+}
+
+
+.sidebar-social-links {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+}
+
+
+.sidebar-social-link {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171717,
+            #090909
+        );
+
+    color: #777;
+
+    box-shadow:
+        4px 4px 9px
+        #020202,
+        -3px -3px 7px
+        rgba(255,255,255,.018);
+
+    text-decoration: none;
+
+    transition:
+        .2s ease;
+
+}
+
+
+.sidebar-social-link svg {
+
+    width: 18px;
+
+    height: 18px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+}
+
+
+.sidebar-social-link .social-play {
+
+    fill: currentColor;
+
+    stroke: none;
+
+}
+
+
+.sidebar-social-link .social-dot {
+
+    fill: currentColor;
+
+    stroke: none;
+
+}
+
+
+.sidebar-social-link:hover {
+
+    color: #fff;
+
+    border-color:
+        rgba(229,9,20,.55);
+
+    background:
+        linear-gradient(
+            145deg,
+            #1b0b0d,
+            #0b0808
+        );
+
+    box-shadow:
+        0 0 14px
+        rgba(229,9,20,.18),
+        4px 4px 9px
+        #020202;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+.sidebar-social-link:focus-visible {
+
+    outline:
+        2px solid
+        #e50914;
+
+    outline-offset: 2px;
+
+}
+
+
+/* =========================================================
    MAIN CONTENT
    ========================================================= */
 
@@ -1900,6 +2065,30 @@ body {
 
 
 @media (max-width: 500px) {
+
+    .sidebar-social {
+
+        padding:
+            0 4px;
+
+    }
+
+
+    .sidebar-social-links {
+
+        gap: 8px;
+
+    }
+
+
+    .sidebar-social-link {
+
+        width: 40px;
+
+        height: 40px;
+
+    }
+
 
     .dashboard-content {
 
