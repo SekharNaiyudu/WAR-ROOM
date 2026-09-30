@@ -1973,27 +1973,56 @@ async function shareProgressToPlatform(
 
 
         /*
-           Do not download here.
-           The Download Story Image button is the separate
-           explicit download option.
+           Platform buttons download the generated Story card first.
+           The separate Download Story Image button remains available.
         */
 
-        await copyShareImageToClipboard(
-            blob
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+        const anchor =
+            document.createElement(
+                "a"
+            );
+
+        anchor.href =
+            url;
+
+        anchor.download =
+            shareImageFileName;
+
+        document.body.appendChild(
+            anchor
         );
 
+        anchor.click();
 
-        /*
-           Open the requested web platform in a new tab.
-           A normal web page cannot programmatically inject a
-           local Blob into Instagram/WhatsApp's cross-origin
-           file picker. The generated image is therefore kept
-           in memory and copied to the clipboard when the browser
-           permits it, while the platform itself is opened here.
-        */
+        anchor.remove();
 
-        openPlatformWeb(
-            platform
+        setTimeout(
+            function() {
+
+                URL.revokeObjectURL(
+                    url
+                );
+
+            },
+            1500
+        );
+
+        /* Open the requested web platform after starting the download. */
+
+        setTimeout(
+            function() {
+
+                openPlatformWeb(
+                    platform
+                );
+
+            },
+            350
         );
 
     }
