@@ -10304,6 +10304,15 @@ USER_CTF_CATEGORY_NAMES = {
 
 USER_CTF_POINTS_PER_CHALLENGE = 10
 
+# Every CEH challenge, including Workshop / CEH / Detecting Phishing,
+# is worth exactly 10 points.
+USER_CTF_CEH_CATEGORIES = {
+    "steganography",
+    "wireshark",
+    "event-logs",
+    "detecting-phishing"
+}
+
 USER_CTF_VAPT_POINTS = {
     "test-cases": 50,
     "url-redirection": 40,
@@ -10349,6 +10358,9 @@ def get_user_ctf_points(
         )
 
     if domain == "ceh":
+        if category not in USER_CTF_CEH_CATEGORIES:
+            return 0
+
         return int(
             USER_CTF_POINTS_PER_CHALLENGE
         )
@@ -10742,9 +10754,50 @@ def sync_ctf_account_to_leaderboard(
     if not ctf_rows:
         return 0
 
+    # Re-apply the current server-side score to every already-correct
+    # submission. This repairs older rows whose points_awarded value
+    # may be zero/stale after a scoring/category change.
     stored_ctf_total, corrected_ctf_total = (
         _calculate_ctf_account_total(ctf_rows)
     )
+
+    for row in ctf_rows:
+        row_domain = str(
+            row["domain"] or ""
+        ).strip().lower()
+        row_category = str(
+            row["category"] or ""
+        ).strip().lower()
+
+        expected_points = get_user_ctf_points(
+            row_domain,
+            row_category
+        )
+
+        current_awarded = int(
+            row["points_awarded"] or 0
+        )
+
+        if current_awarded != expected_points:
+            cursor.execute(
+                """
+                UPDATE ctf_user_submissions
+                SET points_awarded = ?
+                WHERE user_id = ?
+                  AND event = ?
+                  AND domain = ?
+                  AND category = ?
+                  AND challenge_number = ?
+                """,
+                (
+                    expected_points,
+                    account_id,
+                    event,
+                    row_domain,
+                    row_category,
+                    int(row["challenge_number"])
+                )
+            )
 
     cursor.execute(
         """
@@ -10895,11 +10948,19 @@ def sync_all_ctf_scores_to_leaderboards():
 
         connection.commit()
 
-    except DB_INTEGRITY_ERRORS:
+    except DB_INTEGRITY_ERRORS as error:
         connection.rollback()
+        print(
+            "CTF LEADERBOARD SYNC INTEGRITY ERROR:",
+            error
+        )
 
-    except Exception:
+    except Exception as error:
         connection.rollback()
+        print(
+            "CTF LEADERBOARD SYNC ERROR:",
+            error
+        )
 
     finally:
         connection.close()
@@ -11385,6 +11446,18 @@ async def submit_user_ctf_answer(
         if existing and int(
             existing["correct"] or 0
         ) == 1:
+
+            # Repair the persistent leaderboard score for legacy solved rows.
+            sync_ctf_account_to_leaderboard(
+                cursor,
+                account_type,
+                account_id,
+                event,
+                domain,
+                now
+            )
+
+            connection.commit()
 
             return {
                 "success": True,
