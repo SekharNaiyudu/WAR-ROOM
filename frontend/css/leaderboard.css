@@ -1929,6 +1929,477 @@ body {
 
 
 /* =========================================================
+   ADMIN POINTS ACTION
+   ========================================================= */
+
+.leaderboard-table th:nth-child(4),
+.leaderboard-table td:nth-child(4) {
+
+    width: 15%;
+
+}
+
+
+.leaderboard-table th:nth-child(5),
+.leaderboard-table td:nth-child(5) {
+
+    width: 13%;
+
+}
+
+
+.leaderboard-edit-points-btn {
+
+    min-width: 62px;
+
+    height: 30px;
+
+    padding:
+        0 12px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(229,9,20,.38);
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171010,
+            #090909
+        );
+
+    color: #ff2634;
+
+    font-family: inherit;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    box-shadow:
+        4px 4px 9px
+        #020202,
+        -3px -3px 7px
+        rgba(255,255,255,.018);
+
+    transition:
+        .2s ease;
+
+}
+
+
+.leaderboard-edit-points-btn:hover {
+
+    color: #fff;
+
+    border-color:
+        #e50914;
+
+    background:
+        #e50914;
+
+    box-shadow:
+        0 0 15px
+        rgba(229,9,20,.20);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+.leaderboard-edit-points-btn:disabled {
+
+    opacity: .45;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
+
+/* =========================================================
+   EXTRA POINTS MODAL
+   ========================================================= */
+
+.admin-points-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 24px;
+
+    background:
+        rgba(0,0,0,.78);
+
+    backdrop-filter:
+        blur(7px);
+
+}
+
+
+.admin-points-modal.open {
+
+    display: flex;
+
+}
+
+
+.admin-points-modal-card {
+
+    width: min(460px, 100%);
+
+    padding: 26px;
+
+    border:
+        1px solid
+        rgba(229,9,20,.24);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171010,
+            #080808
+        );
+
+    box-shadow:
+        15px 15px 35px
+        #020202,
+        0 0 30px
+        rgba(229,9,20,.08);
+
+}
+
+
+.admin-points-modal-kicker {
+
+    color: #e50914;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 2.5px;
+
+}
+
+
+.admin-points-modal-title {
+
+    margin-top: 8px;
+
+    color: #fff;
+
+    font-size: 22px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+}
+
+
+.admin-points-modal-subtitle {
+
+    margin-top: 7px;
+
+    color: #777;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+
+}
+
+
+.admin-points-account {
+
+    margin-top: 19px;
+
+    padding: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
+    border-radius: 12px;
+
+    background:
+        #0c0c0c;
+
+}
+
+
+.admin-points-account span {
+
+    display: block;
+
+    color: #555;
+
+    font-size: 7px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.admin-points-account strong {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color: #fff;
+
+    font-size: 13px;
+
+}
+
+
+.admin-points-current {
+
+    margin-top: 8px;
+
+    color: #777;
+
+    font-size: 8px;
+
+}
+
+
+.admin-points-current strong {
+
+    display: inline;
+
+    margin: 0;
+
+    color: #ff2634;
+
+    font-size: 10px;
+
+}
+
+
+.admin-points-form {
+
+    margin-top: 18px;
+
+}
+
+
+.admin-points-form label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #777;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.4px;
+
+}
+
+
+.admin-points-input {
+
+    width: 100%;
+
+    height: 48px;
+
+    padding:
+        0 14px;
+
+    border:
+        1px solid
+        rgba(229,9,20,.20);
+
+    border-radius: 11px;
+
+    outline: none;
+
+    background:
+        #090909;
+
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+}
+
+
+.admin-points-input:focus {
+
+    border-color:
+        #e50914;
+
+    box-shadow:
+        0 0 15px
+        rgba(229,9,20,.08);
+
+}
+
+
+.admin-points-modal-actions {
+
+    margin-top: 20px;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 9px;
+
+}
+
+
+.admin-points-modal-btn {
+
+    min-width: 100px;
+
+    height: 42px;
+
+    padding:
+        0 15px;
+
+    border-radius: 10px;
+
+    font-family: inherit;
+
+    font-size: 8px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+}
+
+
+.admin-points-cancel {
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    background:
+        #0d0d0d;
+
+    color: #777;
+
+}
+
+
+.admin-points-cancel:hover {
+
+    color: #fff;
+
+    border-color:
+        rgba(255,255,255,.18);
+
+}
+
+
+.admin-points-submit {
+
+    border:
+        1px solid
+        #e50914;
+
+    background:
+        #e50914;
+
+    color: #fff;
+
+    box-shadow:
+        0 0 15px
+        rgba(229,9,20,.12);
+
+}
+
+
+.admin-points-submit:hover {
+
+    background:
+        #ff1f2d;
+
+    border-color:
+        #ff1f2d;
+
+}
+
+
+.admin-points-submit:disabled {
+
+    opacity: .55;
+
+    cursor: not-allowed;
+
+}
+
+
+.admin-points-message {
+
+    min-height: 18px;
+
+    margin-top: 9px;
+
+    color: #777;
+
+    font-size: 8px;
+
+}
+
+
+.admin-points-message.error {
+
+    color: #ff5260;
+
+}
+
+
+.admin-points-message.success {
+
+    color: #62d49b;
+
+}
+
+
+/* =========================================================
    TABLE BODY
    ========================================================= */
 

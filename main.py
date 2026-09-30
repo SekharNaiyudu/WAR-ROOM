@@ -2107,6 +2107,24 @@ class AccountDataUpdate(BaseModel):
 
 
 # =========================================================
+# ADMIN LEADERBOARD EXTRA POINTS MODEL
+# =========================================================
+# Admins can award additional points for activities that are
+# outside the verified CTF scoring system. The browser never
+# decides the resulting total. The backend reads the current
+# persistent account_data value and adds the requested amount.
+# =========================================================
+
+class AdminLeaderboardPointsUpdate(BaseModel):
+
+    event: str
+    domain: str
+    account_type: str
+    account_id: int
+    add_points: int
+
+
+# =========================================================
 # HACKATHON STATUS MODEL
 # =========================================================
 
@@ -5035,6 +5053,436 @@ async def get_admin_leaderboard(
             "top_score": rows[0]["points"] if rows else 0,
             "rows": rows
         }
+
+    finally:
+
+        connection.close()
+
+
+
+# =========================================================
+# ADMIN LEADERBOARD EXTRA POINTS
+# =========================================================
+# Extra points are awarded for legitimate activities outside the
+# automatic CTF score, for example workshop participation,
+# bonus activities, presentations, special tasks, or other
+# administrator-approved scoring events.
+#
+# IMPORTANT:
+# - This endpoint is protected by the existing require_admin auth.
+# - It never accepts a replacement total from the browser.
+# - It accepts only a positive increment.
+# - It updates the same account_data row used by BOTH admin and
+#   user leaderboard APIs.
+# - Existing CTF synchronization remains authoritative for the
+#   CTF portion of the score. The synchronization logic already
+#   preserves non-CTF points, so these extra points survive future
+#   CTF submissions and leaderboard refreshes.
+# =========================================================
+
+@app.post("/api/admin/leaderboard/points")
+async def add_admin_leaderboard_points(
+    update: AdminLeaderboardPointsUpdate,
+    admin_username: str = Depends(require_admin)
+):
+
+    event = (
+        str(update.event or "")
+        .strip()
+        .lower()
+    )
+
+    domain = (
+        str(update.domain or "")
+        .strip()
+        .lower()
+    )
+
+    account_type = (
+        str(update.account_type or "")
+        .strip()
+        .lower()
+    )
+
+    try:
+        account_id = int(update.account_id)
+    except (TypeError, ValueError):
+
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid account ID."
+        )
+
+    try:
+        add_points = int(update.add_points)
+    except (TypeError, ValueError):
+
+        raise HTTPException(
+            status_code=400,
+            detail="Extra points must be a whole number."
+        )
+
+    if event not in {"workshop", "hackathon"}:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid event."
+        )
+
+    if event == "workshop":
+
+        if domain not in WORKSHOP_DOMAINS:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid Workshop domain."
+            )
+
+        expected_account_type = "user"
+
+    else:
+
+        if domain not in HACKATHON_DOMAINS:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid Hackathon domain."
+            )
+
+        expected_account_type = "team"
+
+    if account_type != expected_account_type:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Account type does not match the selected event."
+        )
+
+    if account_id < 1:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid account ID."
+        )
+
+    if add_points <= 0:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Enter extra points greater than 0."
+        )
+
+    # Keep accidental or malicious oversized awards bounded.
+    # The normal UI never approaches this value.
+    if add_points > 100000:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Extra points cannot exceed 100000 at once."
+        )
+
+    # Synchronize verified CTF scores first. This ensures the
+    # starting total is current before the administrator adds the
+    # separate extra-activity points.
+    repair_existing_vapt_ctf_scores()
+    sync_all_ctf_scores_to_leaderboards()
+
+    connection = get_user_db()
+
+    try:
+
+        cursor = connection.cursor()
+
+        # -----------------------------------------------------
+        # Verify that the selected account belongs to the chosen
+        # event/domain and is approved. This prevents an admin
+        # request from writing points into an unrelated account.
+        # -----------------------------------------------------
+
+        if event == "workshop":
+
+            cursor.execute(
+                """
+                SELECT
+                    u.id,
+                    u.name,
+                    wr.domain,
+                    wr.status
+                FROM users u
+                INNER JOIN workshop_registrations wr
+                    ON wr.user_id = u.id
+                WHERE
+                    u.id = ?
+                    AND wr.domain = ?
+                    AND wr.status = 'approved'
+                LIMIT 1
+                """,
+                (
+                    account_id,
+                    domain
+                )
+            )
+
+            account_row = cursor.fetchone()
+
+            if not account_row:
+
+                raise HTTPException(
+                    status_code=404,
+                    detail="Approved Workshop account was not found."
+                )
+
+            account_name = str(
+                account_row["name"]
+                or
+                "Participant"
+            )
+
+        else:
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    team_name,
+                    domain,
+                    status
+                FROM hackathon_teams
+                WHERE
+                    id = ?
+                    AND domain = ?
+                    AND status = 'approved'
+                LIMIT 1
+                """,
+                (
+                    account_id,
+                    domain
+                )
+            )
+
+            account_row = cursor.fetchone()
+
+            if not account_row:
+
+                raise HTTPException(
+                    status_code=404,
+                    detail="Approved Hackathon team was not found."
+                )
+
+            account_name = str(
+                account_row["team_name"]
+                or
+                "Team"
+            )
+
+        # -----------------------------------------------------
+        # Read the canonical account_data row.
+        # -----------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT
+                points,
+                data_json
+            FROM account_data
+            WHERE
+                account_type = ?
+                AND account_id = ?
+                AND event_type = ?
+                AND domain = ?
+            LIMIT 1
+            """,
+            (
+                account_type,
+                account_id,
+                event,
+                domain
+            )
+        )
+
+        existing = cursor.fetchone()
+
+        current_points = (
+            int(existing["points"] or 0)
+            if existing
+            else 0
+        )
+
+        # Keep a small, persistent marker in data_json so the
+        # distinction between automatic CTF scoring and manually
+        # awarded extra points remains available for future logic.
+        current_data = {}
+
+        if existing:
+
+            try:
+
+                current_data = json.loads(
+                    existing["data_json"]
+                    or
+                    "{}"
+                )
+
+                if not isinstance(
+                    current_data,
+                    dict
+                ):
+
+                    current_data = {}
+
+            except Exception:
+
+                current_data = {}
+
+        existing_extra_points = 0
+
+        try:
+
+            existing_extra_points = int(
+                current_data.get(
+                    "admin_extra_points",
+                    0
+                )
+                or
+                0
+            )
+
+        except (TypeError, ValueError):
+
+            existing_extra_points = 0
+
+        new_points = (
+            current_points
+            +
+            add_points
+        )
+
+        new_extra_points = (
+            existing_extra_points
+            +
+            add_points
+        )
+
+        current_data[
+            "admin_extra_points"
+        ] = new_extra_points
+
+        current_data[
+            "last_admin_points_update"
+        ] = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        now = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        # -----------------------------------------------------
+        # Update or create the SAME account_data row consumed by
+        # /api/admin/leaderboard and /api/user/leaderboard.
+        # -----------------------------------------------------
+
+        if existing:
+
+            cursor.execute(
+                """
+                UPDATE account_data
+                SET
+                    points = ?,
+                    data_json = ?,
+                    updated_at = ?
+                WHERE
+                    account_type = ?
+                    AND account_id = ?
+                    AND event_type = ?
+                    AND domain = ?
+                """,
+                (
+                    new_points,
+                    json.dumps(
+                        current_data
+                    ),
+                    now,
+                    account_type,
+                    account_id,
+                    event,
+                    domain
+                )
+            )
+
+        else:
+
+            cursor.execute(
+                """
+                INSERT INTO account_data (
+                    account_type,
+                    account_id,
+                    event_type,
+                    domain,
+                    points,
+                    data_json,
+                    created_at,
+                    updated_at
+                )
+                VALUES (
+                    ?, ?, ?, ?, ?, ?, ?, ?
+                )
+                """,
+                (
+                    account_type,
+                    account_id,
+                    event,
+                    domain,
+                    new_points,
+                    json.dumps(
+                        current_data
+                    ),
+                    now,
+                    now
+                )
+            )
+
+        connection.commit()
+
+        return {
+            "success": True,
+            "message": (
+                f"Added {add_points} extra points "
+                f"to {account_name}."
+            ),
+            "event": event,
+            "domain": domain,
+            "account_type": account_type,
+            "account_id": account_id,
+            "account_name": account_name,
+            "previous_points": current_points,
+            "added_points": add_points,
+            "new_points": new_points,
+            "admin_extra_points": new_extra_points
+        }
+
+    except HTTPException:
+
+        connection.rollback()
+        raise
+
+    except DB_INTEGRITY_ERRORS:
+
+        connection.rollback()
+
+        raise HTTPException(
+            status_code=409,
+            detail="Unable to update leaderboard points."
+        )
+
+    except Exception:
+
+        connection.rollback()
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to update leaderboard points."
+        )
 
     finally:
 

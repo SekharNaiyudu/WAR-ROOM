@@ -588,7 +588,7 @@ function showLoading() {
         <tr>
 
             <td
-                colspan="4"
+                colspan="5"
             >
 
                 <div class="leaderboard-empty">
@@ -626,7 +626,7 @@ function showMessage(
         <tr>
 
             <td
-                colspan="4"
+                colspan="5"
             >
 
                 <div class="leaderboard-empty">
@@ -638,6 +638,628 @@ function showMessage(
         </tr>
 
     `;
+
+}
+
+
+/* =========================================================
+   ADMIN EXTRA POINTS MODAL
+   ========================================================= */
+
+let adminPointsModal = null;
+
+let adminPointsModalRow = null;
+
+
+function ensureAdminPointsModal() {
+
+    if (
+        adminPointsModal
+        &&
+        document.body.contains(
+            adminPointsModal
+        )
+    ) {
+
+        return adminPointsModal;
+
+    }
+
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "admin-points-modal";
+
+
+    wrapper.innerHTML = `
+
+        <div
+            class="admin-points-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="adminPointsModalTitle"
+        >
+
+            <div
+                class="admin-points-modal-kicker"
+            >
+                LEADERBOARD / ADMIN ACTION
+            </div>
+
+
+            <div
+                class="admin-points-modal-title"
+                id="adminPointsModalTitle"
+            >
+                ADD EXTRA POINTS
+            </div>
+
+
+            <div
+                class="admin-points-modal-subtitle"
+            >
+                Add points for an approved activity outside
+                the automatic CTF score. The new total will be
+                reflected on both Admin and User leaderboards.
+            </div>
+
+
+            <div
+                class="admin-points-account"
+            >
+
+                <span>
+                    ACCOUNT
+                </span>
+
+                <strong
+                    id="adminPointsAccountName"
+                >
+                    Participant
+                </strong>
+
+                <div
+                    class="admin-points-current"
+                >
+                    Current Points:
+                    <strong
+                        id="adminPointsCurrent"
+                    >
+                        0
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <form
+                class="admin-points-form"
+                id="adminPointsForm"
+            >
+
+                <label
+                    for="adminPointsInput"
+                >
+                    EXTRA POINTS TO ADD
+                </label>
+
+                <input
+                    id="adminPointsInput"
+                    class="admin-points-input"
+                    type="number"
+                    min="1"
+                    max="100000"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="Example: 25"
+                    autocomplete="off"
+                    required
+                >
+
+                <div
+                    class="admin-points-message"
+                    id="adminPointsMessage"
+                    aria-live="polite"
+                ></div>
+
+
+                <div
+                    class="admin-points-modal-actions"
+                >
+
+                    <button
+                        type="button"
+                        class="admin-points-modal-btn admin-points-cancel"
+                        id="adminPointsCancel"
+                    >
+                        CANCEL
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="admin-points-modal-btn admin-points-submit"
+                        id="adminPointsSubmit"
+                    >
+                        ADD POINTS
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        wrapper
+    );
+
+
+    adminPointsModal =
+        wrapper;
+
+
+    const cancelButton =
+        wrapper.querySelector(
+            "#adminPointsCancel"
+        );
+
+
+    const form =
+        wrapper.querySelector(
+            "#adminPointsForm"
+        );
+
+
+    const input =
+        wrapper.querySelector(
+            "#adminPointsInput"
+        );
+
+
+    cancelButton.addEventListener(
+        "click",
+        closeAdminPointsModal
+    );
+
+
+    wrapper.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                wrapper
+            ) {
+
+                closeAdminPointsModal();
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Escape"
+                &&
+                wrapper.classList.contains(
+                    "open"
+                )
+            ) {
+
+                closeAdminPointsModal();
+
+            }
+
+        }
+    );
+
+
+    form.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            await submitAdminPoints();
+
+        }
+    );
+
+
+    input.addEventListener(
+        "input",
+        function() {
+
+            const message =
+                wrapper.querySelector(
+                    "#adminPointsMessage"
+                );
+
+            if (message) {
+
+                message.textContent =
+                    "";
+
+                message.className =
+                    "admin-points-message";
+
+            }
+
+        }
+    );
+
+
+    return wrapper;
+
+}
+
+
+function closeAdminPointsModal() {
+
+    if (
+        !adminPointsModal
+    ) {
+
+        return;
+
+    }
+
+
+    adminPointsModal.classList.remove(
+        "open"
+    );
+
+
+    adminPointsModalRow =
+        null;
+
+}
+
+
+function openAdminPointsModal(
+    row
+) {
+
+    const modal =
+        ensureAdminPointsModal();
+
+
+    adminPointsModalRow =
+        row;
+
+
+    const accountName =
+        modal.querySelector(
+            "#adminPointsAccountName"
+        );
+
+
+    const currentPoints =
+        modal.querySelector(
+            "#adminPointsCurrent"
+        );
+
+
+    const input =
+        modal.querySelector(
+            "#adminPointsInput"
+        );
+
+
+    const message =
+        modal.querySelector(
+            "#adminPointsMessage"
+        );
+
+
+    const submit =
+        modal.querySelector(
+            "#adminPointsSubmit"
+        );
+
+
+    if (accountName) {
+
+        accountName.textContent =
+            row.name
+            ||
+            row.account_name
+            ||
+            row.team_name
+            ||
+            "Participant";
+
+    }
+
+
+    if (currentPoints) {
+
+        currentPoints.textContent =
+            Number(
+                row.points
+                ??
+                0
+            ).toLocaleString();
+
+    }
+
+
+    if (input) {
+
+        input.value =
+            "";
+
+    }
+
+
+    if (message) {
+
+        message.textContent =
+            "";
+
+        message.className =
+            "admin-points-message";
+
+    }
+
+
+    if (submit) {
+
+        submit.disabled =
+            false;
+
+        submit.textContent =
+            "ADD POINTS";
+
+    }
+
+
+    modal.classList.add(
+        "open"
+    );
+
+
+    window.setTimeout(
+        function() {
+
+            if (input) {
+
+                input.focus();
+
+            }
+
+        },
+        40
+    );
+
+}
+
+
+async function submitAdminPoints() {
+
+    if (
+        !adminPointsModal
+        ||
+        !adminPointsModalRow
+    ) {
+
+        return;
+
+    }
+
+
+    const row =
+        adminPointsModalRow;
+
+
+    const input =
+        adminPointsModal.querySelector(
+            "#adminPointsInput"
+        );
+
+
+    const message =
+        adminPointsModal.querySelector(
+            "#adminPointsMessage"
+        );
+
+
+    const submit =
+        adminPointsModal.querySelector(
+            "#adminPointsSubmit"
+        );
+
+
+    const rawValue =
+        String(
+            input?.value
+            ||
+            ""
+        ).trim();
+
+
+    const addPoints =
+        Number(
+            rawValue
+        );
+
+
+    if (
+        !Number.isInteger(
+            addPoints
+        )
+        ||
+        addPoints < 1
+        ||
+        addPoints > 100000
+    ) {
+
+        if (message) {
+
+            message.textContent =
+                "Enter a whole number between 1 and 100000.";
+
+            message.className =
+                "admin-points-message error";
+
+        }
+
+        input?.focus();
+
+        return;
+
+    }
+
+
+    if (submit) {
+
+        submit.disabled =
+            true;
+
+        submit.textContent =
+            "SAVING...";
+
+    }
+
+
+    if (message) {
+
+        message.textContent =
+            "";
+
+        message.className =
+            "admin-points-message";
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/leaderboard/points",
+                {
+
+                    method:
+                        "POST",
+
+                    credentials:
+                        "same-origin",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            event:
+                                currentEvent,
+
+                            domain:
+                                getApiDomain(),
+
+                            account_type:
+                                row.account_type,
+
+                            account_id:
+                                Number(
+                                    row.id
+                                ),
+
+                            add_points:
+                                addPoints
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response
+                .json()
+                .catch(
+                    function() {
+
+                        return {};
+
+                    }
+                );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+
+                data.detail
+                ||
+                data.message
+                ||
+                "Unable to update points."
+
+            );
+
+        }
+
+
+        closeAdminPointsModal();
+
+
+        await loadLeaderboard();
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            "ADMIN EXTRA POINTS ERROR:",
+            error
+        );
+
+
+        if (message) {
+
+            message.textContent =
+                error.message
+                ||
+                "Unable to update points.";
+
+            message.className =
+                "admin-points-message error";
+
+        }
+
+        if (submit) {
+
+            submit.disabled =
+                false;
+
+            submit.textContent =
+                "ADD POINTS";
+
+        }
+
+    }
 
 }
 
@@ -888,6 +1510,30 @@ function renderLeaderboard() {
                                     ${points.toLocaleString()}
 
                                 </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="leaderboard-edit-points-btn"
+                                    data-edit-points="true"
+                                    data-account-type="${escapeHtml(
+                                        row.account_type
+                                        ||
+                                        ""
+                                    )}"
+                                    data-account-id="${escapeHtml(
+                                        row.id
+                                        ??
+                                        ""
+                                    )}"
+                                    title="Add extra points"
+                                >
+                                    EDIT
+                                </button>
 
                             </td>
 
@@ -1264,6 +1910,94 @@ domainCards.forEach(
 
     }
 );
+
+
+/* =========================================================
+   EDIT POINTS ACTION
+   ========================================================= */
+
+if (
+    leaderboardTableBody
+) {
+
+    leaderboardTableBody.addEventListener(
+        "click",
+        function(event) {
+
+            const button =
+                event.target.closest(
+                    "[data-edit-points]"
+                );
+
+
+            if (
+                !button
+            ) {
+
+                return;
+
+            }
+
+
+            const accountType =
+                String(
+                    button.dataset.accountType
+                    ||
+                    ""
+                ).trim();
+
+
+            const accountId =
+                String(
+                    button.dataset.accountId
+                    ||
+                    ""
+                ).trim();
+
+
+            const row =
+                leaderboardRows.find(
+                    function(item) {
+
+                        return (
+                            String(
+                                item.account_type
+                                ||
+                                ""
+                            ).trim()
+                            ===
+                            accountType
+                            &&
+                            String(
+                                item.id
+                                ??
+                                ""
+                            ).trim()
+                            ===
+                            accountId
+                        );
+
+                    }
+                );
+
+
+            if (
+                !row
+            ) {
+
+                return;
+
+            }
+
+
+            openAdminPointsModal(
+                row
+            );
+
+        }
+    );
+
+}
 
 
 /* =========================================================
