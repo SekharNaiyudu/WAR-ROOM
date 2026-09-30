@@ -1865,113 +1865,72 @@ function closeShareProgress() {
 
 
 /* =========================================================
-   NATIVE SHARE
+   PLATFORM SHARE — WEB
    ========================================================= */
 
-async function tryNativeFileShare(
-    blob,
-    platform
-) {
+async function copyShareImageToClipboard(blob) {
 
-    const file =
-        new File(
-            [blob],
-            shareImageFileName,
-            {
-                type:
-                    "image/png"
-            }
-        );
-
-    const shareData = {
-
-        title:
-            "WAR ROOM — My Progress",
-
-        text:
-            `I am ranked on the WAR ROOM ${formatEvent(currentEvent)} — ${formatDomain(currentDomain)} leaderboard.`,
-
-        files:
-            [file]
-
-    };
-
+    /*
+       Best-effort copy only. This does NOT download the image.
+       If the browser/platform supports pasting an image, the
+       generated Story card is already available in the clipboard.
+    */
 
     if (
-        navigator.share
-        &&
-        navigator.canShare
-        &&
-        navigator.canShare(
-            {
-                files:
-                    [file]
-            }
-        )
+        !navigator.clipboard
+        ||
+        typeof ClipboardItem === "undefined"
+        ||
+        typeof navigator.clipboard.write !== "function"
     ) {
 
-        try {
-
-            await navigator.share(
-                shareData
-            );
-
-            return true;
-
-        }
-
-        catch (
-            error
-        ) {
-
-            if (
-                error?.name ===
-                "AbortError"
-            ) {
-
-                return true;
-
-            }
-
-        }
+        return false;
 
     }
 
+    try {
 
-    return false;
+        const item =
+            new ClipboardItem({
+                "image/png": blob
+            });
+
+        await navigator.clipboard.write(
+            [item]
+        );
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "IMAGE CLIPBOARD COPY NOT AVAILABLE:",
+            error
+        );
+
+        return false;
+
+    }
 
 }
 
 
 /* =========================================================
-   PLATFORM FALLBACK
+   OPEN PLATFORM WEB
    ========================================================= */
 
-function openPlatformFallback(
-    platform
-) {
-
-    const text =
-        encodeURIComponent(
-            `I am ranked on the WAR ROOM ${formatEvent(currentEvent)} — ${formatDomain(currentDomain)} leaderboard.`
-        );
-
+function openPlatformWeb(platform) {
 
     let url = "";
-
 
     if (
         platform === "instagram"
     ) {
 
-        /*
-           Instagram does not expose a normal web URL that can
-           upload a local browser-generated image directly into
-           Stories. Try the mobile Story camera deep link first.
-        */
-
         url =
-            "instagram://story-camera";
+            "https://www.instagram.com/";
 
     }
 
@@ -1979,32 +1938,22 @@ function openPlatformFallback(
         platform === "whatsapp"
     ) {
 
-        /*
-           WhatsApp can be opened with the share text. The native
-           share flow above is preferred when the browser supports
-           file sharing.
-        */
-
         url =
-            `https://wa.me/?text=${text}`;
+            "https://web.whatsapp.com/";
 
     }
 
-    else {
+    if (!url) {
 
-        /*
-           Snapchat web/app entry point. Native file sharing is
-           preferred when supported.
-        */
-
-        url =
-            "snapchat://";
+        return;
 
     }
 
-
-    window.location.href =
-        url;
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
 
 }
 
@@ -2023,84 +1972,44 @@ async function shareProgressToPlatform(
             await prepareShareImage();
 
 
-        const shared =
-            await tryNativeFileShare(
-                blob,
-                platform
-            );
+        /*
+           Do not download here.
+           The Download Story Image button is the separate
+           explicit download option.
+        */
 
-
-        if (
-            shared
-        ) {
-
-            return;
-
-        }
+        await copyShareImageToClipboard(
+            blob
+        );
 
 
         /*
-           Desktop browsers generally cannot inject a local PNG
-           directly into a platform's Story/Status composer.
-           Download the image first, then open the platform.
+           Open the requested web platform in a new tab.
+           A normal web page cannot programmatically inject a
+           local Blob into Instagram/WhatsApp's cross-origin
+           file picker. The generated image is therefore kept
+           in memory and copied to the clipboard when the browser
+           permits it, while the platform itself is opened here.
         */
 
-        const downloadUrl =
-            URL.createObjectURL(
-                blob
-            );
-
-        const anchor =
-            document.createElement(
-                "a"
-            );
-
-        anchor.href =
-            downloadUrl;
-
-        anchor.download =
-            shareImageFileName;
-
-        document.body.appendChild(
-            anchor
-        );
-
-        anchor.click();
-
-        anchor.remove();
-
-        setTimeout(
-            function() {
-
-                URL.revokeObjectURL(
-                    downloadUrl
-                );
-
-            },
-            2000
-        );
-
-
-        setTimeout(
-            function() {
-
-                openPlatformFallback(
-                    platform
-                );
-
-            },
-            250
+        openPlatformWeb(
+            platform
         );
 
     }
 
-    catch (
-        error
-    ) {
+    catch (error) {
 
         console.error(
             "PLATFORM SHARE ERROR:",
             error
+        );
+
+        /* Even if clipboard access is blocked, still open the
+           requested platform so the user can continue there. */
+
+        openPlatformWeb(
+            platform
         );
 
     }
