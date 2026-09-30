@@ -817,3 +817,117 @@
 /* =========================================================
    FINAL
    ========================================================= */
+
+
+/* =========================================================
+   SOCIAL MEDIA — SIMPLE PLATFORM COLORS
+   ========================================================= */
+
+.sidebar-social {
+    width: 100%;
+    margin-top: 16px;
+    padding: 0 9px;
+}
+
+.sidebar-social-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    text-align: center;
+}
+
+.sidebar-social-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sidebar-social-link {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 12px;
+    background: linear-gradient(145deg, #171717, #090909);
+    text-decoration: none;
+    transition: .2s ease;
+    box-shadow:
+        4px 4px 9px #020202,
+        -3px -3px 7px rgba(255,255,255,.018);
+}
+
+.sidebar-social-link svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.sidebar-social-link .social-play {
+    fill: currentColor;
+    stroke: none;
+}
+
+.sidebar-social-link .social-dot {
+    fill: currentColor;
+    stroke: none;
+}
+
+/* Instagram */
+.sidebar-social-link.instagram {
+    color: #E1306C;
+}
+
+.sidebar-social-link.instagram:hover {
+    color: #F77737;
+    border-color: rgba(225,48,108,.65);
+    box-shadow:
+        0 0 14px rgba(225,48,108,.22),
+        4px 4px 9px #020202;
+}
+
+/* YouTube */
+.sidebar-social-link.youtube {
+    color: #FF0000;
+}
+
+.sidebar-social-link.youtube:hover {
+    color: #FF2020;
+    border-color: rgba(255,0,0,.65);
+    box-shadow:
+        0 0 14px rgba(255,0,0,.22),
+        4px 4px 9px #020202;
+}
+
+/* Website / Browser */
+.sidebar-social-link.website {
+    color: #FFFFFF;
+}
+
+.sidebar-social-link.website:hover {
+    color: #FFFFFF;
+    border-color: rgba(255,255,255,.55);
+    box-shadow:
+        0 0 14px rgba(255,255,255,.14),
+        4px 4px 9px #020202;
+}
+
+.sidebar-social-link:hover {
+    transform: translateY(-2px);
+}
+
+.sidebar-social-link:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
