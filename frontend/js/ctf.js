@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
             steganography: 20,
             wireshark: 7,
             "event-logs": 10,
+            "detecting-phishing": 20,
             "test-cases": 1,
             "url-redirection": 1,
             "broken-link-hijack": 1,
@@ -54,7 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
             ceh: [
                 "steganography",
                 "wireshark",
-                "event-logs"
+                "event-logs",
+                "detecting-phishing"
             ],
 
             vapt: [
@@ -117,6 +119,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "event-logs":
             "EVENT LOGS",
 
+        "detecting-phishing":
+            "DETECTING PHISHING",
+
         "burp-suite":
             "BURP SUITE",
 
@@ -163,6 +168,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         "event-logs":
             "10 Challenges",
+
+        "detecting-phishing":
+            "20 Challenges",
 
         "burp-suite":
             "3 Challenges",

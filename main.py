@@ -9530,6 +9530,7 @@ CTF_EVENT_CHALLENGE_COUNTS = {
         "steganography": 20,
         "wireshark": 7,
         "event-logs": 10,
+        "detecting-phishing": 20,
         "test-cases": 1,
         "url-redirection": 1,
         "broken-link-hijack": 1,
@@ -9560,7 +9561,8 @@ CTF_VAPT_CATEGORIES = {
 CTF_CEH_CATEGORIES = {
     "steganography",
     "wireshark",
-    "event-logs"
+    "event-logs",
+    "detecting-phishing"
 }
 
 
@@ -10243,7 +10245,8 @@ USER_CTF_EVENT_CATEGORIES = {
         "ceh": [
             "steganography",
             "wireshark",
-            "event-logs"
+            "event-logs",
+            "detecting-phishing"
         ],
         "vapt": [
             "test-cases",

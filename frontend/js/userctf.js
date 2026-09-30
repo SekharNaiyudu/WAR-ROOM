@@ -63,6 +63,13 @@ const DOMAIN_CONFIG = {
                 description:
                     "Windows event investigation challenges",
                 count: 10
+            },
+
+            "detecting-phishing": {
+                title: "DETECTING PHISHING",
+                description:
+                    "Phishing identification and analysis challenges",
+                count: 20
             }
 
         }
