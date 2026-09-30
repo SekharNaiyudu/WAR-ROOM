@@ -209,6 +209,27 @@
             </div>
         </div>
 
+        <!-- =====================================================
+             SHARE YOUR PROGRESS
+             ===================================================== -->
+
+        <div class="sidebar-share-progress">
+
+            <span class="sidebar-share-label">
+                SHARE YOUR PROGRESS
+            </span>
+
+            <button
+                type="button"
+                class="share-progress-button"
+                id="openShareProgress"
+            >
+                <span class="share-progress-icon">↗</span>
+                <span>SHARE</span>
+            </button>
+
+        </div>
+
 
     </aside>
 
@@ -497,8 +518,109 @@
 </main>
 
 
+
+<!-- =========================================================
+     SHARE YOUR PROGRESS MODAL
+     ========================================================= -->
+
+<div
+    class="share-progress-modal"
+    id="shareProgressModal"
+    aria-hidden="true"
+>
+
+    <div
+        class="share-progress-backdrop"
+        id="shareProgressBackdrop"
+    ></div>
+
+    <div
+        class="share-progress-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="shareProgressTitle"
+    >
+
+        <button
+            type="button"
+            class="share-progress-close"
+            id="closeShareProgress"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+        <div class="share-progress-kicker">
+            WAR ROOM / SHARE
+        </div>
+
+        <h2 id="shareProgressTitle">
+            SHARE YOUR PROGRESS
+        </h2>
+
+        <p class="share-progress-description">
+            Your leaderboard placement is highlighted in a share-ready story card.
+        </p>
+
+        <div class="share-progress-preview-wrap">
+            <img
+                id="shareProgressPreview"
+                class="share-progress-preview"
+                alt="WAR ROOM leaderboard placement preview"
+            >
+        </div>
+
+        <div class="share-progress-actions">
+
+            <button
+                type="button"
+                class="share-platform-button instagram-share"
+                data-share-platform="instagram"
+            >
+                <span class="share-platform-icon">◎</span>
+                <span>Instagram Story</span>
+            </button>
+
+            <button
+                type="button"
+                class="share-platform-button whatsapp-share"
+                data-share-platform="whatsapp"
+            >
+                <span class="share-platform-icon">◔</span>
+                <span>WhatsApp Status</span>
+            </button>
+
+            <button
+                type="button"
+                class="share-platform-button snapchat-share"
+                data-share-platform="snapchat"
+            >
+                <span class="share-platform-icon">◒</span>
+                <span>Snap Story</span>
+            </button>
+
+        </div>
+
+        <button
+            type="button"
+            class="download-share-image"
+            id="downloadShareImage"
+        >
+            DOWNLOAD STORY IMAGE
+        </button>
+
+        <p class="share-progress-note">
+            On supported mobile browsers, Share opens the device share sheet so the
+            generated image can be sent to Instagram, WhatsApp or Snapchat.
+        </p>
+
+    </div>
+
+</div>
+
+
 <script
-    src="/js/user-leaderboard.js?v=4"
+    src="/js/user-leaderboard.js?v=5"
 ></script>
 
 </body>

@@ -1059,6 +1059,1208 @@ if (
 }
 
 
+
+/* =========================================================
+   SHARE YOUR PROGRESS
+   ========================================================= */
+
+const openShareProgressButton =
+    document.getElementById(
+        "openShareProgress"
+    );
+
+const shareProgressModal =
+    document.getElementById(
+        "shareProgressModal"
+    );
+
+const closeShareProgressButton =
+    document.getElementById(
+        "closeShareProgress"
+    );
+
+const shareProgressBackdrop =
+    document.getElementById(
+        "shareProgressBackdrop"
+    );
+
+const shareProgressPreview =
+    document.getElementById(
+        "shareProgressPreview"
+    );
+
+const downloadShareImageButton =
+    document.getElementById(
+        "downloadShareImage"
+    );
+
+let shareImageBlob = null;
+let shareImageUrl = "";
+let shareImageFileName =
+    "war-room-progress.png";
+
+
+/* =========================================================
+   CURRENT PARTICIPANT
+   ========================================================= */
+
+function getCurrentParticipantName() {
+
+    const storageKeys = [
+
+        "user_data",
+
+        "workshop_user_data",
+
+        "hackathon_team_data"
+
+    ];
+
+    for (
+        const key of storageKeys
+    ) {
+
+        try {
+
+            const raw =
+                sessionStorage.getItem(
+                    key
+                );
+
+            if (!raw) {
+                continue;
+            }
+
+            const data =
+                JSON.parse(raw);
+
+            const name =
+                data.name
+                ||
+                data.team_name
+                ||
+                data.account_name
+                ||
+                "";
+
+            if (name) {
+                return String(name);
+            }
+
+        }
+
+        catch {
+
+            /* Ignore malformed session data. */
+
+        }
+
+    }
+
+
+    return (
+
+        sessionStorage.getItem(
+            "workshop_user_name"
+        )
+
+        ||
+
+        sessionStorage.getItem(
+            "hackathon_team_name"
+        )
+
+        ||
+
+        "Participant"
+
+    );
+
+}
+
+
+/* =========================================================
+   CURRENT PARTICIPANT ROW
+   ========================================================= */
+
+function getCurrentParticipantRow() {
+
+    const participantName =
+        getCurrentParticipantName()
+            .trim()
+            .toLowerCase();
+
+    if (!participantName) {
+        return null;
+    }
+
+    const index =
+        leaderboardRows.findIndex(
+            function(row) {
+
+                const rowName =
+                    String(
+                        row.name
+                        ||
+                        row.account_name
+                        ||
+                        row.team_name
+                        ||
+                        ""
+                    )
+                    .trim()
+                    .toLowerCase();
+
+                return (
+                    rowName ===
+                    participantName
+                );
+
+            }
+        );
+
+    if (index === -1) {
+        return null;
+    }
+
+    return {
+
+        row:
+            leaderboardRows[index],
+
+        rank:
+            index + 1
+
+    };
+
+}
+
+
+/* =========================================================
+   CANVAS TEXT WRAP
+   ========================================================= */
+
+function drawWrappedCanvasText(
+    ctx,
+    text,
+    x,
+    y,
+    maxWidth,
+    lineHeight
+) {
+
+    const words =
+        String(text).split(" ");
+
+    let line = "";
+
+    for (
+        let index = 0;
+        index < words.length;
+        index += 1
+    ) {
+
+        const testLine =
+            line
+            ? `${line} ${words[index]}`
+            : words[index];
+
+        const width =
+            ctx.measureText(
+                testLine
+            ).width;
+
+        if (
+            width > maxWidth
+            &&
+            line
+        ) {
+
+            ctx.fillText(
+                line,
+                x,
+                y
+            );
+
+            line =
+                words[index];
+
+            y +=
+                lineHeight;
+
+        }
+
+        else {
+
+            line =
+                testLine;
+
+        }
+
+    }
+
+    if (line) {
+
+        ctx.fillText(
+            line,
+            x,
+            y
+        );
+
+    }
+
+    return y;
+
+}
+
+
+/* =========================================================
+   BUILD STORY IMAGE
+   ========================================================= */
+
+async function buildShareProgressImage() {
+
+    const participant =
+        getCurrentParticipantRow();
+
+    const participantName =
+        participant?.row?.name
+        ||
+        participant?.row?.account_name
+        ||
+        participant?.row?.team_name
+        ||
+        getCurrentParticipantName();
+
+    const rank =
+        participant?.rank
+        ||
+        "—";
+
+    const points =
+        Number(
+            participant?.row?.points
+            ??
+            0
+        );
+
+    const eventName =
+        formatEvent(
+            currentEvent
+        );
+
+    const domainName =
+        formatDomain(
+            currentDomain
+        );
+
+
+    /*
+       1080 × 1350 is a portrait social-story
+       format and keeps the placement prominent.
+    */
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    canvas.width = 1080;
+    canvas.height = 1350;
+
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    /* Background */
+
+    const background =
+        ctx.createLinearGradient(
+            0,
+            0,
+            1080,
+            1350
+        );
+
+    background.addColorStop(
+        0,
+        "#080808"
+    );
+
+    background.addColorStop(
+        .55,
+        "#120607"
+    );
+
+    background.addColorStop(
+        1,
+        "#050505"
+    );
+
+    ctx.fillStyle =
+        background;
+
+    ctx.fillRect(
+        0,
+        0,
+        1080,
+        1350
+    );
+
+
+    /* Red glow */
+
+    const glow =
+        ctx.createRadialGradient(
+            540,
+            220,
+            20,
+            540,
+            220,
+            650
+        );
+
+    glow.addColorStop(
+        0,
+        "rgba(229,9,20,.25)"
+    );
+
+    glow.addColorStop(
+        1,
+        "rgba(229,9,20,0)"
+    );
+
+    ctx.fillStyle =
+        glow;
+
+    ctx.fillRect(
+        0,
+        0,
+        1080,
+        700
+    );
+
+
+    /* Top accent */
+
+    ctx.fillStyle =
+        "#e50914";
+
+    ctx.fillRect(
+        72,
+        72,
+        220,
+        6
+    );
+
+
+    /* Brand */
+
+    ctx.font =
+        "900 28px Arial";
+
+    ctx.fillStyle =
+        "#ffffff";
+
+    ctx.fillText(
+        "SYNTHO",
+        72,
+        140
+    );
+
+    ctx.fillStyle =
+        "#e50914";
+
+    ctx.fillText(
+        "QUEST",
+        205,
+        140
+    );
+
+
+    ctx.font =
+        "700 15px Arial";
+
+    ctx.fillStyle =
+        "#666666";
+
+    ctx.fillText(
+        "WAR ROOM / CYBERSECURITY EVENT PLATFORM",
+        72,
+        178
+    );
+
+
+    /* Main message */
+
+    ctx.font =
+        "900 58px Arial";
+
+    ctx.fillStyle =
+        "#ffffff";
+
+    ctx.fillText(
+        "I'M ON THE",
+        72,
+        315
+    );
+
+    ctx.fillStyle =
+        "#ff2634";
+
+    ctx.fillText(
+        "LEADERBOARD.",
+        72,
+        382
+    );
+
+
+    /* Placement card */
+
+    const cardX = 72;
+    const cardY = 455;
+    const cardW = 936;
+    const cardH = 420;
+
+    ctx.fillStyle =
+        "#111111";
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        cardX,
+        cardY,
+        cardW,
+        cardH,
+        28
+    );
+
+    ctx.fill();
+
+
+    ctx.strokeStyle =
+        "rgba(229,9,20,.42)";
+
+    ctx.lineWidth =
+        2;
+
+    ctx.stroke();
+
+
+    /* Rank */
+
+    ctx.font =
+        "900 18px Arial";
+
+    ctx.fillStyle =
+        "#666666";
+
+    ctx.fillText(
+        "MY PLACEMENT",
+        120,
+        515
+    );
+
+
+    ctx.font =
+        "900 150px Arial";
+
+    ctx.fillStyle =
+        "#ff2634";
+
+    ctx.fillText(
+        `#${rank}`,
+        120,
+        670
+    );
+
+
+    /* Participant */
+
+    ctx.font =
+        "900 38px Arial";
+
+    ctx.fillStyle =
+        "#ffffff";
+
+    const nameY =
+        drawWrappedCanvasText(
+            ctx,
+            participantName,
+            120,
+            755,
+            650,
+            48
+        );
+
+
+    /* Meta */
+
+    ctx.font =
+        "800 20px Arial";
+
+    ctx.fillStyle =
+        "#777777";
+
+    ctx.fillText(
+        `${eventName}  •  ${domainName}`,
+        120,
+        Math.max(
+            815,
+            nameY + 35
+        )
+    );
+
+
+    /* Points block */
+
+    ctx.textAlign =
+        "right";
+
+    ctx.font =
+        "900 62px Arial";
+
+    ctx.fillStyle =
+        "#ffffff";
+
+    ctx.fillText(
+        points.toLocaleString(),
+        945,
+        690
+    );
+
+    ctx.font =
+        "900 14px Arial";
+
+    ctx.fillStyle =
+        "#666666";
+
+    ctx.fillText(
+        "POINTS",
+        945,
+        720
+    );
+
+    ctx.textAlign =
+        "left";
+
+
+    /* Footer */
+
+    ctx.font =
+        "800 19px Arial";
+
+    ctx.fillStyle =
+        "#ffffff";
+
+    ctx.fillText(
+        "YOUR CYBERSECURITY PROGRESS",
+        72,
+        1010
+    );
+
+    ctx.font =
+        "500 17px Arial";
+
+    ctx.fillStyle =
+        "#777777";
+
+    drawWrappedCanvasText(
+        ctx,
+        "Challenge by challenge. Point by point. Keep climbing the WAR ROOM leaderboard.",
+        72,
+        1045,
+        850,
+        29
+    );
+
+
+    /* Bottom CTA */
+
+    ctx.fillStyle =
+        "#e50914";
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        72,
+        1165,
+        360,
+        66,
+        14
+    );
+
+    ctx.fill();
+
+    ctx.font =
+        "900 18px Arial";
+
+    ctx.fillStyle =
+        "#ffffff";
+
+    ctx.fillText(
+        "SHARE YOUR PROGRESS",
+        105,
+        1207
+    );
+
+
+    ctx.font =
+        "700 16px Arial";
+
+    ctx.fillStyle =
+        "#555555";
+
+    ctx.fillText(
+        "synthoquest.com",
+        72,
+        1285
+    );
+
+
+    return new Promise(
+        function(resolve) {
+
+            canvas.toBlob(
+                function(blob) {
+
+                    resolve(blob);
+
+                },
+                "image/png",
+                1
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PREPARE SHARE IMAGE
+   ========================================================= */
+
+async function prepareShareImage() {
+
+    if (
+        shareImageBlob
+    ) {
+
+        return shareImageBlob;
+
+    }
+
+
+    shareImageBlob =
+        await buildShareProgressImage();
+
+
+    if (!shareImageBlob) {
+
+        throw new Error(
+            "Unable to create the share image."
+        );
+
+    }
+
+
+    shareImageUrl =
+        URL.createObjectURL(
+            shareImageBlob
+        );
+
+
+    shareImageFileName =
+        `war-room-${currentEvent}-${currentDomain}-rank.png`;
+
+
+    if (
+        shareProgressPreview
+    ) {
+
+        shareProgressPreview.src =
+            shareImageUrl;
+
+    }
+
+
+    return shareImageBlob;
+
+}
+
+
+/* =========================================================
+   OPEN SHARE MODAL
+   ========================================================= */
+
+async function openShareProgress() {
+
+    if (
+        !shareProgressModal
+    ) {
+
+        return;
+
+    }
+
+
+    shareProgressModal.classList.add(
+        "open"
+    );
+
+    shareProgressModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    try {
+
+        await prepareShareImage();
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            "SHARE IMAGE ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CLOSE SHARE MODAL
+   ========================================================= */
+
+function closeShareProgress() {
+
+    if (
+        !shareProgressModal
+    ) {
+
+        return;
+
+    }
+
+
+    shareProgressModal.classList.remove(
+        "open"
+    );
+
+    shareProgressModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* =========================================================
+   NATIVE SHARE
+   ========================================================= */
+
+async function tryNativeFileShare(
+    blob,
+    platform
+) {
+
+    const file =
+        new File(
+            [blob],
+            shareImageFileName,
+            {
+                type:
+                    "image/png"
+            }
+        );
+
+    const shareData = {
+
+        title:
+            "WAR ROOM — My Progress",
+
+        text:
+            `I am ranked on the WAR ROOM ${formatEvent(currentEvent)} — ${formatDomain(currentDomain)} leaderboard.`,
+
+        files:
+            [file]
+
+    };
+
+
+    if (
+        navigator.share
+        &&
+        navigator.canShare
+        &&
+        navigator.canShare(
+            {
+                files:
+                    [file]
+            }
+        )
+    ) {
+
+        try {
+
+            await navigator.share(
+                shareData
+            );
+
+            return true;
+
+        }
+
+        catch (
+            error
+        ) {
+
+            if (
+                error?.name ===
+                "AbortError"
+            ) {
+
+                return true;
+
+            }
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =========================================================
+   PLATFORM FALLBACK
+   ========================================================= */
+
+function openPlatformFallback(
+    platform
+) {
+
+    const text =
+        encodeURIComponent(
+            `I am ranked on the WAR ROOM ${formatEvent(currentEvent)} — ${formatDomain(currentDomain)} leaderboard.`
+        );
+
+
+    let url = "";
+
+
+    if (
+        platform === "instagram"
+    ) {
+
+        /*
+           Instagram does not expose a normal web URL that can
+           upload a local browser-generated image directly into
+           Stories. Try the mobile Story camera deep link first.
+        */
+
+        url =
+            "instagram://story-camera";
+
+    }
+
+    else if (
+        platform === "whatsapp"
+    ) {
+
+        /*
+           WhatsApp can be opened with the share text. The native
+           share flow above is preferred when the browser supports
+           file sharing.
+        */
+
+        url =
+            `https://wa.me/?text=${text}`;
+
+    }
+
+    else {
+
+        /*
+           Snapchat web/app entry point. Native file sharing is
+           preferred when supported.
+        */
+
+        url =
+            "snapchat://";
+
+    }
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* =========================================================
+   PLATFORM SHARE
+   ========================================================= */
+
+async function shareProgressToPlatform(
+    platform
+) {
+
+    try {
+
+        const blob =
+            await prepareShareImage();
+
+
+        const shared =
+            await tryNativeFileShare(
+                blob,
+                platform
+            );
+
+
+        if (
+            shared
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+           Desktop browsers generally cannot inject a local PNG
+           directly into a platform's Story/Status composer.
+           Download the image first, then open the platform.
+        */
+
+        const downloadUrl =
+            URL.createObjectURL(
+                blob
+            );
+
+        const anchor =
+            document.createElement(
+                "a"
+            );
+
+        anchor.href =
+            downloadUrl;
+
+        anchor.download =
+            shareImageFileName;
+
+        document.body.appendChild(
+            anchor
+        );
+
+        anchor.click();
+
+        anchor.remove();
+
+        setTimeout(
+            function() {
+
+                URL.revokeObjectURL(
+                    downloadUrl
+                );
+
+            },
+            2000
+        );
+
+
+        setTimeout(
+            function() {
+
+                openPlatformFallback(
+                    platform
+                );
+
+            },
+            250
+        );
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            "PLATFORM SHARE ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DOWNLOAD SHARE IMAGE
+   ========================================================= */
+
+async function downloadShareProgressImage() {
+
+    try {
+
+        const blob =
+            await prepareShareImage();
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+        const anchor =
+            document.createElement(
+                "a"
+            );
+
+        anchor.href =
+            url;
+
+        anchor.download =
+            shareImageFileName;
+
+        document.body.appendChild(
+            anchor
+        );
+
+        anchor.click();
+
+        anchor.remove();
+
+        setTimeout(
+            function() {
+
+                URL.revokeObjectURL(
+                    url
+                );
+
+            },
+            1000
+        );
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            "DOWNLOAD SHARE IMAGE ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SHARE EVENTS
+   ========================================================= */
+
+if (
+    openShareProgressButton
+) {
+
+    openShareProgressButton.addEventListener(
+        "click",
+        openShareProgress
+    );
+
+}
+
+
+if (
+    closeShareProgressButton
+) {
+
+    closeShareProgressButton.addEventListener(
+        "click",
+        closeShareProgress
+    );
+
+}
+
+
+if (
+    shareProgressBackdrop
+) {
+
+    shareProgressBackdrop.addEventListener(
+        "click",
+        closeShareProgress
+    );
+
+}
+
+
+if (
+    downloadShareImageButton
+) {
+
+    downloadShareImageButton.addEventListener(
+        "click",
+        downloadShareProgressImage
+    );
+
+}
+
+
+document
+    .querySelectorAll(
+        "[data-share-platform]"
+    )
+    .forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    shareProgressToPlatform(
+                        button.dataset.sharePlatform
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeShareProgress();
+
+        }
+
+    }
+);
+
+
 /* =========================================================
    INITIALIZE
    ========================================================= */
