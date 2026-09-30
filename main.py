@@ -10712,15 +10712,17 @@ def sync_ctf_account_to_leaderboard(
     now: str | None = None
 ):
     """
-    Synchronize one solved CTF account into account_data.
-
-    CTF submission rows keep their normalized domain. The
-    leaderboard row uses the canonical event domain.
+    Rebuild the canonical persisted leaderboard score from every
+    correctly solved CTF submission for this account.
     """
 
     account_type = str(account_type or "").strip().lower()
     event = str(event or "").strip().lower()
-    ctf_domain = normalize_user_ctf_domain(event, ctf_domain)
+
+    ctf_domain = normalize_user_ctf_domain(
+        event,
+        ctf_domain
+    )
 
     leaderboard_domain = get_ctf_leaderboard_domain(
         event,
@@ -10730,17 +10732,20 @@ def sync_ctf_account_to_leaderboard(
     if account_type not in {"user", "team"}:
         return 0
 
+    # Read every solved challenge for this account.
     cursor.execute(
         """
         SELECT
             domain,
             category,
+            challenge_number,
             points_awarded
         FROM ctf_user_submissions
         WHERE user_id = ?
           AND event = ?
           AND domain = ?
           AND correct = 1
+        ORDER BY category, challenge_number
         """,
         (
             account_id,
@@ -10751,34 +10756,38 @@ def sync_ctf_account_to_leaderboard(
 
     ctf_rows = cursor.fetchall()
 
-    if not ctf_rows:
-        return 0
+    stored_ctf_total = 0
+    corrected_ctf_total = 0
 
-    # Re-apply the current server-side score to every already-correct
-    # submission. This repairs older rows whose points_awarded value
-    # may be zero/stale after a scoring/category change.
-    stored_ctf_total, corrected_ctf_total = (
-        _calculate_ctf_account_total(ctf_rows)
-    )
-
+    # Re-score each solved challenge from the current server map.
     for row in ctf_rows:
+
         row_domain = str(
             row["domain"] or ""
         ).strip().lower()
+
         row_category = str(
             row["category"] or ""
         ).strip().lower()
+
+        challenge_number = int(
+            row["challenge_number"] or 0
+        )
+
+        stored_points = int(
+            row["points_awarded"] or 0
+        )
 
         expected_points = get_user_ctf_points(
             row_domain,
             row_category
         )
 
-        current_awarded = int(
-            row["points_awarded"] or 0
-        )
+        stored_ctf_total += stored_points
+        corrected_ctf_total += expected_points
 
-        if current_awarded != expected_points:
+        if stored_points != expected_points:
+
             cursor.execute(
                 """
                 UPDATE ctf_user_submissions
@@ -10795,13 +10804,16 @@ def sync_ctf_account_to_leaderboard(
                     event,
                     row_domain,
                     row_category,
-                    int(row["challenge_number"])
+                    challenge_number
                 )
             )
 
+    # Read the exact account_data row used by both leaderboards.
     cursor.execute(
         """
-        SELECT points
+        SELECT
+            points,
+            data_json
         FROM account_data
         WHERE account_type = ?
           AND account_id = ?
@@ -10825,18 +10837,89 @@ def sync_ctf_account_to_leaderboard(
         else 0
     )
 
-    non_ctf_total = max(
-        0,
-        current_total - stored_ctf_total
-    )
+    current_data = {}
+
+    if account_row:
+
+        try:
+
+            current_data = json.loads(
+                account_row["data_json"] or "{}"
+            )
+
+            if not isinstance(
+                current_data,
+                dict
+            ):
+                current_data = {}
+
+        except Exception:
+
+            current_data = {}
+
+    # Admin-awarded points are explicitly preserved when available.
+    # Older rows without the marker retain their previous non-CTF
+    # portion by subtracting the stored CTF total.
+    admin_extra_points = None
+
+    if "admin_extra_points" in current_data:
+
+        try:
+
+            admin_extra_points = max(
+                0,
+                int(
+                    current_data.get(
+                        "admin_extra_points",
+                        0
+                    )
+                    or 0
+                )
+            )
+
+        except (
+            TypeError,
+            ValueError
+        ):
+
+            admin_extra_points = 0
+
+    if admin_extra_points is None:
+
+        admin_extra_points = max(
+            0,
+            current_total - stored_ctf_total
+        )
 
     corrected_account_total = (
-        non_ctf_total + corrected_ctf_total
+        admin_extra_points
+        +
+        corrected_ctf_total
     )
 
     if now is None:
-        now = datetime.now(timezone.utc).isoformat()
 
+        now = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+    current_data["ctf_points"] = (
+        corrected_ctf_total
+    )
+
+    current_data["admin_extra_points"] = (
+        admin_extra_points
+    )
+
+    current_data["total_points"] = (
+        corrected_account_total
+    )
+
+    current_data["last_ctf_sync"] = now
+
+    # Always write the canonical total. This is the important fix:
+    # the leaderboard no longer depends on a stale account_data.points
+    # value left over from an earlier scoring implementation.
     if account_row:
 
         cursor.execute(
@@ -10844,6 +10927,7 @@ def sync_ctf_account_to_leaderboard(
             UPDATE account_data
             SET
                 points = ?,
+                data_json = ?,
                 updated_at = ?
             WHERE account_type = ?
               AND account_id = ?
@@ -10852,6 +10936,7 @@ def sync_ctf_account_to_leaderboard(
             """,
             (
                 corrected_account_total,
+                json.dumps(current_data),
                 now,
                 account_type,
                 account_id,
@@ -10874,7 +10959,7 @@ def sync_ctf_account_to_leaderboard(
                 created_at,
                 updated_at
             )
-            VALUES (?, ?, ?, ?, ?, '{}', ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 account_type,
@@ -10882,6 +10967,7 @@ def sync_ctf_account_to_leaderboard(
                 event,
                 leaderboard_domain,
                 corrected_account_total,
+                json.dumps(current_data),
                 now,
                 now
             )
@@ -11728,12 +11814,42 @@ async def submit_user_ctf_answer(
 
         connection.commit()
 
+        cursor.execute(
+            """
+            SELECT points
+            FROM account_data
+            WHERE account_type = ?
+              AND account_id = ?
+              AND event_type = ?
+              AND domain = ?
+            LIMIT 1
+            """,
+            (
+                account_type,
+                account_id,
+                event,
+                leaderboard_domain
+            )
+        )
+
+        final_account_row = cursor.fetchone()
+
+        final_leaderboard_points = (
+            int(
+                final_account_row["points"] or 0
+            )
+            if final_account_row
+            else 0
+        )
+
         return {
             "success": True,
             "correct": True,
             "already_solved": False,
             "message": "Correct answer. Challenge solved.",
-            "points_awarded": points_awarded
+            "points_awarded": points_awarded,
+            "ctf_points": corrected_ctf_total,
+            "leaderboard_points": final_leaderboard_points
         }
 
     except HTTPException:
