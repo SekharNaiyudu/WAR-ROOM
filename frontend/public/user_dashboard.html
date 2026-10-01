@@ -363,20 +363,46 @@
                  INTRO
                  ================================================= -->
 
-            <div class="dashboard-section-heading">
+            <div class="dashboard-section-heading event-overview-heading">
 
-                <span>
-                    YOUR EVENT
-                </span>
+                <div class="event-overview-heading-content">
+                    <span>
+                        YOUR EVENT
+                    </span>
 
-                <h2>
-                    EVENT OVERVIEW
-                </h2>
+                    <h2>
+                        EVENT OVERVIEW
+                    </h2>
 
-                <p>
-                    Your registered event and domain
-                    information is shown below.
-                </p>
+                    <p>
+                        Your registered event and domain
+                        information is shown below.
+                    </p>
+                </div>
+
+                <!-- DIGITAL FORENSICS HACKATHON PROJECT ACCESS -->
+                <div
+                    class="digital-forensics-project-actions"
+                    id="digitalForensicsProjectActions"
+                    hidden
+                >
+                    <button
+                        type="button"
+                        id="downloadProjectPdfBtn"
+                        class="project-pdf-download-btn disabled"
+                        disabled
+                    >
+                        DOWNLOAD PDF
+                    </button>
+
+                    <div
+                        class="project-pdf-password-btn"
+                        id="projectPdfPasswordBtn"
+                    >
+                        PASSWORD =
+                        <span id="projectPdfPassword">—</span>
+                    </div>
+                </div>
 
             </div>
 

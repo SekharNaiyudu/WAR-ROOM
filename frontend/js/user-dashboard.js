@@ -136,6 +136,8 @@ async function initializeUserDashboard() {
 
     updateDomainInformation();
 
+    updateDigitalForensicsProjectAccess();
+
     updatePoints();
 
     updateAccountStatus();
@@ -175,6 +177,34 @@ async function initializeUserDashboard() {
 /* =========================================================
    GET CURRENT EVENT
    ========================================================= */
+
+function updateDigitalForensicsProjectAccess() {
+
+    const actions = document.getElementById("digitalForensicsProjectActions");
+    const downloadButton = document.getElementById("downloadProjectPdfBtn");
+    const password = document.getElementById("projectPdfPassword");
+
+    if (!actions) return;
+
+    const isDigitalForensicsHackathon =
+        userSession.event === "hackathon" &&
+        String(userSession.domain || "").trim().toLowerCase() === "forensics";
+
+    if (!isDigitalForensicsHackathon) {
+        actions.hidden = true;
+        return;
+    }
+
+    actions.hidden = false;
+
+    if (downloadButton) {
+        downloadButton.disabled = true;
+        downloadButton.classList.add("disabled");
+    }
+
+    if (password) password.textContent = "—";
+}
+
 
 function getCurrentEvent() {
 
