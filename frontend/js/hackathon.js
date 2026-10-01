@@ -353,6 +353,13 @@ function selectDomain(domain) {
 
 
     /* =====================================================
+       DIGITAL FORENSICS PROJECT SELECTOR
+       ===================================================== */
+
+    updateProjectSelectorVisibility();
+
+
+    /* =====================================================
        LOAD DATA
        ===================================================== */
 
@@ -2880,6 +2887,736 @@ function setupLogout() {
 
 
 /* =========================================================
+   DIGITAL FORENSICS PROJECT SELECTION
+   ========================================================= */
+
+let projectWheelRotation = 0;
+let projectSpinBusy = false;
+
+
+function isDigitalForensicsHackathon(){
+
+    return selectedDomain === "forensics_hackathon";
+
+}
+
+
+function updateProjectSelectorVisibility(){
+
+    const button = document.getElementById(
+        "selectProjectBtn"
+    );
+
+    if (!button) {
+        return;
+    }
+
+    const visible = isDigitalForensicsHackathon();
+
+    button.hidden = !visible;
+
+    if (!visible) {
+        closeProjectSelectionModal();
+    }
+
+}
+
+
+function buildProjectWheel(){
+
+    const wheel = document.getElementById(
+        "projectWheel"
+    );
+
+    if (!wheel || wheel.dataset.ready === "true") {
+        return;
+    }
+
+    for (let index = 1; index <= 20; index += 1) {
+
+        const label = document.createElement("span");
+
+        label.className = "project-wheel-label";
+
+        label.style.setProperty(
+            "--wheel-angle",
+            `${(index - 1) * 18}deg`
+        );
+
+        label.textContent = String(index).padStart(2, "0");
+
+        wheel.appendChild(label);
+
+    }
+
+    wheel.dataset.ready = "true";
+
+}
+
+
+function setProjectModalOpen(isOpen){
+
+    const modal = document.getElementById(
+        "projectSelectionModal"
+    );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.toggle(
+        "is-open",
+        isOpen
+    );
+
+    modal.setAttribute(
+        "aria-hidden",
+        isOpen ? "false" : "true"
+    );
+
+    document.body.classList.toggle(
+        "project-modal-active",
+        isOpen
+    );
+
+}
+
+
+function closeProjectSelectionModal(){
+
+    setProjectModalOpen(false);
+
+}
+
+
+function formatProjectAllocationDate(value){
+
+    if (!value) {
+        return "-";
+    }
+
+    try {
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(value);
+        }
+
+        return date.toLocaleString(
+            undefined,
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    } catch (error) {
+
+        return String(value);
+
+    }
+
+}
+
+
+function renderProjectAllocationHistory(data){
+
+    const allocatedCount = document.getElementById(
+        "projectAllocatedCount"
+    );
+
+    const availableCount = document.getElementById(
+        "projectAvailableCount"
+    );
+
+    const status = document.getElementById(
+        "projectWheelStatus"
+    );
+
+    const tbody = document.getElementById(
+        "projectAllocationTableBody"
+    );
+
+    const allocations = Array.isArray(
+        data?.allocations
+    )
+        ? data.allocations
+        : [];
+
+    if (allocatedCount) {
+        allocatedCount.textContent = String(
+            data?.allocated_count ?? allocations.length
+        );
+    }
+
+    if (availableCount) {
+        availableCount.textContent = String(
+            data?.available_count ?? Math.max(0, 20 - allocations.length)
+        );
+    }
+
+    if (status) {
+
+        const available = Number(
+            data?.available_count ?? Math.max(0, 20 - allocations.length)
+        );
+
+        status.textContent = available > 0
+            ? `READY — ${available} PROJECT${available === 1 ? "" : "S"} AVAILABLE`
+            : "ALL 20 PROJECTS ASSIGNED — RESET REQUIRED";
+
+    }
+
+    if (!tbody) {
+        return;
+    }
+
+    if (!allocations.length) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="project-history-empty">
+                    No projects assigned yet.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+    tbody.innerHTML = allocations.map(
+        function(item, index){
+
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${escapeHtml(item.team_name || "-")}</td>
+                    <td>${escapeHtml(item.project_title || "-")}</td>
+                    <td>${escapeHtml(formatProjectAllocationDate(item.allocated_at))}</td>
+                </tr>
+            `;
+
+        }
+    ).join("");
+
+}
+
+
+async function loadProjectAllocations(){
+
+    if (!isDigitalForensicsHackathon()) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/admin/hackathon/project-allocations?domain=forensics_hackathon",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.detail ||
+                "Unable to load project allocations."
+            );
+        }
+
+        renderProjectAllocationHistory(data);
+
+    } catch (error) {
+
+        console.error(
+            "PROJECT ALLOCATION LOAD ERROR:",
+            error
+        );
+
+        showToast(
+            error.message ||
+            "Unable to load project allocations."
+        );
+
+    }
+
+}
+
+
+function setProjectSpinButtonBusy(isBusy){
+
+    const button = document.getElementById(
+        "projectSpinBtn"
+    );
+
+    if (!button) {
+        return;
+    }
+
+    button.disabled = isBusy;
+
+    button.innerHTML = isBusy
+        ? "<span>◌</span> SPINNING..."
+        : "<span>↻</span> SPIN";
+
+}
+
+
+function animateProjectWheel(projectIndex){
+
+    const wheel = document.getElementById(
+        "projectWheel"
+    );
+
+    if (!wheel) {
+        return Promise.resolve();
+    }
+
+    const normalizedIndex = Math.max(
+        1,
+        Math.min(20, Number(projectIndex) || 1)
+    );
+
+    const desiredRotation = -(
+        (normalizedIndex - 1) * 18
+    );
+
+    const currentMod = (
+        projectWheelRotation % 360 + 360
+    ) % 360;
+
+    const desiredMod = (
+        desiredRotation % 360 + 360
+    ) % 360;
+
+    const alignmentDelta = (
+        desiredMod - currentMod + 360
+    ) % 360;
+
+    const fullSpins = 5 * 360;
+
+    projectWheelRotation += (
+        fullSpins + alignmentDelta
+    );
+
+    wheel.style.transform =
+        `rotate(${projectWheelRotation}deg)`;
+
+    return new Promise(
+        function(resolve){
+
+            window.setTimeout(
+                resolve,
+                4750
+            );
+
+        }
+    );
+
+}
+
+
+function showProjectResult(data){
+
+    const title = document.getElementById(
+        "selectedProjectTitle"
+    );
+
+    const team = document.getElementById(
+        "selectedProjectTeam"
+    );
+
+    if (title) {
+        title.textContent =
+            data.project_title ||
+            "Project assigned";
+    }
+
+    if (team) {
+        team.textContent =
+            `${data.team_name || "Team"} • Project ${String(data.project_index || "").padStart(2, "0")}`;
+    }
+
+}
+
+
+async function spinProjectForTeam(){
+
+    if (!isDigitalForensicsHackathon()) {
+        return;
+    }
+
+    if (projectSpinBusy) {
+        return;
+    }
+
+    const input = document.getElementById(
+        "projectTeamName"
+    );
+
+    const teamName = String(
+        input?.value || ""
+    ).trim();
+
+    if (!teamName) {
+
+        showToast(
+            "Enter the registered team name before spinning."
+        );
+
+        input?.focus();
+
+        return;
+
+    }
+
+    projectSpinBusy = true;
+
+    setProjectSpinButtonBusy(true);
+
+    const status = document.getElementById(
+        "projectWheelStatus"
+    );
+
+    if (status) {
+        status.textContent =
+            "CONTACTING BACKEND — RESERVING UNIQUE PROJECT...";
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/admin/hackathon/project-spin",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    domain: "forensics_hackathon",
+                    team_name: teamName
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.detail ||
+                "Unable to assign a project."
+            );
+        }
+
+        await animateProjectWheel(
+            data.project_index
+        );
+
+        showProjectResult(data);
+
+        if (status) {
+            status.textContent = data.already_assigned
+                ? "TEAM ALREADY HAD THIS PROJECT — NO SECOND PROJECT CONSUMED"
+                : "PROJECT LOCKED — UNIQUE TEAM ALLOCATION SAVED";
+        }
+
+        await loadProjectAllocations();
+
+        showToast(
+            data.already_assigned
+                ? `${data.team_name} already has ${data.project_title}.`
+                : `${data.team_name} assigned: ${data.project_title}.`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "PROJECT SPIN ERROR:",
+            error
+        );
+
+        if (status) {
+            status.textContent =
+                "SPIN FAILED — NO PROJECT WAS CONSUMED";
+        }
+
+        showToast(
+            error.message ||
+            "Unable to assign a project."
+        );
+
+    } finally {
+
+        projectSpinBusy = false;
+
+        setProjectSpinButtonBusy(false);
+
+    }
+
+}
+
+
+async function resetProjectAllocations(){
+
+    if (!isDigitalForensicsHackathon()) {
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Reset all Digital Forensics project allocations?\n\n" +
+        "This removes every Team → Project assignment for the current run."
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const button = document.getElementById(
+        "projectResetBtn"
+    );
+
+    if (button) {
+        button.disabled = true;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/admin/hackathon/project-reset",
+            {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    domain: "forensics_hackathon",
+                    team_name: "ADMIN_RESET"
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.detail ||
+                "Unable to reset project allocations."
+            );
+        }
+
+        const title = document.getElementById(
+            "selectedProjectTitle"
+        );
+
+        const team = document.getElementById(
+            "selectedProjectTeam"
+        );
+
+        if (title) {
+            title.textContent =
+                "Awaiting team spin";
+        }
+
+        if (team) {
+            team.textContent =
+                "No project assigned in this session yet.";
+        }
+
+        const wheel = document.getElementById(
+            "projectWheel"
+        );
+
+        if (wheel) {
+            projectWheelRotation = 0;
+            wheel.style.transition = "none";
+            wheel.style.transform = "rotate(0deg)";
+            window.requestAnimationFrame(
+                function(){
+                    window.requestAnimationFrame(
+                        function(){
+                            wheel.style.transition =
+                                "transform 4.6s cubic-bezier(.12,.72,.08,1)";
+                        }
+                    );
+                }
+            );
+        }
+
+        await loadProjectAllocations();
+
+        showToast(
+            `Reset complete. ${data.available_count} projects are available.`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "PROJECT RESET ERROR:",
+            error
+        );
+
+        showToast(
+            error.message ||
+            "Unable to reset project allocations."
+        );
+
+    } finally {
+
+        if (button) {
+            button.disabled = false;
+        }
+
+    }
+
+}
+
+
+function openProjectSelectionModal(){
+
+    if (!isDigitalForensicsHackathon()) {
+        return;
+    }
+
+    buildProjectWheel();
+
+    setProjectModalOpen(true);
+
+    loadProjectAllocations();
+
+    const input = document.getElementById(
+        "projectTeamName"
+    );
+
+    window.setTimeout(
+        function(){
+            input?.focus();
+        },
+        120
+    );
+
+}
+
+
+function setupProjectSelector(){
+
+    const openButton = document.getElementById(
+        "selectProjectBtn"
+    );
+
+    const closeButton = document.getElementById(
+        "projectModalCloseBtn"
+    );
+
+    const spinButton = document.getElementById(
+        "projectSpinBtn"
+    );
+
+    const resetButton = document.getElementById(
+        "projectResetBtn"
+    );
+
+    const refreshButton = document.getElementById(
+        "projectRefreshBtn"
+    );
+
+    const teamInput = document.getElementById(
+        "projectTeamName"
+    );
+
+    if (openButton) {
+        openButton.addEventListener(
+            "click",
+            openProjectSelectionModal
+        );
+    }
+
+    if (closeButton) {
+        closeButton.addEventListener(
+            "click",
+            closeProjectSelectionModal
+        );
+    }
+
+    document
+        .querySelectorAll("[data-project-modal-close]")
+        .forEach(
+            function(element){
+                element.addEventListener(
+                    "click",
+                    closeProjectSelectionModal
+                );
+            }
+        );
+
+    if (spinButton) {
+        spinButton.addEventListener(
+            "click",
+            spinProjectForTeam
+        );
+    }
+
+    if (resetButton) {
+        resetButton.addEventListener(
+            "click",
+            resetProjectAllocations
+        );
+    }
+
+    if (refreshButton) {
+        refreshButton.addEventListener(
+            "click",
+            loadProjectAllocations
+        );
+    }
+
+    if (teamInput) {
+        teamInput.addEventListener(
+            "keydown",
+            function(event){
+
+                if (
+                    event.key === "Enter" &&
+                    !projectSpinBusy
+                ) {
+                    event.preventDefault();
+                    spinProjectForTeam();
+                }
+
+            }
+        );
+    }
+
+    document.addEventListener(
+        "keydown",
+        function(event){
+
+            if (
+                event.key === "Escape" &&
+                document.getElementById("projectSelectionModal")?.classList.contains("is-open")
+            ) {
+                closeProjectSelectionModal();
+            }
+
+        }
+    );
+
+    updateProjectSelectorVisibility();
+
+}
+
+
+/* =========================================================
    INITIALIZE
    ========================================================= */
 
@@ -2913,6 +3650,8 @@ document.addEventListener(
         setupDomainCards();
 
         setupUploadButtons();
+
+        setupProjectSelector();
 
         setupRefresh();
 

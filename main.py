@@ -544,6 +544,40 @@ HACKATHON_DOMAINS = {
 
 
 # =========================================================
+# DIGITAL FORENSICS HACKATHON PROJECT ALLOCATION
+# =========================================================
+# The project list is authoritative on the backend. The browser only
+# renders the wheel animation; it never decides which project a team gets.
+# This keeps project allocation unique across all admin devices/sessions.
+# =========================================================
+
+DIGITAL_FORENSICS_HACKATHON_PROJECTS = [
+    "The Midnight Ledger Transfer",
+    "The Erased Clinical Trial",
+    "The Ghost on the Sales Director’s Laptop",
+    "The Duplicate Administrator",
+    "The Silent Ransomware Factory",
+    "The Payroll Email That Paid the Wrong Company",
+    "The Fileless Invoice",
+    "The Sixty-Second Data Leak",
+    "The Poisoned Build Server",
+    "The Cloud Witness That Wasn’t Synced",
+    "The Competitor’s Stolen Formula",
+    "The CFO’s Impossible Login",
+    "The Hospital Image Archive Breach",
+    "The Timestamps That Lied",
+    "The Lateral Movement Maze",
+    "The OT Laptop on the Wrong Network",
+    "The Email Attachment That Opened the Door",
+    "The Insider Who Knew the Forensics",
+    "The Enterprise-Wide False Alarm",
+    "The Blackout Briefcase"
+]
+
+DIGITAL_FORENSICS_HACKATHON_DOMAIN = "forensics_hackathon"
+
+
+# =========================================================
 # DEFAULT SYSTEM STATE
 # =========================================================
 
@@ -893,7 +927,6 @@ def get_user_db():
                 ensure_ctf_answer_key_table()
             if 'ensure_user_ctf_submission_table' in globals():
                 ensure_user_ctf_submission_table()
-
             _USER_DATABASE_INITIALIZED = True
         finally:
             _USER_DATABASE_INITIALIZING = False
@@ -1192,9 +1225,75 @@ def initialize_user_database():
     )
 
 
+    # Digital Forensics Hackathon project allocation state.
+    ensure_hackathon_project_allocation_table(
+        connection
+    )
+
+
     connection.commit()
 
     connection.close()
+
+
+# =========================================================
+# HACKATHON PROJECT ALLOCATION TABLE
+# =========================================================
+# This table stores the unique Team -> Project assignment for the
+# Digital Forensics Hackathon. It is separate from leaderboard/account
+# data because project allocation is an event-management state, not a
+# score database. Neon PostgreSQL is used automatically on Vercel and
+# SQLite remains supported for local development.
+# =========================================================
+
+def ensure_hackathon_project_allocation_table(connection):
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS hackathon_project_allocations (
+
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                event TEXT NOT NULL,
+
+                domain TEXT NOT NULL,
+
+                team_id INTEGER NOT NULL,
+
+                team_name TEXT NOT NULL,
+
+                project_index INTEGER NOT NULL,
+
+                project_title TEXT NOT NULL,
+
+                allocated_at TEXT NOT NULL,
+
+                UNIQUE (
+                    event,
+                    domain,
+                    team_id
+                ),
+
+                UNIQUE (
+                    event,
+                    domain,
+                    project_index
+                )
+
+        )
+        """
+    )
+
+    cursor.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_hackathon_project_allocations_domain
+            ON hackathon_project_allocations (event, domain)
+            """
+        )
+
+    connection.commit()
 
 
 # =========================================================
@@ -7280,6 +7379,25 @@ async def delete_admin_account(
 
 
             # -------------------------------------------------
+            # DELETE DIGITAL FORENSICS PROJECT ALLOCATION
+            # -------------------------------------------------
+            # A deleted team must not leave its project permanently
+            # occupied. This only affects the separate project
+            # allocation state and does not touch leaderboard points.
+            # -------------------------------------------------
+
+            cursor.execute(
+                """
+                DELETE FROM hackathon_project_allocations
+                WHERE team_id = ?
+                """,
+                (
+                    team_id,
+                )
+            )
+
+
+            # -------------------------------------------------
             # DELETE ALL TEAM SESSIONS
             # -------------------------------------------------
 
@@ -7596,6 +7714,23 @@ async def delete_all_admin_accounts(
                       AND account_id IN (
                           {placeholders}
                       )
+                    """,
+                    tuple(
+                        team_ids
+                    )
+                )
+
+
+                # -------------------------------------------------
+                # DELETE DIGITAL FORENSICS PROJECT ALLOCATIONS
+                # -------------------------------------------------
+
+                cursor.execute(
+                    f"""
+                    DELETE FROM hackathon_project_allocations
+                    WHERE team_id IN (
+                        {placeholders}
+                    )
                     """,
                     tuple(
                         team_ids
@@ -9056,6 +9191,453 @@ async def workshop_toolkit_summary():
         "success": True,
         "toolkits": result
     }
+
+
+# =========================================================
+# DIGITAL FORENSICS HACKATHON PROJECT ALLOCATION
+# =========================================================
+# Admin-only project draw system. The backend owns the project list and
+# allocation state; the frontend wheel is only a visual presentation.
+# A team can receive only one project, and each project can be assigned
+# to only one team for the current Digital Forensics Hackathon run.
+# =========================================================
+
+
+class HackathonProjectSpinRequest(BaseModel):
+
+    domain: str
+    team_name: str
+
+
+
+def validate_digital_forensics_project_domain(domain: str):
+
+    normalized_domain = str(domain or "").strip().lower()
+
+    if normalized_domain != DIGITAL_FORENSICS_HACKATHON_DOMAIN:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Project selection is available only for the "
+                "Digital Forensics Hackathon."
+            )
+        )
+
+    return normalized_domain
+
+
+@app.get("/api/admin/hackathon/project-allocations")
+async def get_hackathon_project_allocations(
+    domain: str = DIGITAL_FORENSICS_HACKATHON_DOMAIN,
+    admin_username: str = Depends(require_admin)
+):
+
+    domain = validate_digital_forensics_project_domain(domain)
+
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                team_id,
+                team_name,
+                project_index,
+                project_title,
+                allocated_at
+            FROM hackathon_project_allocations
+            WHERE event = 'hackathon'
+              AND domain = ?
+            ORDER BY allocated_at ASC, id ASC
+            """,
+            (domain,)
+        )
+
+        rows = cursor.fetchall()
+
+        allocations = []
+
+        for row in rows:
+            allocations.append({
+                "id": row["id"],
+                "team_id": row["team_id"],
+                "team_name": row["team_name"],
+                "project_index": row["project_index"],
+                "project_title": row["project_title"],
+                "allocated_at": row["allocated_at"]
+            })
+
+        allocated_indices = {
+            int(row["project_index"])
+            for row in rows
+        }
+
+        return {
+            "success": True,
+            "event": "hackathon",
+            "domain": domain,
+            "total_projects": len(DIGITAL_FORENSICS_HACKATHON_PROJECTS),
+            "allocated_count": len(allocations),
+            "available_count": max(
+                0,
+                len(DIGITAL_FORENSICS_HACKATHON_PROJECTS)
+                - len(allocations)
+            ),
+            "allocations": allocations,
+            "available_project_indices": [
+                index
+                for index in range(
+                    1,
+                    len(DIGITAL_FORENSICS_HACKATHON_PROJECTS) + 1
+                )
+                if index not in allocated_indices
+            ]
+        }
+
+    finally:
+        connection.close()
+
+
+@app.post("/api/admin/hackathon/project-spin")
+async def spin_hackathon_project(
+    payload: HackathonProjectSpinRequest,
+    admin_username: str = Depends(require_admin)
+):
+
+    domain = validate_digital_forensics_project_domain(
+        payload.domain
+    )
+
+    team_name = str(payload.team_name or "").strip()
+
+    if not team_name:
+        raise HTTPException(
+            status_code=400,
+            detail="Enter a team name before spinning."
+        )
+
+    if len(team_name) > 160:
+        raise HTTPException(
+            status_code=400,
+            detail="Team name is too long."
+        )
+
+    # A few retries protect the allocation from two admin browsers
+    # pressing SPIN at nearly the same time. The database UNIQUE
+    # constraints remain the final authority against duplicate projects.
+    for _attempt in range(8):
+
+        connection = get_user_db()
+
+        try:
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    team_name,
+                    status
+                FROM hackathon_teams
+                WHERE domain = ?
+                  AND LOWER(team_name) = LOWER(?)
+                LIMIT 1
+                """,
+                (
+                    domain,
+                    team_name
+                )
+            )
+
+            team = cursor.fetchone()
+
+            if not team:
+                raise HTTPException(
+                    status_code=404,
+                    detail=(
+                        "Team not found in the Digital Forensics Hackathon. "
+                        "Enter the registered team name."
+                    )
+                )
+
+            if str(team["status"] or "").strip().lower() == "rejected":
+                raise HTTPException(
+                    status_code=409,
+                    detail="This team has been rejected and cannot receive a project."
+                )
+
+            team_id = int(team["id"])
+            canonical_team_name = str(team["team_name"])
+
+            # If this team already has a project, return the existing
+            # assignment. Never consume a second project for the same team.
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    team_id,
+                    team_name,
+                    project_index,
+                    project_title,
+                    allocated_at
+                FROM hackathon_project_allocations
+                WHERE event = 'hackathon'
+                  AND domain = ?
+                  AND team_id = ?
+                LIMIT 1
+                """,
+                (
+                    domain,
+                    team_id
+                )
+            )
+
+            existing = cursor.fetchone()
+
+            if existing:
+                connection.rollback()
+
+                return {
+                    "success": True,
+                    "already_assigned": True,
+                    "event": "hackathon",
+                    "domain": domain,
+                    "team_id": existing["team_id"],
+                    "team_name": existing["team_name"],
+                    "project_index": existing["project_index"],
+                    "project_title": existing["project_title"],
+                    "allocated_at": existing["allocated_at"],
+                    "message": "This team already has a project assigned."
+                }
+
+            cursor.execute(
+                """
+                SELECT project_index
+                FROM hackathon_project_allocations
+                WHERE event = 'hackathon'
+                  AND domain = ?
+                """,
+                (domain,)
+            )
+
+            used_indices = {
+                int(row["project_index"])
+                for row in cursor.fetchall()
+            }
+
+            available_indices = [
+                index
+                for index in range(
+                    1,
+                    len(DIGITAL_FORENSICS_HACKATHON_PROJECTS) + 1
+                )
+                if index not in used_indices
+            ]
+
+            if not available_indices:
+                connection.rollback()
+
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "All 20 Digital Forensics projects have already "
+                        "been assigned. Reset allocations before starting "
+                        "a new hackathon run."
+                    )
+                )
+
+            project_index = available_indices[
+                secrets.randbelow(len(available_indices))
+            ]
+
+            project_title = DIGITAL_FORENSICS_HACKATHON_PROJECTS[
+                project_index - 1
+            ]
+
+            allocated_at = datetime.now(
+                timezone.utc
+            ).isoformat()
+
+            cursor.execute(
+                """
+                INSERT INTO hackathon_project_allocations (
+                    event,
+                    domain,
+                    team_id,
+                    team_name,
+                    project_index,
+                    project_title,
+                    allocated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    "hackathon",
+                    domain,
+                    team_id,
+                    canonical_team_name,
+                    project_index,
+                    project_title,
+                    allocated_at
+                )
+            )
+
+            connection.commit()
+
+            # Read back the committed row. This makes the endpoint return
+            # the exact durable allocation rather than an uncommitted value.
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    team_id,
+                    team_name,
+                    project_index,
+                    project_title,
+                    allocated_at
+                FROM hackathon_project_allocations
+                WHERE event = 'hackathon'
+                  AND domain = ?
+                  AND team_id = ?
+                LIMIT 1
+                """,
+                (
+                    domain,
+                    team_id
+                )
+            )
+
+            saved = cursor.fetchone()
+
+            if not saved:
+                raise RuntimeError(
+                    "Project allocation could not be verified after commit."
+                )
+
+            return {
+                "success": True,
+                "already_assigned": False,
+                "event": "hackathon",
+                "domain": domain,
+                "team_id": saved["team_id"],
+                "team_name": saved["team_name"],
+                "project_index": saved["project_index"],
+                "project_title": saved["project_title"],
+                "allocated_at": saved["allocated_at"],
+                "message": "Project assigned successfully."
+            }
+
+        except HTTPException:
+            connection.rollback()
+            raise
+
+        except DB_INTEGRITY_ERRORS:
+            # Another request won the race for either this team or the
+            # selected project. Start a fresh transaction and retry.
+            connection.rollback()
+
+            if _attempt >= 7:
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "Project allocation changed at the same time. "
+                        "Please press SPIN again."
+                    )
+                )
+
+        except Exception as error:
+            connection.rollback()
+
+            print(
+                "HACKATHON PROJECT SPIN ERROR:",
+                error
+            )
+
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to allocate a hackathon project."
+            )
+
+        finally:
+            connection.close()
+
+    raise HTTPException(
+        status_code=409,
+        detail="Unable to allocate a unique project. Please try again."
+    )
+
+
+@app.post("/api/admin/hackathon/project-reset")
+async def reset_hackathon_project_allocations(
+    payload: HackathonProjectSpinRequest,
+    admin_username: str = Depends(require_admin)
+):
+
+    domain = validate_digital_forensics_project_domain(
+        payload.domain
+    )
+
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM hackathon_project_allocations
+            WHERE event = 'hackathon'
+              AND domain = ?
+            """,
+            (domain,)
+        )
+
+        row = cursor.fetchone()
+        deleted_count = int(row["total"] or 0) if row else 0
+
+        cursor.execute(
+            """
+            DELETE FROM hackathon_project_allocations
+            WHERE event = 'hackathon'
+              AND domain = ?
+            """,
+            (domain,)
+        )
+
+        connection.commit()
+
+        return {
+            "success": True,
+            "event": "hackathon",
+            "domain": domain,
+            "reset_count": deleted_count,
+            "total_projects": len(
+                DIGITAL_FORENSICS_HACKATHON_PROJECTS
+            ),
+            "available_count": len(
+                DIGITAL_FORENSICS_HACKATHON_PROJECTS
+            ),
+            "message": "Digital Forensics project allocations have been reset."
+        }
+
+    except Exception as error:
+        connection.rollback()
+
+        print(
+            "HACKATHON PROJECT RESET ERROR:",
+            error
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to reset project allocations."
+        )
+
+    finally:
+        connection.close()
 
 
 # HACKATHON PARTICIPANTS

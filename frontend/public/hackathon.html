@@ -708,6 +708,20 @@
                 </button>
 
 
+                <!-- DIGITAL FORENSICS ONLY — PROJECT DRAW -->
+                <button
+                    type="button"
+                    class="add-domain-button project-selector-button"
+                    id="selectProjectBtn"
+                    hidden
+                >
+                    <span>
+                        ◎
+                    </span>
+                    SELECT PROJECT
+                </button>
+
+
             </article>
 
 
@@ -995,6 +1009,194 @@
 
 </main>
 
+
+
+<!-- =====================================================
+     DIGITAL FORENSICS PROJECT SELECTION MODAL
+     ===================================================== -->
+
+<div
+    class="project-selection-modal"
+    id="projectSelectionModal"
+    aria-hidden="true"
+>
+
+    <div class="project-selection-backdrop" data-project-modal-close></div>
+
+    <section
+        class="project-selection-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="projectSelectionTitle"
+    >
+
+        <button
+            type="button"
+            class="project-modal-close"
+            id="projectModalCloseBtn"
+            aria-label="Close project selection"
+        >
+            ×
+        </button>
+
+        <div class="project-modal-header">
+            <span>
+                DIGITAL FORENSICS HACKATHON
+            </span>
+
+            <h2 id="projectSelectionTitle">
+                Select Hackathon Project
+            </h2>
+
+            <p>
+                Enter a registered team name and spin the wheel.
+                Each project can be assigned only once.
+            </p>
+        </div>
+
+        <div class="project-modal-grid">
+
+            <div class="project-wheel-panel">
+
+                <div class="project-wheel-stage">
+                    <div class="project-wheel-pointer">
+                        <span></span>
+                    </div>
+
+                    <div
+                        class="project-wheel"
+                        id="projectWheel"
+                        aria-label="20 project selection wheel"
+                    >
+                        <div class="project-wheel-center">
+                            <strong>SPIN</strong>
+                            <small>20 PROJECTS</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-wheel-status" id="projectWheelStatus">
+                    READY — 20 PROJECTS AVAILABLE
+                </div>
+
+            </div>
+
+            <div class="project-control-panel">
+
+                <div class="project-control-field">
+                    <label for="projectTeamName">
+                        TEAM NAME
+                    </label>
+
+                    <input
+                        type="text"
+                        id="projectTeamName"
+                        maxlength="160"
+                        autocomplete="off"
+                        placeholder="Enter registered team name"
+                    >
+
+                    <small>
+                        The team must already be registered for Digital Forensics Hackathon.
+                    </small>
+                </div>
+
+                <button
+                    type="button"
+                    class="project-spin-button"
+                    id="projectSpinBtn"
+                >
+                    <span>↻</span>
+                    SPIN
+                </button>
+
+                <div class="project-result-card" id="projectResultCard">
+                    <span>
+                        SELECTED PROJECT
+                    </span>
+
+                    <strong id="selectedProjectTitle">
+                        Awaiting team spin
+                    </strong>
+
+                    <small id="selectedProjectTeam">
+                        No project assigned in this session yet.
+                    </small>
+                </div>
+
+                <div class="project-counter-row">
+                    <div>
+                        <span>ALLOCATED</span>
+                        <strong id="projectAllocatedCount">0</strong>
+                    </div>
+
+                    <div>
+                        <span>AVAILABLE</span>
+                        <strong id="projectAvailableCount">20</strong>
+                    </div>
+
+                    <div>
+                        <span>TOTAL</span>
+                        <strong>20</strong>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    class="project-reset-button"
+                    id="projectResetBtn"
+                >
+                    RESET PROJECT ALLOCATIONS
+                </button>
+
+                <p class="project-reset-warning">
+                    Reset is intended after the hackathon. It removes all current
+                    Digital Forensics team-to-project assignments.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="project-allocation-history">
+            <div class="project-history-heading">
+                <div>
+                    <span>ALLOCATION HISTORY</span>
+                    <h3>Assigned Projects</h3>
+                </div>
+
+                <button
+                    type="button"
+                    id="projectRefreshBtn"
+                >
+                    ↻ Refresh
+                </button>
+            </div>
+
+            <div class="project-history-table-wrap">
+                <table class="project-history-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Team</th>
+                            <th>Project</th>
+                            <th>Allocated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectAllocationTableBody">
+                        <tr>
+                            <td colspan="4" class="project-history-empty">
+                                No projects assigned yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+</div>
 
 
 <!-- =====================================================
