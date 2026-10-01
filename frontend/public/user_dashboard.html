@@ -386,21 +386,27 @@
                     id="digitalForensicsProjectActions"
                     hidden
                 >
-                    <button
-                        type="button"
-                        id="downloadProjectPdfBtn"
-                        class="project-pdf-download-btn disabled"
-                        disabled
-                    >
-                        DOWNLOAD PDF
-                    </button>
+                    <div class="project-access-label">
+                        PROJECT ACCESS
+                    </div>
 
-                    <div
-                        class="project-pdf-password-btn"
-                        id="projectPdfPasswordBtn"
-                    >
-                        PASSWORD =
-                        <span id="projectPdfPassword">—</span>
+                    <div class="project-access-controls">
+                        <button
+                            type="button"
+                            id="downloadProjectPdfBtn"
+                            class="project-pdf-download-btn disabled"
+                            disabled
+                        >
+                            DOWNLOAD PDF
+                        </button>
+
+                        <div
+                            class="project-pdf-password-btn"
+                            id="projectPdfPasswordBtn"
+                        >
+                            <span class="project-password-label">PASSWORD =</span>
+                            <span id="projectPdfPassword">—</span>
+                        </div>
                     </div>
                 </div>
 

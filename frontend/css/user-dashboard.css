@@ -2060,3 +2060,112 @@ body {
     outline-offset: 2px;
 }
 
+
+/* =========================================================
+   DIGITAL FORENSICS HACKATHON PROJECT ACCESS
+   ========================================================= */
+
+.event-overview-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 430px);
+    align-items: stretch;
+    gap: 28px;
+}
+
+.digital-forensics-project-actions {
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid rgba(229, 9, 20, 0.24);
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(24, 24, 24, 0.96), rgba(12, 12, 12, 0.98));
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+}
+
+.digital-forensics-project-actions[hidden] {
+    display: none !important;
+}
+
+.project-access-label {
+    margin-bottom: 14px;
+    color: #777;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.project-access-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(145px, auto);
+    gap: 10px;
+    align-items: stretch;
+}
+
+.project-pdf-download-btn,
+.project-pdf-password-btn {
+    min-height: 52px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.project-pdf-download-btn {
+    border: 1px solid rgba(229, 9, 20, 0.55);
+    background: #e50914;
+    color: #fff;
+    cursor: pointer;
+    padding: 0 18px;
+    transition: 0.2s ease;
+}
+
+.project-pdf-download-btn:hover:not(:disabled) {
+    background: #ff2634;
+    border-color: #ff2634;
+    transform: translateY(-1px);
+}
+
+.project-pdf-download-btn.disabled,
+.project-pdf-download-btn:disabled {
+    background: rgba(92, 92, 92, 0.42);
+    border-color: rgba(130, 130, 130, 0.22);
+    color: rgba(255, 255, 255, 0.32);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.project-pdf-password-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 14px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.035);
+    color: #f2f2f2;
+    white-space: nowrap;
+}
+
+.project-password-label {
+    color: #777;
+    font-weight: 700;
+}
+
+@media (max-width: 1050px) {
+    .event-overview-heading {
+        grid-template-columns: 1fr;
+    }
+
+    .digital-forensics-project-actions {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 620px) {
+    .project-access-controls {
+        grid-template-columns: 1fr;
+    }
+}
