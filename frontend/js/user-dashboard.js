@@ -136,7 +136,7 @@ async function initializeUserDashboard() {
 
     updateDomainInformation();
 
-    updateDigitalForensicsProjectAccess();
+    await updateDigitalForensicsProjectAccess();
 
     updatePoints();
 
@@ -178,17 +178,27 @@ async function initializeUserDashboard() {
    GET CURRENT EVENT
    ========================================================= */
 
-function updateDigitalForensicsProjectAccess() {
+async function updateDigitalForensicsProjectAccess() {
 
-    const actions = document.getElementById("digitalForensicsProjectActions");
-    const downloadButton = document.getElementById("downloadProjectPdfBtn");
-    const password = document.getElementById("projectPdfPassword");
+    const actions = document.getElementById(
+        "digitalForensicsProjectActions"
+    );
+
+    const downloadButton = document.getElementById(
+        "downloadProjectPdfBtn"
+    );
+
+    const passwordElement = document.getElementById(
+        "projectPdfPassword"
+    );
 
     if (!actions) return;
 
     const isDigitalForensicsHackathon =
         userSession.event === "hackathon" &&
-        String(userSession.domain || "").trim().toLowerCase() === "forensics";
+        String(userSession.domain || "")
+            .trim()
+            .toLowerCase() === "forensics";
 
     if (!isDigitalForensicsHackathon) {
         actions.hidden = true;
@@ -200,9 +210,125 @@ function updateDigitalForensicsProjectAccess() {
     if (downloadButton) {
         downloadButton.disabled = true;
         downloadButton.classList.add("disabled");
+        downloadButton.onclick = null;
     }
 
-    if (password) password.textContent = "—";
+    if (passwordElement) {
+        passwordElement.textContent = "—";
+    }
+
+    const sessionToken = getHackathonSessionToken();
+
+    if (!sessionToken) return;
+
+    try {
+        const response = await fetch(
+            `/api/hackathon/digital-forensics/project-access?session_token=${encodeURIComponent(sessionToken)}&time=${Date.now()}`,
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
+
+        const data = await response.json().catch(function () {
+            return {};
+        });
+
+        if (!response.ok || !data.success) {
+            console.error("DIGITAL FORENSICS PROJECT ACCESS ERROR:", data);
+            return;
+        }
+
+        if (!data.available) {
+            return;
+        }
+
+        if (passwordElement) {
+            passwordElement.textContent = data.password || "—";
+        }
+
+        if (
+            downloadButton &&
+            data.download_available
+        ) {
+            downloadButton.disabled = false;
+            downloadButton.classList.remove("disabled");
+
+            downloadButton.onclick = async function () {
+                const enteredPassword = window.prompt(
+                    "Enter the Digital Forensics project password:"
+                );
+
+                if (enteredPassword === null) return;
+
+                const password = String(enteredPassword).trim();
+
+                if (!password) {
+                    window.alert("Project password is required.");
+                    return;
+                }
+
+                downloadButton.disabled = true;
+
+                try {
+                    const pdfResponse = await fetch(
+                        "/api/hackathon/digital-forensics/project-pdf",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                session_token: sessionToken,
+                                password: password
+                            })
+                        }
+                    );
+
+                    if (!pdfResponse.ok) {
+                        const errorData = await pdfResponse.json().catch(function () {
+                            return {};
+                        });
+
+                        window.alert(
+                            errorData.detail ||
+                            "Unable to download the assigned project PDF."
+                        );
+                        return;
+                    }
+
+                    const blob = await pdfResponse.blob();
+                    const objectUrl = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = objectUrl;
+                    link.download =
+                        `digital_forensics_project_${data.project_index}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(objectUrl);
+                }
+                catch (error) {
+                    console.error(
+                        "DIGITAL FORENSICS PDF DOWNLOAD ERROR:",
+                        error
+                    );
+                    window.alert(
+                        "Unable to download the project PDF."
+                    );
+                }
+                finally {
+                    downloadButton.disabled = false;
+                }
+            };
+        }
+    }
+    catch (error) {
+        console.error(
+            "DIGITAL FORENSICS PROJECT ACCESS LOAD ERROR:",
+            error
+        );
+    }
 }
 
 

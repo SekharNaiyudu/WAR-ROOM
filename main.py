@@ -578,6 +578,62 @@ DIGITAL_FORENSICS_HACKATHON_DOMAIN = "forensics_hackathon"
 
 
 # =========================================================
+# DIGITAL FORENSICS HACKATHON PROJECT PDF ACCESS
+# =========================================================
+# Each backend allocation index maps to exactly one project PDF and
+# one project password. Access is granted only to the authenticated
+# Hackathon team that owns the allocation.
+# =========================================================
+
+DIGITAL_FORENSICS_HACKATHON_PROJECT_PASSWORDS = {
+    1: "SQDF-K7M4-XP9Q",
+    2: "SQDF-R8T2-VN6L",
+    3: "SQDF-H5Q9-ZK3P",
+    4: "SQDF-M2W7-JR8X",
+    5: "SQDF-P9L4-CY6N",
+    6: "SQDF-T6X8-BQ2M",
+    7: "SQDF-V3N7-KD9R",
+    8: "SQDF-Y8P2-HM5T",
+    9: "SQDF-C4R6-WX9K",
+    10: "SQDF-J7Q3-LP8V",
+    11: "SQDF-N5K9-TX4B",
+    12: "SQDF-B2M8-RQ7Y",
+    13: "SQDF-X6V3-PK9H",
+    14: "SQDF-Q8J5-NR2W",
+    15: "SQDF-L4Y7-CM8Q",
+    16: "SQDF-W9R2-HK6P",
+    17: "SQDF-D7X4-VT8N",
+    18: "SQDF-K3P9-YM5R",
+    19: "SQDF-Z6H2-QW8L",
+    20: "SQDF-F8N5-JX3K",
+}
+
+DIGITAL_FORENSICS_HACKATHON_PROJECT_PDFS = {
+    1: "01_The_Midnight_Ledger_Transfer.pdf",
+    2: "02_The_Erased_Clinical_Trial.pdf",
+    3: "03_The_Ghost_on_the_Sales_Director_s_Laptop.pdf",
+    4: "04_The_Duplicate_Administrator.pdf",
+    5: "05_The_Silent_Ransomware_Factory.pdf",
+    6: "06_The_Payroll_Email_That_Paid_the_Wrong_Company.pdf",
+    7: "07_The_Fileless_Invoice.pdf",
+    8: "08_The_Sixty_Second_Data_Leak.pdf",
+    9: "09_The_Poisoned_Build_Server.pdf",
+    10: "10_The_Cloud_Witness_That_Wasn_t_Synced.pdf",
+    11: "11_The_Competitor_s_Stolen_Formula.pdf",
+    12: "12_The_CFO_s_Impossible_Login.pdf",
+    13: "13_The_Hospital_Image_Archive_Breach.pdf",
+    14: "14_The_Timestamps_That_Lied.pdf",
+    15: "15_The_Lateral_Movement_Maze.pdf",
+    16: "16_The_OT_Laptop_on_the_Wrong_Network.pdf",
+    17: "17_The_Email_Attachment_That_Opened_the_Door.pdf",
+    18: "18_The_Insider_Who_Knew_the_Forensics.pdf",
+    19: "19_The_Enterprise_Wide_False_Alarm.pdf",
+    20: "20_The_Blackout_Briefcase.pdf",
+}
+
+
+
+# =========================================================
 # DEFAULT SYSTEM STATE
 # =========================================================
 
@@ -5591,6 +5647,180 @@ async def add_admin_leaderboard_points(
 # =========================================================
 # CURRENT HACKATHON TEAM DATA
 # =========================================================
+
+
+# =========================================================
+# DIGITAL FORENSICS HACKATHON PROJECT ACCESS
+# =========================================================
+
+class DigitalForensicsProjectDownloadRequest(BaseModel):
+
+    session_token: str
+    password: str
+
+
+def get_digital_forensics_project_allocation(session_token: str):
+
+    session_token = str(session_token or "").strip()
+
+    if not session_token:
+        raise HTTPException(
+            status_code=401,
+            detail="Hackathon session is required."
+        )
+
+    team = get_current_hackathon_user(session_token)
+
+    if not team:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired Hackathon session."
+        )
+
+    domain = str(team["domain"] or "").strip().lower()
+
+    if domain != DIGITAL_FORENSICS_HACKATHON_DOMAIN:
+        raise HTTPException(
+            status_code=403,
+            detail="Digital Forensics project access is not available for this Hackathon domain."
+        )
+
+    connection = get_user_db()
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            SELECT
+                project_index,
+                project_title,
+                allocated_at
+            FROM hackathon_project_allocations
+            WHERE event = 'hackathon'
+              AND domain = ?
+              AND team_id = ?
+            LIMIT 1
+            """,
+            (
+                DIGITAL_FORENSICS_HACKATHON_DOMAIN,
+                team["id"]
+            )
+        )
+
+        allocation = cursor.fetchone()
+
+    finally:
+        connection.close()
+
+    if not allocation:
+        return team, None
+
+    try:
+        project_index = int(allocation["project_index"])
+    except (TypeError, ValueError):
+        raise HTTPException(
+            status_code=500,
+            detail="Invalid Digital Forensics project allocation."
+        )
+
+    if project_index not in DIGITAL_FORENSICS_HACKATHON_PROJECT_PASSWORDS:
+        raise HTTPException(
+            status_code=500,
+            detail="Digital Forensics project password is not configured."
+        )
+
+    if project_index not in DIGITAL_FORENSICS_HACKATHON_PROJECT_PDFS:
+        raise HTTPException(
+            status_code=500,
+            detail="Digital Forensics project PDF is not configured."
+        )
+
+    return team, allocation
+
+
+@app.get("/api/hackathon/digital-forensics/project-access")
+async def get_digital_forensics_project_access(
+    session_token: str
+):
+
+    team, allocation = get_digital_forensics_project_allocation(
+        session_token
+    )
+
+    if not allocation:
+        return {
+            "success": True,
+            "available": False,
+            "event": "hackathon",
+            "domain": DIGITAL_FORENSICS_HACKATHON_DOMAIN,
+            "project_index": None,
+            "project_title": None,
+            "password": None,
+            "download_available": False
+        }
+
+    project_index = int(allocation["project_index"])
+    filename = DIGITAL_FORENSICS_HACKATHON_PROJECT_PDFS[project_index]
+    pdf_path = BASE_DIR / "project_pdfs" / "digital_forensics" / filename
+
+    return {
+        "success": True,
+        "available": True,
+        "event": "hackathon",
+        "domain": DIGITAL_FORENSICS_HACKATHON_DOMAIN,
+        "team_name": team["team_name"],
+        "project_index": project_index,
+        "project_title": allocation["project_title"],
+        "password": DIGITAL_FORENSICS_HACKATHON_PROJECT_PASSWORDS[project_index],
+        "download_available": pdf_path.is_file(),
+        "allocated_at": allocation["allocated_at"]
+    }
+
+
+@app.post("/api/hackathon/digital-forensics/project-pdf")
+async def download_digital_forensics_project_pdf(
+    request: DigitalForensicsProjectDownloadRequest
+):
+
+    team, allocation = get_digital_forensics_project_allocation(
+        request.session_token
+    )
+
+    if not allocation:
+        raise HTTPException(
+            status_code=403,
+            detail="No Digital Forensics project has been assigned to this team."
+        )
+
+    project_index = int(allocation["project_index"])
+    expected_password = DIGITAL_FORENSICS_HACKATHON_PROJECT_PASSWORDS[project_index]
+
+    supplied_password = str(request.password or "")
+
+    if not hmac.compare_digest(
+        supplied_password,
+        expected_password
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Incorrect project password."
+        )
+
+    filename = DIGITAL_FORENSICS_HACKATHON_PROJECT_PDFS[project_index]
+    pdf_path = BASE_DIR / "project_pdfs" / "digital_forensics" / filename
+
+    if not pdf_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="The assigned project PDF is not available yet."
+        )
+
+    return FileResponse(
+        path=pdf_path,
+        media_type="application/pdf",
+        filename=filename
+    )
+
 
 @app.get("/api/hackathon/data")
 async def get_current_hackathon_data(
