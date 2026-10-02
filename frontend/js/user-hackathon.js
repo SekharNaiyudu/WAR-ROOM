@@ -913,11 +913,6 @@ if (registerForm) {
                 };
 
 
-                console.log(
-                    "HACKATHON REGISTRATION REQUEST:",
-                    payload
-                );
-
 
                 /* -------------------------------------------------
                    API REQUEST

@@ -3046,6 +3046,21 @@ async def get_current_user(
 
     }
 # =========================================================
+# HACKATHON MEMBER CONTACT SCHEMA (IDEMPOTENT)
+# =========================================================
+def ensure_hackathon_member_contacts(cursor):
+    """Ensure phone storage exists even for databases created by older builds."""
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS hackathon_team_member_contacts (
+            team_id INTEGER PRIMARY KEY,
+            member_phones TEXT NOT NULL
+        )
+        """
+    )
+
+
+# =========================================================
 # HACKATHON USER REGISTRATION
 # =========================================================
 
@@ -3405,6 +3420,8 @@ async def hackathon_register(
         team_id = (
             cursor.lastrowid
         )
+
+        ensure_hackathon_member_contacts(cursor)
 
         cursor.execute(
             """
@@ -9961,6 +9978,8 @@ async def get_hackathon_participants(
 
         cursor = connection.cursor()
 
+
+        ensure_hackathon_member_contacts(cursor)
 
         cursor.execute(
             """
