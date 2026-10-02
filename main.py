@@ -233,19 +233,26 @@ class PersistentCursor:
 
         if match:
             table_name = match.group(1)
-            try:
-                self._cursor.execute(
-                    "SELECT currval(pg_get_serial_sequence(%s, %s)) AS id",
-                    (table_name, "id"),
-                )
-                row = self._cursor.fetchone()
-                if row:
-                    try:
-                        self.lastrowid = row["id"]
-                    except Exception:
-                        self.lastrowid = row[0]
-            except Exception:
-                self.lastrowid = None
+
+            # Only these two INSERT paths consume cursor.lastrowid.
+            # Other tables (for example hackathon_team_member_contacts)
+            # do not have an auto-generated id sequence. Calling currval()
+            # for them raises a PostgreSQL error and aborts the transaction,
+            # which can silently roll back the preceding team INSERT.
+            if table_name.lower() in {"users", "hackathon_teams"}:
+                try:
+                    self._cursor.execute(
+                        "SELECT currval(pg_get_serial_sequence(%s, %s)) AS id",
+                        (table_name, "id"),
+                    )
+                    row = self._cursor.fetchone()
+                    if row:
+                        try:
+                            self.lastrowid = row["id"]
+                        except Exception:
+                            self.lastrowid = row[0]
+                except Exception:
+                    self.lastrowid = None
 
         return self
 
