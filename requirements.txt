@@ -5,3 +5,4 @@ python-dotenv
 python-multipart
 psycopg[binary]
 boto3
+psycopg_pool

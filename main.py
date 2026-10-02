@@ -27,6 +27,7 @@ import hmac
 import os
 import re
 import socket
+import threading
 from email.utils import parseaddr
 
 from datetime import datetime, timezone
@@ -35,9 +36,14 @@ from dotenv import load_dotenv
 try:
     import psycopg
     from psycopg.rows import dict_row
+    try:
+        from psycopg_pool import ConnectionPool
+    except ImportError:
+        ConnectionPool = None
 except ImportError:
     psycopg = None
     dict_row = None
+    ConnectionPool = None
 
 load_dotenv()
 
@@ -172,6 +178,13 @@ PERSISTENT_DATABASE_URL = (
 
 USE_PERSISTENT_DATABASE = bool(PERSISTENT_DATABASE_URL)
 
+# A small per-process pool limits simultaneous Neon connections. Vercel can
+# create multiple instances, so the database provider's global connection
+# limits must still be configured for the deployment's maximum instances.
+_PERSISTENT_POOL = None
+_PERSISTENT_POOL_LOCK = threading.Lock()
+_DATABASE_INIT_LOCK = threading.RLock()
+
 
 if psycopg is not None:
     DB_INTEGRITY_ERRORS = (
@@ -275,8 +288,10 @@ class PersistentCursor:
 
 class PersistentConnection:
 
-    def __init__(self, connection):
+    def __init__(self, connection, pool=None):
         self._connection = connection
+        self._pool = pool
+        self._returned = False
 
     def cursor(self):
         return PersistentCursor(
@@ -295,6 +310,15 @@ class PersistentConnection:
         return self._connection.rollback()
 
     def close(self):
+        if self._returned:
+            return None
+        self._returned = True
+        if self._pool is not None:
+            try:
+                self._connection.rollback()
+            except Exception:
+                pass
+            return self._pool.putconn(self._connection)
         return self._connection.close()
 
     def __getattr__(self, name):
@@ -302,16 +326,34 @@ class PersistentConnection:
 
 
 def connect_persistent_database():
+    global _PERSISTENT_POOL
     if psycopg is None:
         raise RuntimeError(
             "PostgreSQL support is not installed. "
             "Add psycopg[binary] to requirements.txt."
         )
 
+    # Pool is optional for compatibility with environments that have not
+    # installed the updated requirements yet; direct connections time out.
+    if ConnectionPool is not None:
+        if _PERSISTENT_POOL is None:
+            with _PERSISTENT_POOL_LOCK:
+                if _PERSISTENT_POOL is None:
+                    _PERSISTENT_POOL = ConnectionPool(
+                        conninfo=PERSISTENT_DATABASE_URL,
+                        min_size=0,
+                        max_size=3,
+                        timeout=5,
+                        kwargs={"row_factory": dict_row, "connect_timeout": 5},
+                        open=True,
+                    )
+        return PersistentConnection(_PERSISTENT_POOL.getconn(timeout=5), _PERSISTENT_POOL)
+
     return PersistentConnection(
         psycopg.connect(
             PERSISTENT_DATABASE_URL,
             row_factory=dict_row,
+            connect_timeout=5,
         )
     )
 
@@ -975,42 +1017,27 @@ def get_user_db():
     global _USER_DATABASE_INITIALIZED
     global _USER_DATABASE_INITIALIZING
 
-    if (
-        not _USER_DATABASE_INITIALIZED
-        and not _USER_DATABASE_INITIALIZING
-    ):
-        _USER_DATABASE_INITIALIZING = True
-        try:
-            initialize_user_database()
+    if not _USER_DATABASE_INITIALIZED:
+        with _DATABASE_INIT_LOCK:
+            if not _USER_DATABASE_INITIALIZED and not _USER_DATABASE_INITIALIZING:
+                _USER_DATABASE_INITIALIZING = True
+                try:
+                    initialize_user_database()
+                    # CTF tables are initialized after the base schema.
+                    if 'ensure_ctf_answer_key_table' in globals():
+                        ensure_ctf_answer_key_table()
+                    if 'ensure_user_ctf_submission_table' in globals():
+                        ensure_user_ctf_submission_table()
+                    _USER_DATABASE_INITIALIZED = True
+                finally:
+                    _USER_DATABASE_INITIALIZING = False
 
-            # These CTF tables used to be created at module import time.
-            # Create them only after the base database has been initialized,
-            # keeping the Vercel module import free of database connections.
-            if 'ensure_ctf_answer_key_table' in globals():
-                ensure_ctf_answer_key_table()
-            if 'ensure_user_ctf_submission_table' in globals():
-                ensure_user_ctf_submission_table()
-            _USER_DATABASE_INITIALIZED = True
-        finally:
-            _USER_DATABASE_INITIALIZING = False
-
-
-
-    # Vercel/Neon: persistent database for users, registrations,
-    # sessions, CTF submissions, points and leaderboard data.
     if USE_PERSISTENT_DATABASE:
         return connect_persistent_database()
 
-    connection = sqlite3.connect(
-        USER_DATABASE
-    )
-
+    connection = sqlite3.connect(USER_DATABASE, timeout=10)
     connection.row_factory = sqlite3.Row
-
-    connection.execute(
-        "PRAGMA foreign_keys = ON"
-    )
-
+    connection.execute("PRAGMA foreign_keys = ON")
     return connection
 
 
@@ -1411,10 +1438,7 @@ def get_admin_database_connection():
                 )
             )
 
-        return psycopg.connect(
-            database_url,
-            row_factory=dict_row
-        )
+        return connect_persistent_database()
 
     return get_user_db()
 
@@ -1954,7 +1978,7 @@ app.mount(
 # =========================================================
 
 @app.get("/")
-async def home():
+def home():
 
     index_file = (
         PUBLIC_DIR /
@@ -1981,7 +2005,7 @@ async def home():
 # =========================================================
 
 @app.get("/admin")
-async def admin_login():
+def admin_login():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -1990,7 +2014,7 @@ async def admin_login():
 
 
 @app.get("/admin.html")
-async def old_admin_login():
+def old_admin_login():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -2003,7 +2027,7 @@ async def old_admin_login():
 # =========================================================
 
 @app.get("/user-login")
-async def user_login_page():
+def user_login_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -2026,7 +2050,7 @@ async def user_login_page():
 
 
 @app.get("/user-login.html")
-async def old_user_login_page():
+def old_user_login_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -2052,7 +2076,7 @@ async def old_user_login_page():
 # =========================================================
 
 @app.get("/user-hackathon")
-async def user_hackathon_page():
+def user_hackathon_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -2075,7 +2099,7 @@ async def user_hackathon_page():
 
 
 @app.get("/user-hackathon.html")
-async def old_user_hackathon_page():
+def old_user_hackathon_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -2103,7 +2127,7 @@ async def old_user_hackathon_page():
 # =========================================================
 
 @app.get("/user/leaderboard")
-async def user_leaderboard_page():
+def user_leaderboard_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -2126,7 +2150,7 @@ async def user_leaderboard_page():
 
 
 @app.get("/user-leaderboard.html")
-async def old_user_leaderboard_page():
+def old_user_leaderboard_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -2317,7 +2341,7 @@ class HackathonStatusUpdate(BaseModel):
 # =========================================================
 
 @app.post("/api/workshop/register")
-async def workshop_register(
+def workshop_register(
     registration: WorkshopRegister
 ):
 
@@ -2645,7 +2669,7 @@ async def workshop_register(
 # =========================================================
 
 @app.post("/api/workshop/login")
-async def workshop_login(
+def workshop_login(
     credentials: WorkshopLogin
 ):
 
@@ -2892,7 +2916,7 @@ async def workshop_login(
 # =========================================================
 
 @app.post("/api/workshop/logout")
-async def workshop_logout(
+def workshop_logout(
     logout: WorkshopLogout
 ):
 
@@ -2988,7 +3012,7 @@ def get_current_workshop_user(
 # =========================================================
 
 @app.get("/api/user/me")
-async def get_current_user(
+def get_current_user(
     session_token: str
 ):
 
@@ -3101,7 +3125,7 @@ def ensure_hackathon_member_contacts(cursor):
 # =========================================================
 
 @app.post("/api/hackathon/register")
-async def hackathon_register(
+def hackathon_register(
     registration: HackathonRegister
 ):
 
@@ -3543,7 +3567,7 @@ async def hackathon_register(
 # =========================================================
 
 @app.post("/api/hackathon/login")
-async def hackathon_login(
+def hackathon_login(
     credentials: HackathonLogin
 ):
 
@@ -3849,7 +3873,7 @@ async def hackathon_login(
 # =========================================================
 
 @app.post("/api/hackathon/logout")
-async def hackathon_logout(
+def hackathon_logout(
     logout: HackathonLogout
 ):
 
@@ -3943,7 +3967,7 @@ def get_current_hackathon_user(
 # =========================================================
 
 @app.get("/api/hackathon/me")
-async def get_current_hackathon_user_api(
+def get_current_hackathon_user_api(
     session_token: str
 ):
 
@@ -4374,7 +4398,7 @@ def serialize_account_data(
 # =========================================================
 
 @app.get("/api/user/data")
-async def get_current_user_data(
+def get_current_user_data(
     session_token: str
 ):
 
@@ -4431,7 +4455,7 @@ async def get_current_user_data(
 # =========================================================
 
 @app.put("/api/user/data")
-async def update_current_user_data(
+def update_current_user_data(
     update: AccountDataUpdate,
     session_token: str
 ):
@@ -4483,7 +4507,7 @@ async def update_current_user_data(
 # =========================================================
 
 @app.get("/api/user/leaderboard")
-async def get_user_leaderboard(
+def get_user_leaderboard(
     event: str,
     domain: str,
     session_token: str
@@ -4579,16 +4603,6 @@ async def get_user_leaderboard(
                 "is currently disabled."
             )
         )
-
-
-    # Recalculate any legacy VAPT CTF scores before reading
-    # account_data so the leaderboard cannot show stale 10-point
-    # VAPT totals.
-    repair_existing_vapt_ctf_scores()
-
-    # Synchronize solved CTF scores into the canonical
-    # account_data domain consumed by the leaderboard.
-    sync_all_ctf_scores_to_leaderboards()
 
     connection = get_user_db()
 
@@ -5140,7 +5154,7 @@ def require_admin(
 # =========================================================
 
 @app.get("/api/admin/leaderboard")
-async def get_admin_leaderboard(
+def get_admin_leaderboard(
     admin_username: str = Depends(require_admin),
     event: str | None = None,
     domain: str | None = None
@@ -5338,7 +5352,7 @@ async def get_admin_leaderboard(
 # =========================================================
 
 @app.post("/api/admin/leaderboard/points")
-async def add_admin_leaderboard_points(
+def add_admin_leaderboard_points(
     update: AdminLeaderboardPointsUpdate,
     admin_username: str = Depends(require_admin)
 ):
@@ -5841,7 +5855,7 @@ def get_digital_forensics_project_allocation(session_token: str):
 
 
 @app.get("/api/hackathon/digital-forensics/project-access")
-async def get_digital_forensics_project_access(
+def get_digital_forensics_project_access(
     session_token: str
 ):
 
@@ -5880,7 +5894,7 @@ async def get_digital_forensics_project_access(
 
 
 @app.post("/api/hackathon/digital-forensics/project-pdf")
-async def download_digital_forensics_project_pdf(
+def download_digital_forensics_project_pdf(
     request: DigitalForensicsProjectDownloadRequest
 ):
 
@@ -5925,7 +5939,7 @@ async def download_digital_forensics_project_pdf(
 
 
 @app.get("/api/hackathon/data")
-async def get_current_hackathon_data(
+def get_current_hackathon_data(
     session_token: str
 ):
 
@@ -5982,7 +5996,7 @@ async def get_current_hackathon_data(
 # =========================================================
 
 @app.put("/api/hackathon/data")
-async def update_current_hackathon_data(
+def update_current_hackathon_data(
     update: AccountDataUpdate,
     session_token: str
 ):
@@ -6101,7 +6115,7 @@ def get_admin_credentials():
 # =========================================================
 
 @app.post("/api/admin/login")
-async def admin_login_api(
+def admin_login_api(
     credentials: AdminLogin,
     response: Response
 ):
@@ -6164,7 +6178,7 @@ async def admin_login_api(
 # =========================================================
 
 @app.get("/api/admin/auth-check")
-async def admin_auth_check(
+def admin_auth_check(
     admin_username: str = Depends(require_admin)
 ):
 
@@ -6190,7 +6204,7 @@ class ToolkitStoragePresignRequest(BaseModel):
 @app.post("/api/toolkit/r2-presign")
 # Backward-compatible route for any cached frontend still using the old path.
 @app.post("/api/toolkit/blob-presign")
-async def presign_toolkit_upload(
+def presign_toolkit_upload(
     payload: ToolkitStoragePresignRequest,
     admin_username: str = Depends(require_admin)
 ):
@@ -6270,7 +6284,7 @@ class ToolkitStorageCompleteRequest(BaseModel):
 @app.post("/api/toolkit/r2-complete")
 # Backward-compatible route for any cached frontend still using the old path.
 @app.post("/api/toolkit/blob-complete")
-async def complete_toolkit_upload(
+def complete_toolkit_upload(
     payload: ToolkitStorageCompleteRequest,
     admin_username: str = Depends(require_admin)
 ):
@@ -6413,7 +6427,7 @@ async def complete_toolkit_upload(
 # =========================================================
 
 @app.post("/api/admin/logout")
-async def admin_logout(
+def admin_logout(
     response: Response,
     session_token: str | None = Cookie(
         default=None,
@@ -6476,7 +6490,7 @@ async def admin_logout(
 # =========================================================
 
 @app.get("/api/admin/settings")
-async def get_admin_settings(
+def get_admin_settings(
     admin_username: str = Depends(require_admin)
 ):
 
@@ -6494,7 +6508,7 @@ async def get_admin_settings(
 # =========================================================
 
 @app.post("/api/admin/settings/username")
-async def change_admin_username(
+def change_admin_username(
     update: AdminUsernameChange,
     response: Response,
     session_token: str | None = Cookie(
@@ -6660,7 +6674,7 @@ async def change_admin_username(
 # =========================================================
 
 @app.post("/api/admin/settings/password")
-async def change_admin_password(
+def change_admin_password(
     update: AdminPasswordChange,
     admin_username: str = Depends(require_admin)
 ):
@@ -6816,7 +6830,7 @@ ACCOUNT_EVENT_DOMAINS = {
 @app.get(
     "/api/admin/accounts/{event_type}/{domain}"
 )
-async def get_admin_accounts(
+def get_admin_accounts(
     event_type: str,
     domain: str,
     admin_username: str = Depends(require_admin)
@@ -7145,12 +7159,12 @@ async def get_admin_accounts(
 @app.get(
     "/api/admin/accounts/{event_type}/{domain}/participants"
 )
-async def get_admin_account_participants_compat(
+def get_admin_account_participants_compat(
     event_type: str,
     domain: str,
     admin_username: str = Depends(require_admin)
 ):
-    return await get_admin_accounts(
+    return get_admin_accounts(
         event_type,
         domain,
         admin_username
@@ -7173,7 +7187,7 @@ class AccountApprovalStatusUpdate(BaseModel):
 @app.patch(
     "/api/admin/accounts/{event_type}/{domain}/{account_id}/status"
 )
-async def update_admin_account_status(
+def update_admin_account_status(
     event_type: str,
     domain: str,
     account_id: int,
@@ -7386,7 +7400,7 @@ async def update_admin_account_status(
 @app.get(
     "/api/admin/notifications/registrations"
 )
-async def get_admin_registration_notifications(
+def get_admin_registration_notifications(
     admin_username: str = Depends(require_admin)
 ):
 
@@ -7506,7 +7520,7 @@ async def get_admin_registration_notifications(
 @app.delete(
     "/api/admin/accounts/{event_type}/{domain}/{account_id}"
 )
-async def delete_admin_account(
+def delete_admin_account(
     event_type: str,
     domain: str,
     account_id: int,
@@ -7838,7 +7852,7 @@ async def delete_admin_account(
 @app.delete(
     "/api/admin/accounts/{event_type}/{domain}"
 )
-async def delete_all_admin_accounts(
+def delete_all_admin_accounts(
     event_type: str,
     domain: str,
     admin_username: str = Depends(require_admin)
@@ -8172,7 +8186,7 @@ async def delete_all_admin_accounts(
 # =========================================================
 
 @app.get("/admin/dashboard")
-async def admin_dashboard_page():
+def admin_dashboard_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8181,7 +8195,7 @@ async def admin_dashboard_page():
 
 
 @app.get("/admin-dashboard")
-async def admin_dashboard():
+def admin_dashboard():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8190,7 +8204,7 @@ async def admin_dashboard():
 
 
 @app.get("/admin-dashboard.html")
-async def old_admin_dashboard():
+def old_admin_dashboard():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8203,7 +8217,7 @@ async def old_admin_dashboard():
 # =========================================================
 
 @app.get("/admin/workshop")
-async def admin_workshop_page():
+def admin_workshop_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8212,7 +8226,7 @@ async def admin_workshop_page():
 
 
 @app.get("/admin/workshop.html")
-async def old_admin_workshop_page():
+def old_admin_workshop_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8221,7 +8235,7 @@ async def old_admin_workshop_page():
 
 
 @app.get("/workshop")
-async def workshop_page():
+def workshop_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8230,7 +8244,7 @@ async def workshop_page():
 
 
 @app.get("/workshop.html")
-async def old_workshop_page():
+def old_workshop_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8243,7 +8257,7 @@ async def old_workshop_page():
 # =========================================================
 
 @app.get("/admin/hackathon")
-async def admin_hackathon_page():
+def admin_hackathon_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8252,7 +8266,7 @@ async def admin_hackathon_page():
 
 
 @app.get("/admin/hackathon.html")
-async def old_admin_hackathon_page():
+def old_admin_hackathon_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8265,7 +8279,7 @@ async def old_admin_hackathon_page():
 # =========================================================
 
 @app.get("/admin/leaderboard")
-async def admin_leaderboard_page():
+def admin_leaderboard_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8274,7 +8288,7 @@ async def admin_leaderboard_page():
 
 
 @app.get("/admin/leaderboard.html")
-async def old_admin_leaderboard_page():
+def old_admin_leaderboard_page():
 
     return FileResponse(
         PUBLIC_DIR /
@@ -8285,7 +8299,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 
 
 @app.get("/admin/accounts")
-async def admin_accounts():
+def admin_accounts():
     return FileResponse(
         PUBLIC_DIR /"accounts.html"
     )
@@ -8295,7 +8309,7 @@ async def admin_accounts():
 # =========================================================
 
 @app.get("/admin/settings")
-async def admin_settings_page():
+def admin_settings_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -8321,7 +8335,7 @@ async def admin_settings_page():
 # =========================================================
 
 @app.get("/api/system/state")
-async def get_system_state():
+def get_system_state():
 
     return load_state()
 
@@ -8344,7 +8358,7 @@ class StateUpdate(BaseModel):
 # =========================================================
 
 @app.post("/api/system/state")
-async def update_system_state(
+def update_system_state(
     update: StateUpdate,
     admin_username: str = Depends(require_admin)
 ):
@@ -8965,7 +8979,7 @@ def _toolkit_storage_redirect(row, filename):
 # =========================================================
 
 @app.get("/api/toolkit/{event_type}/{item}")
-async def list_toolkit(
+def list_toolkit(
     event_type: str,
     item: str
 ):
@@ -8995,7 +9009,7 @@ async def list_toolkit(
     "/api/toolkit/download/"
     "{event_type}/{item}/{filename}"
 )
-async def download_toolkit(
+def download_toolkit(
     event_type: str,
     item: str,
     filename: str
@@ -9069,7 +9083,7 @@ async def download_toolkit(
 # =========================================================
 
 @app.get("/api/user/toolkit")
-async def get_current_user_toolkit(
+def get_current_user_toolkit(
     session_token: str
 ):
 
@@ -9099,7 +9113,7 @@ async def get_current_user_toolkit(
 # =========================================================
 
 @app.get("/api/user/toolkit/download/{filename}")
-async def download_current_user_toolkit(
+def download_current_user_toolkit(
     filename: str,
     session_token: str
 ):
@@ -9183,7 +9197,7 @@ async def download_current_user_toolkit(
 # =========================================================
 
 @app.get("/api/hackathon/toolkit")
-async def get_current_hackathon_toolkit(
+def get_current_hackathon_toolkit(
     session_token: str
 ):
 
@@ -9213,7 +9227,7 @@ async def get_current_hackathon_toolkit(
 # =========================================================
 
 @app.get("/api/hackathon/toolkit/download/{filename}")
-async def download_current_hackathon_toolkit(
+def download_current_hackathon_toolkit(
     filename: str,
     session_token: str
 ):
@@ -9304,7 +9318,7 @@ async def download_current_hackathon_toolkit(
     "/api/toolkit/blob-metadata/"
     "{event_type}/{item}/{filename}"
 )
-async def get_toolkit_blob_metadata(
+def get_toolkit_blob_metadata(
     event_type: str,
     item: str,
     filename: str,
@@ -9392,7 +9406,7 @@ async def get_toolkit_blob_metadata(
     "/api/toolkit/"
     "{event_type}/{item}/{filename}"
 )
-async def delete_toolkit(
+def delete_toolkit(
     event_type: str,
     item: str,
     filename: str,
@@ -9514,7 +9528,7 @@ async def delete_toolkit_legacy_route(
 # =========================================================
 
 @app.get("/api/workshop/toolkits")
-async def workshop_toolkit_summary():
+def workshop_toolkit_summary():
 
     result = {}
 
@@ -9564,7 +9578,7 @@ def validate_digital_forensics_project_domain(domain: str):
 
 
 @app.get("/api/admin/hackathon/project-allocations")
-async def get_hackathon_project_allocations(
+def get_hackathon_project_allocations(
     domain: str = DIGITAL_FORENSICS_HACKATHON_DOMAIN,
     admin_username: str = Depends(require_admin)
 ):
@@ -9639,7 +9653,7 @@ async def get_hackathon_project_allocations(
 
 
 @app.post("/api/admin/hackathon/project-spin")
-async def spin_hackathon_project(
+def spin_hackathon_project(
     payload: HackathonProjectSpinRequest,
     admin_username: str = Depends(require_admin)
 ):
@@ -9908,7 +9922,7 @@ async def spin_hackathon_project(
 
 
 @app.post("/api/admin/hackathon/project-reset")
-async def reset_hackathon_project_allocations(
+def reset_hackathon_project_allocations(
     payload: HackathonProjectSpinRequest,
     admin_username: str = Depends(require_admin)
 ):
@@ -9983,8 +9997,9 @@ async def reset_hackathon_project_allocations(
 @app.get(
     "/api/hackathon/{domain}/participants"
 )
-async def get_hackathon_participants(
-    domain: str
+def get_hackathon_participants(
+    domain: str,
+    admin_username: str = Depends(require_admin)
 ):
 
     domain = (
@@ -10140,8 +10155,9 @@ async def get_hackathon_participants(
 @app.get(
     "/api/hackathon/{domain}/summary"
 )
-async def get_hackathon_summary(
-    domain: str
+def get_hackathon_summary(
+    domain: str,
+    admin_username: str = Depends(require_admin)
 ):
 
     domain = (
@@ -10253,10 +10269,11 @@ async def get_hackathon_summary(
     "{domain}/participants/"
     "{team_id}/status"
 )
-async def update_hackathon_participant_status(
+def update_hackathon_participant_status(
     domain: str,
     team_id: int,
-    update: HackathonStatusUpdate
+    update: HackathonStatusUpdate,
+    admin_username: str = Depends(require_admin)
 ):
 
     domain = (
@@ -10381,20 +10398,20 @@ async def update_hackathon_participant_status(
 @app.get(
     "/api/health"
 )
-async def health():
-
-    return {
-
-        "status":
-            "online",
-
-        "application":
-            "WAR ROOM",
-
-        "message":
-            "WAR ROOM API is running"
-
-    }
+def health():
+    """Lightweight liveness/readiness probe without schema migrations."""
+    try:
+        if USE_PERSISTENT_DATABASE:
+            connection = connect_persistent_database()
+        else:
+            connection = sqlite3.connect(USER_DATABASE, timeout=3)
+        try:
+            connection.execute("SELECT 1")
+        finally:
+            connection.close()
+        return {"status": "online", "application": "WAR ROOM", "database": "ready"}
+    except Exception:
+        raise HTTPException(status_code=503, detail="WAR ROOM database is unavailable")
 
 
 # =========================================================
@@ -10402,7 +10419,7 @@ async def health():
 # =========================================================
 
 @app.get("/user/dashboard")
-async def user_dashboard_page():
+def user_dashboard_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -10427,7 +10444,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 @app.get("/admin/ctf")
-async def admin_ctf():
+def admin_ctf():
     ctf_file = BASE_DIR / "frontend" / "public" / "ctf.html"
     return FileResponse(ctf_file)
 
@@ -10744,7 +10761,7 @@ def validate_ctf_key_request(
 @app.get(
     "/api/admin/ctf/challenge-keys"
 )
-async def get_ctf_answer_keys(
+def get_ctf_answer_keys(
     event: str | None = None,
     domain: str | None = None,
     category: str | None = None,
@@ -10878,7 +10895,7 @@ async def get_ctf_answer_keys(
 @app.post(
     "/api/admin/ctf/challenge-key"
 )
-async def save_ctf_answer_key(
+def save_ctf_answer_key(
     request: CTFAnswerKeyRequest,
     admin_username: str = Depends(
         require_admin
@@ -11038,7 +11055,7 @@ async def save_ctf_answer_key(
 @app.delete(
     "/api/admin/ctf/challenge-key"
 )
-async def delete_ctf_answer_key(
+def delete_ctf_answer_key(
     event: str,
     domain: str,
     category: str,
@@ -12082,7 +12099,7 @@ def validate_user_ctf_request(
 # =========================================================
 
 @app.get("/user/ctf")
-async def user_ctf_page():
+def user_ctf_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -12105,7 +12122,7 @@ async def user_ctf_page():
 
 
 @app.get("/user/ctf.html")
-async def user_ctf_html_page():
+def user_ctf_html_page():
 
     file_path = (
         PUBLIC_DIR /
@@ -12132,7 +12149,7 @@ async def user_ctf_html_page():
 # =========================================================
 
 @app.get("/api/user/ctf/progress")
-async def get_user_ctf_progress(
+def get_user_ctf_progress(
     session_token: str
 ):
 
@@ -12287,7 +12304,7 @@ async def post_user_ctf_progress(
 # =========================================================
 
 @app.post("/api/user/ctf/submit")
-async def submit_user_ctf_answer(
+def submit_user_ctf_answer(
     request: UserCTFSubmitRequest
 ):
 
