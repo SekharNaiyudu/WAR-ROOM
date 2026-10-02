@@ -582,20 +582,32 @@ function createTeamMemberFields() {
         input.required =
             true;
 
+        input.autocomplete = "name";
 
-        wrapper.appendChild(
-            label
-        );
+        const phoneLabel =
+            document.createElement("label");
+        phoneLabel.setAttribute("for", "teamMemberPhone" + index);
+        phoneLabel.textContent = "PHONE NUMBER " + String(index).padStart(2, "0");
 
+        const phoneInput =
+            document.createElement("input");
+        phoneInput.type = "tel";
+        phoneInput.name = "team_member_phone_" + index;
+        phoneInput.id = "teamMemberPhone" + index;
+        phoneInput.placeholder = "Enter phone number for member " + index;
+        phoneInput.inputMode = "tel";
+        phoneInput.autocomplete = "tel";
+        phoneInput.maxLength = 16;
+        phoneInput.required = true;
+        phoneInput.pattern = "\\+?[0-9]{10,15}";
+        phoneInput.title = "Enter 10 to 15 digits, optionally starting with +.";
 
-        wrapper.appendChild(
-            input
-        );
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+        wrapper.appendChild(phoneLabel);
+        wrapper.appendChild(phoneInput);
 
-
-        teamMembersContainer.appendChild(
-            wrapper
-        );
+        teamMembersContainer.appendChild(wrapper);
 
     }
 
@@ -638,36 +650,14 @@ function getTeamMembers() {
 
 
     const inputs =
-        teamMembersContainer
-            .querySelectorAll(
-                "input"
-            );
+        teamMembersContainer.querySelectorAll('input[name^="team_member_"]:not([name^="team_member_phone_"])');
+    return Array.from(inputs, input => input.value.trim());
+}
 
-
-    const members = [];
-
-
-    inputs.forEach(
-        function(input) {
-
-            const name =
-                input.value.trim();
-
-
-            if (name) {
-
-                members.push(
-                    name
-                );
-
-            }
-
-        }
-    );
-
-
-    return members;
-
+function getTeamMemberPhones() {
+    if (!teamMembersContainer) return [];
+    const inputs = teamMembersContainer.querySelectorAll('input[name^="team_member_phone_"]');
+    return Array.from(inputs, input => input.value.trim());
 }
 
 
@@ -727,6 +717,9 @@ if (registerForm) {
 
             const teamMembers =
                 getTeamMembers();
+
+            const teamMemberPhones =
+                getTeamMemberPhones();
 
 
             const teamLeadEmail =
@@ -795,17 +788,30 @@ if (registerForm) {
 
 
             if (
-                teamMembers.length !==
-                count
+                teamMembers.length !== count ||
+                teamMemberPhones.length !== count
             ) {
 
                 showMessage(
-                    "Please enter all team member names.",
+                    "Please enter every team member name and phone number.",
                     "error"
                 );
 
                 return;
 
+            }
+
+
+            const invalidPhone = teamMemberPhones.find(
+                phone => !/^\+?[0-9]{10,15}$/.test(phone)
+            );
+
+            if (invalidPhone) {
+                showMessage(
+                    "Each team member phone number must contain 10 to 15 digits, optionally starting with +.",
+                    "error"
+                );
+                return;
             }
 
 
@@ -888,6 +894,9 @@ if (registerForm) {
 
                     team_members:
                         teamMembers,
+
+                    team_member_phones:
+                        teamMemberPhones,
 
                     email:
                         teamLeadEmail,

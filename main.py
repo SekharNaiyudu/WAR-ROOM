@@ -1116,6 +1116,18 @@ def initialize_user_database():
     )
 
 
+    # Team member contact numbers are stored separately so the existing
+    # team_members JSON array remains a list of names for all old features.
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS hackathon_team_member_contacts (
+            team_id INTEGER PRIMARY KEY,
+            member_phones TEXT NOT NULL
+        )
+        """
+    )
+
+
     # =====================================================
     # USER SESSIONS
     # =====================================================
@@ -2221,6 +2233,9 @@ class HackathonRegister(BaseModel):
 
     team_members: list[str]
 
+    # Optional for backward compatibility with existing clients.
+    team_member_phones: list[str] | None = None
+
     # Canonical field used by the database/backend.
     email: str | None = None
 
@@ -3051,6 +3066,11 @@ async def hackathon_register(
         and str(member).strip()
     ]
 
+    team_member_phones = [
+        str(phone).strip()
+        for phone in (registration.team_member_phones or [])
+    ]
+
     email_value = (
         registration.email
         if registration.email is not None
@@ -3171,6 +3191,23 @@ async def hackathon_register(
                 "match the entered team members."
             )
         )
+
+
+    if len(team_member_phones) != team_members_count:
+        raise HTTPException(
+            status_code=400,
+            detail="Please provide a phone number for every team member."
+        )
+
+    for member_index, phone in enumerate(team_member_phones, start=1):
+        if not re.fullmatch(r"\+?[0-9]{10,15}", phone):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"Enter a valid phone number for team member {member_index} "
+                    "(10 to 15 digits, optionally starting with +)."
+                )
+            )
 
 
     # =====================================================
@@ -3362,6 +3399,15 @@ async def hackathon_register(
             cursor.lastrowid
         )
 
+        cursor.execute(
+            """
+            INSERT INTO hackathon_team_member_contacts
+                (team_id, member_phones)
+            VALUES (?, ?)
+            """,
+            (team_id, json.dumps(team_member_phones))
+        )
+
 
         connection.commit()
 
@@ -3394,6 +3440,9 @@ async def hackathon_register(
 
                 "team_members":
                     team_members,
+
+                "team_member_phones":
+                    team_member_phones,
 
                 "email":
                     email,
