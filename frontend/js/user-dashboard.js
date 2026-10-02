@@ -2243,6 +2243,57 @@ function setText(
    FINAL LOAD MESSAGE
    ========================================================= */
 
+/* =========================================================
+   LIVE USER DASHBOARD REFRESH
+   Refreshes authenticated account state, toolkit availability,
+   and Digital Forensics project access without reinitializing
+   UI listeners or disturbing the current page state.
+   ========================================================= */
+
+let userDashboardRefreshInProgress = false;
+
+async function refreshUserDashboardLive() {
+    if (
+        userDashboardRefreshInProgress ||
+        document.visibilityState !== "visible"
+    ) {
+        return;
+    }
+
+    userDashboardRefreshInProgress = true;
+
+    try {
+        const authenticated = await loadCurrentAuthenticatedUser();
+        if (!authenticated) return;
+
+        updateUserInformation();
+        updateEventInformation();
+        updateDomainInformation();
+        updatePoints();
+        updateAccountStatus();
+        updateRegistrationDetails();
+
+        await Promise.all([
+            updateToolkit(),
+            updateDigitalForensicsProjectAccess()
+        ]);
+
+        updateActivity();
+    } catch (error) {
+        console.error("LIVE USER DASHBOARD REFRESH ERROR:", error);
+    } finally {
+        userDashboardRefreshInProgress = false;
+    }
+}
+
+// Poll while visible; refresh promptly when the user returns to this tab.
+window.setInterval(refreshUserDashboardLive, 15000);
+document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") {
+        refreshUserDashboardLive();
+    }
+});
+
 console.log(
     "WAR ROOM USER DASHBOARD JS LOADED"
 );

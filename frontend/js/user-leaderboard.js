@@ -2203,6 +2203,32 @@ document.addEventListener(
    INITIALIZE
    ========================================================= */
 
+// Keep the signed-in user's leaderboard current after admin score updates.
+let userLeaderboardRefreshInProgress = false;
+
+async function refreshUserLeaderboardLive() {
+    if (
+        userLeaderboardRefreshInProgress ||
+        document.visibilityState !== "visible"
+    ) {
+        return;
+    }
+
+    userLeaderboardRefreshInProgress = true;
+    try {
+        await loadLeaderboard();
+    } finally {
+        userLeaderboardRefreshInProgress = false;
+    }
+}
+
+window.setInterval(refreshUserLeaderboardLive, 15000);
+document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") {
+        refreshUserLeaderboardLive();
+    }
+});
+
 document.addEventListener(
     "DOMContentLoaded",
     function() {
