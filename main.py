@@ -9974,6 +9974,8 @@ async def get_hackathon_participants(
 
                 team_members,
 
+                htmc.member_phones AS member_phones,
+
                 team_lead_email AS email,
 
                 domain,
@@ -9982,7 +9984,10 @@ async def get_hackathon_participants(
 
                 registered_at
 
-            FROM hackathon_teams
+            FROM hackathon_teams ht
+
+            LEFT JOIN hackathon_team_member_contacts htmc
+                ON htmc.team_id = ht.id
 
             WHERE domain = ?
 
@@ -10013,6 +10018,13 @@ async def get_hackathon_participants(
 
                 members = []
 
+            try:
+                member_phones = json.loads(row["member_phones"] or "[]")
+                if not isinstance(member_phones, list):
+                    member_phones = [str(member_phones)] if member_phones else []
+            except (TypeError, ValueError):
+                member_phones = []
+
 
             participants.append({
 
@@ -10032,6 +10044,9 @@ async def get_hackathon_participants(
 
                 "team_members":
                     members,
+
+                "team_member_phones":
+                    member_phones,
 
                 "registered_at":
                     row[
