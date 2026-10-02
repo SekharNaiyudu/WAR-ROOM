@@ -2871,6 +2871,25 @@ document.addEventListener(
         setupParticipantTableSearch();
 
 
+        /* EXPORT CURRENT DOMAIN PARTICIPANTS */
+        const exportButton = document.getElementById("downloadParticipants");
+        if (exportButton) {
+            exportButton.addEventListener("click", function () {
+                if (!participantsData.length) {
+                    if (typeof WarRoomAlert === "function") WarRoomAlert("No registered participants available to export.");
+                    return;
+                }
+                const columns = ["S.No", "Student Name", "Email", "Phone", "Workshop Domain", "Registered On", "Status"];
+                const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+                const rows = participantsData.map((person, index) => [index + 1, person.name, person.email, person.phone, person.domain || selectedDomain, person.registered_at, person.status]);
+                const table = "<table><thead><tr>" + columns.map(v => "<th>" + esc(v) + "</th>").join("") + "</tr></thead><tbody>" + rows.map(row => "<tr>" + row.map(v => "<td>" + esc(v) + "</td>").join("") + "</tr>").join("") + "</tbody></table>";
+                const blob = new Blob(["\ufeff<html><head><meta charset=\"UTF-8\"></head><body>" + table + "</body></html>"], {type: "application/vnd.ms-excel;charset=utf-8;"});
+                const url = URL.createObjectURL(blob); const link = document.createElement("a");
+                link.href = url; link.download = (selectedDomain || "workshop") + "_registered_participants.xls";
+                document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+            });
+        }
+
         /* PARTICIPANT REFRESH */
 
         setupParticipantRefresh();

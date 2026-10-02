@@ -2533,195 +2533,25 @@ function setupSearch() {
    ========================================================= */
 
 function setupDownloadParticipants() {
-
-    const button =
-        document.getElementById(
-            "downloadParticipantsBtn"
-        );
-
-
-    if (!button) {
-
-        return;
-
-    }
-
-
-    button.addEventListener(
-        "click",
-        function() {
-
-            if (
-                !allTeams.length
-            ) {
-
-                WarRoomAlert(
-                    "No registered teams available to download."
-                );
-
-                return;
-
-            }
-
-
-            const rows = [];
-
-
-            rows.push([
-
-                "S.No",
-
-                "Team Name",
-
-                "Team Lead Email",
-
-                "Team Members Count",
-
-                "Team Members",
-
-                "Registered On",
-
-                "Status",
-
-                "Domain"
-
-            ]);
-
-
-            allTeams.forEach(
-                function(team, index) {
-
-                    const members =
-                        Array.isArray(
-                            team.team_members
-                        )
-                            ? team.team_members.join(
-                                " | "
-                            )
-                            : "";
-
-
-                    const memberCount =
-                        team.team_members_count ??
-                        (
-                            Array.isArray(
-                                team.team_members
-                            )
-                                ? team.team_members.length
-                                : ""
-                        );
-
-
-                    rows.push([
-
-                        index + 1,
-
-                        team.team_name ||
-                            "",
-
-                        team.email ||
-                            "",
-
-                        memberCount,
-
-                        members,
-
-                        team.registered_at ||
-                            "",
-
-                        team.status ||
-                            "active",
-
-                        selectedDomain
-
-                    ]);
-
-                }
-            );
-
-
-            const csv =
-                rows
-                    .map(
-                        function(row) {
-
-                            return row
-                                .map(
-                                    function(value) {
-
-                                        return (
-                                            '"' +
-                                            String(
-                                                value
-                                            )
-                                                .replace(
-                                                    /"/g,
-                                                    '""'
-                                                ) +
-                                            '"'
-                                        );
-
-                                    }
-                                )
-                                .join(",");
-
-                        }
-                    )
-                    .join("\n");
-
-
-            const blob =
-                new Blob(
-                    [csv],
-                    {
-                        type:
-                            "text/csv;charset=utf-8;"
-                    }
-                );
-
-
-            const url =
-                URL.createObjectURL(
-                    blob
-                );
-
-
-            const link =
-                document.createElement(
-                    "a"
-                );
-
-
-            link.href =
-                url;
-
-
-            link.download =
-                `${selectedDomain}_registered_teams.csv`;
-
-
-            document.body.appendChild(
-                link
-            );
-
-
-            link.click();
-
-
-            document.body.removeChild(
-                link
-            );
-
-
-            URL.revokeObjectURL(
-                url
-            );
-
+    const button = document.getElementById("downloadParticipantsBtn");
+    const forensicsButton = document.getElementById("downloadForensicsExcelBtn");
+    const exportExcel = function () {
+        if (!allTeams.length) {
+            WarRoomAlert("No registered teams available to download.");
+            return;
         }
-    );
-
+        const columns = ["S.No", "Team Name", "Team Lead Email", "Team Members Count", "Team Members", "Member Phone Numbers", "Registered On", "Status", "Domain"];
+        const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+        const rows = allTeams.map((team, index) => [index + 1, team.team_name, team.email || team.team_lead_email, team.team_members_count ?? team.member_count ?? (Array.isArray(team.team_members) ? team.team_members.length : ""), Array.isArray(team.team_members) ? team.team_members.join(" | ") : "", Array.isArray(team.team_member_phones) ? team.team_member_phones.join(" | ") : (Array.isArray(team.member_phones) ? team.member_phones.join(" | ") : (team.member_phones || "")), team.registered_at, team.status || "active", team.domain || selectedDomain]);
+        const table = "<table><thead><tr>" + columns.map(v => "<th>" + esc(v) + "</th>").join("") + "</tr></thead><tbody>" + rows.map(row => "<tr>" + row.map(v => "<td>" + esc(v) + "</td>").join("") + "</tr>").join("") + "</tbody></table>";
+        const blob = new Blob(["\ufeff<html><head><meta charset=\"UTF-8\"></head><body>" + table + "</body></html>"], {type: "application/vnd.ms-excel;charset=utf-8;"});
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.href = url; link.download = `${selectedDomain}_registered_teams.xls`;
+        document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    };
+    if (button) button.addEventListener("click", exportExcel);
+    if (forensicsButton) forensicsButton.addEventListener("click", exportExcel);
 }
-
 
 /* =========================================================
    UPLOAD BUTTONS
@@ -2906,6 +2736,7 @@ function updateProjectSelectorVisibility(){
     const button = document.getElementById(
         "selectProjectBtn"
     );
+    const excelButton = document.getElementById("downloadForensicsExcelBtn");
 
     if (!button) {
         return;
@@ -2914,6 +2745,7 @@ function updateProjectSelectorVisibility(){
     const visible = isDigitalForensicsHackathon();
 
     button.hidden = !visible;
+    if (excelButton) excelButton.hidden = !visible;
 
     if (!visible) {
         closeProjectSelectionModal();
