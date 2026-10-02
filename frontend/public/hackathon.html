@@ -24,7 +24,7 @@
 
     <link
         rel="stylesheet"
-        href="/css/hackathon.css?v=3"
+        href="/css/hackathon.css?v=4"
     >
 
     <link
@@ -1199,6 +1199,22 @@
 </div>
 
 
+<!-- WAR ROOM THEMED RESET CONFIRMATION MODAL -->
+<div class="wr-confirm-modal" id="projectResetConfirmModal" aria-hidden="true" hidden>
+  <div class="wr-modal-backdrop" data-reset-modal-close></div>
+  <section class="wr-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="projectResetModalTitle" aria-describedby="projectResetModalDescription" tabindex="-1">
+    <button type="button" class="wr-modal-close" id="projectResetModalClose" aria-label="Close">×</button>
+    <span class="wr-modal-kicker">DIGITAL FORENSICS HACKATHON</span>
+    <h2 id="projectResetModalTitle">RESET ALLOCATIONS</h2>
+    <p id="projectResetModalDescription">Are you sure you want to reset all Digital Forensics project allocations?</p>
+    <small>This removes every Team → Project assignment for the current run.</small>
+    <div class="wr-modal-actions">
+      <button type="button" class="wr-modal-btn secondary" id="projectResetCancelBtn">Cancel</button>
+      <button type="button" class="wr-modal-btn danger" id="projectResetConfirmBtn">Reset Allocations</button>
+    </div>
+  </section>
+</div>
+
 <!-- =====================================================
      TOAST
      ===================================================== -->
@@ -1219,7 +1235,7 @@
      ===================================================== -->
 
     <script src="/js/warroom-modal.js?v=2"></script>
-<script src="/js/hackathon.js?v=2"></script>
+<script src="/js/hackathon.js?v=3"></script>
 
 
 

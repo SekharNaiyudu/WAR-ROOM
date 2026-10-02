@@ -3019,3 +3019,25 @@ body{
 body.project-modal-active{
     overflow:hidden;
 }
+
+
+/* WAR ROOM THEMED RESET CONFIRMATION */
+.wr-confirm-modal[hidden], .wr-pdf-modal[hidden] { display:none !important; }
+.wr-confirm-modal, .wr-pdf-modal { position:fixed; inset:0; z-index:10050; display:grid; place-items:center; padding:20px; }
+.wr-modal-backdrop, .wr-pdf-modal-backdrop { position:absolute; inset:0; background:rgba(0,0,0,.82); backdrop-filter:blur(7px); }
+.wr-modal-dialog, .wr-pdf-modal-dialog { position:relative; z-index:1; width:min(100%,480px); padding:30px; border:1px solid rgba(229,9,20,.42); border-radius:20px; background:radial-gradient(circle at 100% 0,rgba(229,9,20,.10),transparent 35%),linear-gradient(145deg,#151515,#080808); box-shadow:12px 12px 35px #000,0 0 30px rgba(229,9,20,.10); color:#f7f7f7; outline:none; }
+.wr-modal-dialog::before, .wr-pdf-modal-dialog::before { content:""; position:absolute; top:0; left:25px; width:130px; height:2px; background:linear-gradient(90deg,#ff2634,transparent); }
+.wr-modal-close, .wr-pdf-modal-close { position:absolute; top:13px; right:15px; border:0; background:transparent; color:#888; font-size:25px; cursor:pointer; }
+.wr-modal-close:hover, .wr-pdf-modal-close:hover { color:#fff; }
+.wr-modal-kicker, .wr-pdf-modal-kicker { display:block; margin:0 30px 10px 0; color:#ff2634; font-size:9px; font-weight:900; letter-spacing:2.4px; }
+.wr-modal-dialog h2, .wr-pdf-modal-dialog h2 { margin:0 25px 14px 0; color:#fff; font-size:19px; font-weight:900; letter-spacing:1.2px; }
+.wr-modal-dialog p, .wr-pdf-modal-dialog p { margin:0 0 10px; color:#c4c4c4; font-size:12px; line-height:1.65; }
+.wr-modal-dialog small { display:block; margin-top:12px; color:#777; font-size:10px; line-height:1.6; }
+.wr-modal-actions, .wr-pdf-modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:25px; }
+.wr-modal-btn, .wr-pdf-modal-btn { min-height:40px; padding:0 17px; border-radius:10px; font:800 10px/1 Arial,sans-serif; letter-spacing:.8px; cursor:pointer; transition:filter .2s,border-color .2s; }
+.wr-modal-btn.secondary, .wr-pdf-modal-btn.secondary { border:1px solid #414141; background:#101010; color:#ddd; }
+.wr-modal-btn.danger, .wr-pdf-modal-btn.danger { border:1px solid #ff2634; background:linear-gradient(145deg,#ff2634,#b7070e); color:#fff; box-shadow:0 0 15px rgba(229,9,20,.16); }
+.wr-modal-btn:hover, .wr-pdf-modal-btn:hover { filter:brightness(1.12); }
+.wr-modal-btn:disabled, .wr-pdf-modal-btn:disabled { opacity:.55; cursor:wait; }
+body.wr-modal-open, body.wr-pdf-modal-open { overflow:hidden; }
+@media(max-width:520px) { .wr-modal-dialog,.wr-pdf-modal-dialog { padding:25px 20px; border-radius:16px; } .wr-modal-actions,.wr-pdf-modal-actions { flex-direction:column-reverse; } .wr-modal-btn,.wr-pdf-modal-btn { width:100%; } }

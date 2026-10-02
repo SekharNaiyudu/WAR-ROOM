@@ -20,7 +20,7 @@
 
     <link
         rel="stylesheet"
-        href="/css/user-dashboard.css?v=4"
+        href="/css/user-dashboard.css?v=5"
     >
 
 </head>
@@ -981,11 +981,29 @@
 
 
 
+<!-- WAR ROOM THEMED PROJECT PDF PASSWORD MODAL -->
+<div class="wr-pdf-modal" id="projectPdfPasswordModal" aria-hidden="true" hidden>
+  <div class="wr-pdf-modal-backdrop" data-pdf-modal-close></div>
+  <section class="wr-pdf-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="projectPdfModalTitle" aria-describedby="projectPdfModalDescription" tabindex="-1">
+    <button type="button" class="wr-pdf-modal-close" id="projectPdfModalClose" aria-label="Close">×</button>
+    <span class="wr-pdf-modal-kicker">DIGITAL FORENSICS HACKATHON</span>
+    <h2 id="projectPdfModalTitle">PROJECT PDF ACCESS</h2>
+    <p id="projectPdfModalDescription">Enter your assigned project password to download the PDF.</p>
+    <label for="projectPdfPasswordInput">PROJECT PASSWORD</label>
+    <input type="password" id="projectPdfPasswordInput" autocomplete="off" spellcheck="false" placeholder="Enter password">
+    <p class="wr-pdf-modal-error" id="projectPdfModalError" role="alert" aria-live="polite"></p>
+    <div class="wr-pdf-modal-actions">
+      <button type="button" class="wr-pdf-modal-btn secondary" id="projectPdfCancelBtn">Cancel</button>
+      <button type="button" class="wr-pdf-modal-btn danger" id="projectPdfVerifyBtn">Verify &amp; Download</button>
+    </div>
+  </section>
+</div>
+
 <!-- =====================================================
      USER DASHBOARD JAVASCRIPT
      ===================================================== -->
 
- <script src="/js/user-dashboard.js?v=9"></script>
+ <script src="/js/user-dashboard.js?v=10"></script>
 
 
 </body>

@@ -3366,16 +3366,52 @@ async function spinProjectForTeam(){
 }
 
 
+/* WAR ROOM THEMED RESET CONFIRMATION */
+function showProjectResetConfirmation() {
+    const modal = document.getElementById("projectResetConfirmModal");
+    const dialog = modal && modal.querySelector(".wr-modal-dialog");
+    const confirmButton = document.getElementById("projectResetConfirmBtn");
+    if (!modal || !confirmButton) return Promise.resolve(false);
+
+    return new Promise((resolve) => {
+        let settled = false;
+        const finish = (value) => {
+            if (settled) return;
+            settled = true;
+            modal.hidden = true;
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("wr-modal-open");
+            confirmButton.removeEventListener("click", onConfirm);
+            cancelButton.removeEventListener("click", onCancel);
+            closeButton.removeEventListener("click", onCancel);
+            modal.querySelectorAll("[data-reset-modal-close]").forEach(el => el.removeEventListener("click", onCancel));
+            document.removeEventListener("keydown", onKeyDown);
+            resolve(value);
+        };
+        const onConfirm = () => finish(true);
+        const onCancel = () => finish(false);
+        const onKeyDown = (event) => { if (event.key === "Escape") onCancel(); };
+        const cancelButton = document.getElementById("projectResetCancelBtn");
+        const closeButton = document.getElementById("projectResetModalClose");
+        confirmButton.addEventListener("click", onConfirm);
+        cancelButton?.addEventListener("click", onCancel);
+        closeButton?.addEventListener("click", onCancel);
+        modal.querySelectorAll("[data-reset-modal-close]").forEach(el => el.addEventListener("click", onCancel));
+        modal.hidden = false;
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("wr-modal-open");
+        document.addEventListener("keydown", onKeyDown);
+        dialog?.focus();
+    });
+}
+
 async function resetProjectAllocations(){
 
     if (!isDigitalForensicsHackathon()) {
         return;
     }
 
-    const confirmed = window.confirm(
-        "Reset all Digital Forensics project allocations?\n\n" +
-        "This removes every Team → Project assignment for the current run."
-    );
+    const confirmed = await showProjectResetConfirmation();
 
     if (!confirmed) {
         return;

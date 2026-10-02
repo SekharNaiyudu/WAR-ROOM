@@ -254,72 +254,12 @@ async function updateDigitalForensicsProjectAccess() {
             downloadButton.disabled = false;
             downloadButton.classList.remove("disabled");
 
-            downloadButton.onclick = async function () {
-                const enteredPassword = window.prompt(
-                    "Enter the Digital Forensics project password:"
-                );
-
-                if (enteredPassword === null) return;
-
-                const password = String(enteredPassword).trim();
-
-                if (!password) {
-                    window.alert("Project password is required.");
-                    return;
-                }
-
-                downloadButton.disabled = true;
-
-                try {
-                    const pdfResponse = await fetch(
-                        "/api/hackathon/digital-forensics/project-pdf",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                session_token: sessionToken,
-                                password: password
-                            })
-                        }
-                    );
-
-                    if (!pdfResponse.ok) {
-                        const errorData = await pdfResponse.json().catch(function () {
-                            return {};
-                        });
-
-                        window.alert(
-                            errorData.detail ||
-                            "Unable to download the assigned project PDF."
-                        );
-                        return;
-                    }
-
-                    const blob = await pdfResponse.blob();
-                    const objectUrl = URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.href = objectUrl;
-                    link.download =
-                        `digital_forensics_project_${data.project_index}.pdf`;
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                    URL.revokeObjectURL(objectUrl);
-                }
-                catch (error) {
-                    console.error(
-                        "DIGITAL FORENSICS PDF DOWNLOAD ERROR:",
-                        error
-                    );
-                    window.alert(
-                        "Unable to download the project PDF."
-                    );
-                }
-                finally {
-                    downloadButton.disabled = false;
-                }
+            downloadButton.onclick = function () {
+                openProjectPdfPasswordModal({
+                    sessionToken: sessionToken,
+                    projectIndex: data.project_index,
+                    downloadButton: downloadButton
+                });
             };
         }
     }
@@ -331,6 +271,92 @@ async function updateDigitalForensicsProjectAccess() {
     }
 }
 
+
+
+/* WAR ROOM THEMED PROJECT PDF PASSWORD MODAL */
+function openProjectPdfPasswordModal(options) {
+    const modal = document.getElementById("projectPdfPasswordModal");
+    const input = document.getElementById("projectPdfPasswordInput");
+    const error = document.getElementById("projectPdfModalError");
+    const verifyButton = document.getElementById("projectPdfVerifyBtn");
+    const cancelButton = document.getElementById("projectPdfCancelBtn");
+    const closeButton = document.getElementById("projectPdfModalClose");
+    const dialog = modal && modal.querySelector(".wr-pdf-modal-dialog");
+    if (!modal || !input || !verifyButton) return;
+
+    input.value = "";
+    error.textContent = "";
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("wr-pdf-modal-open");
+    input.focus();
+
+    let busy = false;
+    const close = () => {
+        if (busy) return;
+        modal.hidden = true;
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("wr-pdf-modal-open");
+        verifyButton.removeEventListener("click", verify);
+        cancelButton?.removeEventListener("click", close);
+        closeButton?.removeEventListener("click", close);
+        modal.querySelectorAll("[data-pdf-modal-close]").forEach(el => el.removeEventListener("click", close));
+        input.removeEventListener("keydown", onInputKeydown);
+        document.removeEventListener("keydown", onModalKeydown);
+    };
+    const onInputKeydown = (event) => { if (event.key === "Enter") { event.preventDefault(); verify(); } };
+    const onModalKeydown = (event) => { if (event.key === "Escape") close(); };
+    const verify = async () => {
+        if (busy) return;
+        const password = String(input.value || "").trim();
+        if (!password) {
+            error.textContent = "Project password is required.";
+            input.focus();
+            return;
+        }
+        busy = true;
+        verifyButton.disabled = true;
+        verifyButton.textContent = "VERIFYING...";
+        error.textContent = "";
+        try {
+            const response = await fetch("/api/hackathon/digital-forensics/project-pdf", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ session_token: options.sessionToken, password })
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                error.textContent = errorData.detail || "Unable to download the assigned project PDF.";
+                return;
+            }
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = objectUrl;
+            link.download = `digital_forensics_project_${options.projectIndex}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+            busy = false;
+            close();
+        } catch (downloadError) {
+            console.error("DIGITAL FORENSICS PDF DOWNLOAD ERROR:", downloadError);
+            error.textContent = "Unable to download the project PDF. Please try again.";
+        } finally {
+            busy = false;
+            verifyButton.disabled = false;
+            verifyButton.textContent = "Verify & Download";
+        }
+    };
+    verifyButton.addEventListener("click", verify);
+    cancelButton?.addEventListener("click", close);
+    closeButton?.addEventListener("click", close);
+    modal.querySelectorAll("[data-pdf-modal-close]").forEach(el => el.addEventListener("click", close));
+    input.addEventListener("keydown", onInputKeydown);
+    document.addEventListener("keydown", onModalKeydown);
+    dialog?.focus({ preventScroll: true });
+}
 
 function getCurrentEvent() {
 
