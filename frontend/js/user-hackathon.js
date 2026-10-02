@@ -994,22 +994,22 @@ if (registerForm) {
                 );
 
 
-                const registeredTeamName =
-                    teamName;
+                const registeredTeamLeadEmail =
+                    teamLeadEmail;
 
 
-                const loginTeamName =
+                const loginTeamLeadEmail =
                     document.getElementById(
-                        "loginTeamName"
+                        "loginTeamLeadEmail"
                     );
 
 
                 if (
-                    loginTeamName
+                    loginTeamLeadEmail
                 ) {
 
-                    loginTeamName.value =
-                        registeredTeamName;
+                    loginTeamLeadEmail.value =
+                        registeredTeamLeadEmail;
 
                 }
 
@@ -1042,11 +1042,11 @@ if (registerForm) {
 
 
                         if (
-                            loginTeamName
+                            loginTeamLeadEmail
                         ) {
 
-                            loginTeamName.value =
-                                registeredTeamName;
+                            loginTeamLeadEmail.value =
+                                registeredTeamLeadEmail;
 
                         }
 
@@ -1110,13 +1110,14 @@ if (loginForm) {
                GET LOGIN VALUES
                ------------------------------------------------- */
 
-            const teamName =
+            const teamLeadEmail =
                 document
                     .getElementById(
-                        "loginTeamName"
+                        "loginTeamLeadEmail"
                     )
                     ?.value
-                    .trim();
+                    .trim()
+                    .toLowerCase();
 
 
             const password =
@@ -1133,12 +1134,12 @@ if (loginForm) {
                ------------------------------------------------- */
 
             if (
-                !teamName ||
+                !teamLeadEmail ||
                 !password
             ) {
 
                 showMessage(
-                    "Please enter team name and password.",
+                    "Please enter team lead email and password.",
                     "error"
                 );
 
@@ -1173,8 +1174,8 @@ if (loginForm) {
 
                 const payload = {
 
-                    team_name:
-                        teamName,
+                    team_lead_email:
+                        teamLeadEmail,
 
                     password:
                         password,
@@ -1186,8 +1187,8 @@ if (loginForm) {
 
 
                 console.log(
-                    "HACKATHON LOGIN REQUEST:",
-                    payload
+                    "HACKATHON LOGIN REQUEST: domain only",
+                    selectedDomain
                 );
 
 
@@ -1313,7 +1314,7 @@ if (loginForm) {
 
                 sessionStorage.setItem(
                     "hackathon_team_name",
-                    teamName
+                    data.team?.team_name || ""
                 );
 
 

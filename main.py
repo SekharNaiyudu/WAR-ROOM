@@ -2255,7 +2255,7 @@ class HackathonRegister(BaseModel):
 
 class HackathonLogin(BaseModel):
 
-    team_name: str
+    team_lead_email: str
 
     password: str
 
@@ -3495,9 +3495,10 @@ async def hackathon_login(
     credentials: HackathonLogin
 ):
 
-    team_name = (
-        credentials.team_name
+    team_lead_email = (
+        credentials.team_lead_email
         .strip()
+        .lower()
     )
 
     password = (
@@ -3548,11 +3549,11 @@ async def hackathon_login(
     # VALIDATION
     # =====================================================
 
-    if not team_name:
+    if not team_lead_email:
 
         raise HTTPException(
             status_code=400,
-            detail="Team name is required."
+            detail="Team lead email is required."
         )
 
 
@@ -3591,11 +3592,11 @@ async def hackathon_login(
 
             FROM hackathon_teams
 
-            WHERE team_name = ?
+            WHERE LOWER(team_lead_email) = ?
               AND domain = ?
             """,
             (
-                team_name,
+                team_lead_email,
                 domain
             )
         )
@@ -3619,7 +3620,7 @@ async def hackathon_login(
             raise HTTPException(
                 status_code=401,
                 detail=(
-                    "Invalid team name or password."
+                    "Invalid team lead email or password."
                 )
             )
 
