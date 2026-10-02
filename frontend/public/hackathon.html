@@ -1097,13 +1097,12 @@
                         TEAM NAME
                     </label>
 
-                    <input
-                        type="text"
+                    <select
                         id="projectTeamName"
-                        maxlength="160"
-                        autocomplete="off"
-                        placeholder="Enter registered team name"
+                        aria-label="Select registered Digital Forensics team"
                     >
+                        <option value="">Loading registered teams...</option>
+                    </select>
 
                     <small>
                         The team must already be registered for Digital Forensics Hackathon.
@@ -1244,7 +1243,7 @@
      ===================================================== -->
 
     <script src="/js/warroom-modal.js?v=2"></script>
-<script src="/js/hackathon.js?v=5"></script>
+<script src="/js/hackathon.js?v=6"></script>
 
 
 

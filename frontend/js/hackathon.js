@@ -2953,6 +2953,84 @@ function renderProjectAllocationHistory(data){
 }
 
 
+async function loadProjectTeams(){
+
+    if (!isDigitalForensicsHackathon()) return;
+
+    const select = document.getElementById("projectTeamName");
+    if (!select) return;
+
+    const previousValue = select.value;
+    select.disabled = true;
+    select.innerHTML = '<option value="">Loading registered teams...</option>';
+
+    try {
+        const [teamsResponse, allocationsResponse] = await Promise.all([
+            fetch("/api/hackathon/forensics_hackathon/participants", {
+                method: "GET", credentials: "same-origin", cache: "no-store"
+            }),
+            fetch("/api/admin/hackathon/project-allocations?domain=forensics_hackathon", {
+                method: "GET", credentials: "same-origin", cache: "no-store"
+            })
+        ]);
+        const [teamsData, allocationsData] = await Promise.all([
+            teamsResponse.json(), allocationsResponse.json()
+        ]);
+        if (!teamsResponse.ok || !teamsData.success) {
+            throw new Error(teamsData.detail || "Unable to load registered teams.");
+        }
+        if (!allocationsResponse.ok || !allocationsData.success) {
+            throw new Error(allocationsData.detail || "Unable to check allocated teams.");
+        }
+
+        const allocated = new Set((Array.isArray(allocationsData.allocations)
+            ? allocationsData.allocations : [])
+            .map(item => String(item.team_name || "").trim().toLocaleLowerCase())
+            .filter(Boolean));
+        const teams = Array.isArray(teamsData.participants) ? teamsData.participants : [];
+        const eligible = teams.filter(team =>
+            String(team.status || "").trim().toLowerCase() !== "rejected" &&
+            String(team.team_name || "").trim()
+        );
+
+        select.innerHTML = "";
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = eligible.length ? "Select registered team" : "No registered teams found";
+        select.appendChild(placeholder);
+
+        eligible.forEach(team => {
+            const name = String(team.team_name).trim();
+            const option = document.createElement("option");
+            option.value = name;
+            const isAllocated = allocated.has(name.toLocaleLowerCase());
+            option.textContent = isAllocated ? `${name} — Project allocated` : name;
+            option.disabled = isAllocated;
+            select.appendChild(option);
+        });
+
+        if (previousValue && Array.from(select.options).some(option => option.value === previousValue && !option.disabled)) {
+            select.value = previousValue;
+        } else {
+            select.value = "";
+        }
+        if (!eligible.length) {
+            const empty = document.createElement("option");
+            empty.value = "";
+            empty.textContent = "No registered teams found";
+            empty.disabled = true;
+            select.appendChild(empty);
+        }
+    } catch (error) {
+        console.error("PROJECT TEAM LIST LOAD ERROR:", error);
+        select.innerHTML = '<option value="">Unable to load teams — refresh and retry</option>';
+        showToast(error.message || "Unable to load registered teams.");
+    } finally {
+        select.disabled = false;
+    }
+}
+
+
 async function loadProjectAllocations(){
 
     if (!isDigitalForensicsHackathon()) {
@@ -3177,6 +3255,7 @@ async function spinProjectForTeam(){
         }
 
         await loadProjectAllocations();
+        await loadProjectTeams();
 
         showToast(
             data.already_assigned
@@ -3336,6 +3415,7 @@ async function resetProjectAllocations(){
         }
 
         await loadProjectAllocations();
+        await loadProjectTeams();
 
         showToast(
             `Reset complete. ${data.available_count} projects are available.`
@@ -3375,17 +3455,10 @@ function openProjectSelectionModal(){
     setProjectModalOpen(true);
 
     loadProjectAllocations();
+    loadProjectTeams();
 
-    const input = document.getElementById(
-        "projectTeamName"
-    );
-
-    window.setTimeout(
-        function(){
-            input?.focus();
-        },
-        120
-    );
+    const teamSelect = document.getElementById("projectTeamName");
+    window.setTimeout(function(){ teamSelect?.focus(); }, 120);
 
 }
 
@@ -3458,26 +3531,13 @@ function setupProjectSelector(){
     if (refreshButton) {
         refreshButton.addEventListener(
             "click",
-            loadProjectAllocations
-        );
-    }
-
-    if (teamInput) {
-        teamInput.addEventListener(
-            "keydown",
-            function(event){
-
-                if (
-                    event.key === "Enter" &&
-                    !projectSpinBusy
-                ) {
-                    event.preventDefault();
-                    spinProjectForTeam();
-                }
-
+            function(){
+                loadProjectAllocations();
+                loadProjectTeams();
             }
         );
     }
+
 
     document.addEventListener(
         "keydown",
