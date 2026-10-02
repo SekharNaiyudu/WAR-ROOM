@@ -1102,6 +1102,8 @@ def initialize_user_database():
 
             team_members TEXT NOT NULL,
 
+            team_member_phones TEXT,
+
             team_lead_email TEXT NOT NULL,
 
             password_hash TEXT NOT NULL,
@@ -3049,7 +3051,12 @@ async def get_current_user(
 # HACKATHON MEMBER CONTACT SCHEMA (IDEMPOTENT)
 # =========================================================
 def ensure_hackathon_member_contacts(cursor):
-    """Ensure phone storage exists even for databases created by older builds."""
+    """Ensure Hackathon phone storage exists on old and new databases.
+
+    New registrations store phones on hackathon_teams so they are committed
+    atomically with the team row. The contacts table remains as a read fallback
+    for teams created by an earlier build.
+    """
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS hackathon_team_member_contacts (
@@ -3058,6 +3065,35 @@ def ensure_hackathon_member_contacts(cursor):
         )
         """
     )
+
+    if USE_PERSISTENT_DATABASE:
+        cursor.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_schema = current_schema()
+              AND table_name = ?
+              AND column_name = ?
+            """,
+            ("hackathon_teams", "team_member_phones")
+        )
+        has_phone_column = cursor.fetchone() is not None
+    else:
+        cursor.execute("PRAGMA table_info(hackathon_teams)")
+        has_phone_column = any(
+            row["name"] == "team_member_phones"
+            for row in cursor.fetchall()
+        )
+
+    if not has_phone_column:
+        if USE_PERSISTENT_DATABASE:
+            cursor.execute(
+                "ALTER TABLE hackathon_teams ADD COLUMN IF NOT EXISTS team_member_phones TEXT"
+            )
+        else:
+            cursor.execute(
+                "ALTER TABLE hackathon_teams ADD COLUMN team_member_phones TEXT"
+            )
 
 
 # =========================================================
@@ -3285,6 +3321,7 @@ async def hackathon_register(
 
         cursor = connection.cursor()
 
+        ensure_hackathon_member_contacts(cursor)
 
         # =================================================
         # CHECK TEAM
@@ -3385,6 +3422,7 @@ async def hackathon_register(
                     team_name,
                     member_count,
                     team_members,
+                    team_member_phones,
                     team_lead_email,
                     password_hash,
                     domain,
@@ -3399,6 +3437,7 @@ async def hackathon_register(
                     ?,
                     ?,
                     ?,
+                    ?,
                     'pending',
                     ?
                 )
@@ -3407,6 +3446,7 @@ async def hackathon_register(
                 team_name,
                 team_members_count,
                 members_json,
+                json.dumps(team_member_phones),
                 email,
                 hash_password(
                     password
@@ -3420,18 +3460,6 @@ async def hackathon_register(
         team_id = (
             cursor.lastrowid
         )
-
-        ensure_hackathon_member_contacts(cursor)
-
-        cursor.execute(
-            """
-            INSERT INTO hackathon_team_member_contacts
-                (team_id, member_phones)
-            VALUES (?, ?)
-            """,
-            (team_id, json.dumps(team_member_phones))
-        )
-
 
         connection.commit()
 
@@ -6921,32 +6949,25 @@ async def get_admin_accounts(
 
         else:
 
+            ensure_hackathon_member_contacts(cursor)
+
             cursor.execute(
                 """
                 SELECT
-
-                    id,
-
-                    team_name,
-
-                    member_count,
-
-                    team_members,
-
-                    team_lead_email,
-
-                    domain,
-
-                    status,
-
-                    registered_at
-
-                FROM hackathon_teams
-
-                WHERE domain = ?
-
-                ORDER BY
-                    registered_at DESC
+                    ht.id,
+                    ht.team_name,
+                    ht.member_count,
+                    ht.team_members,
+                    COALESCE(NULLIF(ht.team_member_phones, ''), htmc.member_phones, '[]') AS member_phones,
+                    ht.team_lead_email,
+                    ht.domain,
+                    ht.status,
+                    ht.registered_at
+                FROM hackathon_teams ht
+                LEFT JOIN hackathon_team_member_contacts htmc
+                    ON htmc.team_id = ht.id
+                WHERE ht.domain = ?
+                ORDER BY ht.registered_at DESC
                 """,
                 (
                     domain,
@@ -6972,6 +6993,12 @@ async def get_admin_accounts(
 
                     members = []
 
+                try:
+                    member_phones = json.loads(row["member_phones"] or "[]")
+                    if not isinstance(member_phones, list):
+                        member_phones = [str(member_phones)] if member_phones else []
+                except (TypeError, ValueError):
+                    member_phones = []
 
                 accounts.append({
 
@@ -6986,6 +7013,12 @@ async def get_admin_accounts(
 
                     "team_members":
                         members,
+
+                    "team_member_phones":
+                        member_phones,
+
+                    "member_phones":
+                        member_phones,
 
                     "email":
                         row["team_lead_email"],
@@ -9993,7 +10026,7 @@ async def get_hackathon_participants(
 
                 team_members,
 
-                htmc.member_phones AS member_phones,
+                COALESCE(NULLIF(ht.team_member_phones, ''), htmc.member_phones, '[]') AS member_phones,
 
                 team_lead_email AS email,
 
@@ -10008,10 +10041,10 @@ async def get_hackathon_participants(
             LEFT JOIN hackathon_team_member_contacts htmc
                 ON htmc.team_id = ht.id
 
-            WHERE domain = ?
+            WHERE ht.domain = ?
 
             ORDER BY
-                registered_at DESC
+                ht.registered_at DESC
             """,
             (
                 domain,

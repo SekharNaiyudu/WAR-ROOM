@@ -2542,7 +2542,21 @@ function setupDownloadParticipants() {
         }
         const columns = ["S.No", "Team Name", "Team Lead Email", "Team Members Count", "Team Members", "Member Phone Numbers", "Registered On", "Status", "Domain"];
         const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
-        const rows = allTeams.map((team, index) => [index + 1, team.team_name, team.email || team.team_lead_email, team.team_members_count ?? team.member_count ?? (Array.isArray(team.team_members) ? team.team_members.length : ""), Array.isArray(team.team_members) ? team.team_members.join(" | ") : "", Array.isArray(team.team_member_phones) ? team.team_member_phones.join(" | ") : (Array.isArray(team.member_phones) ? team.member_phones.join(" | ") : (team.member_phones || "")), team.registered_at, team.status || "active", team.domain || selectedDomain]);
+        const phoneList = team => {
+            const raw = team.team_member_phones ?? team.member_phones;
+            if (Array.isArray(raw)) return raw.map(value => String(value ?? "").trim()).join(" | ");
+            if (typeof raw === "string") {
+                const value = raw.trim();
+                if (!value) return "";
+                try {
+                    const parsed = JSON.parse(value);
+                    if (Array.isArray(parsed)) return parsed.map(item => String(item ?? "").trim()).join(" | ");
+                } catch (_) {}
+                return value;
+            }
+            return "";
+        };
+        const rows = allTeams.map((team, index) => [index + 1, team.team_name, team.email || team.team_lead_email, team.team_members_count ?? team.member_count ?? (Array.isArray(team.team_members) ? team.team_members.length : ""), Array.isArray(team.team_members) ? team.team_members.join(" | ") : "", phoneList(team), team.registered_at, team.status || "active", team.domain || selectedDomain]);
         const table = "<table><thead><tr>" + columns.map(v => "<th>" + esc(v) + "</th>").join("") + "</tr></thead><tbody>" + rows.map(row => "<tr>" + row.map(v => "<td>" + esc(v) + "</td>").join("") + "</tr>").join("") + "</tbody></table>";
         const blob = new Blob(["\ufeff<html><head><meta charset=\"UTF-8\"></head><body>" + table + "</body></html>"], {type: "application/vnd.ms-excel;charset=utf-8;"});
         const url = URL.createObjectURL(blob); const link = document.createElement("a");
