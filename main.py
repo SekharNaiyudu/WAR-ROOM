@@ -12283,7 +12283,7 @@ class UserCTFProgressRequest(BaseModel):
 
 
 @app.post("/api/user/ctf/progress")
-async def post_user_ctf_progress(
+def post_user_ctf_progress(
     request: UserCTFProgressRequest | None = None,
     session_token: str = ""
 ):
@@ -12294,9 +12294,7 @@ async def post_user_ctf_progress(
         or ""
     ).strip()
 
-    return await get_user_ctf_progress(
-        token
-    )
+     return get_user_ctf_progress(token)
 
 
 # =========================================================
