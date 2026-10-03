@@ -12294,7 +12294,7 @@ def post_user_ctf_progress(
         or ""
     ).strip()
 
-     return get_user_ctf_progress(token)
+    return get_user_ctf_progress(token)
 
 
 # =========================================================
