@@ -1,1041 +1,2815 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Security Hackathon — Evaluation Criteria</title>
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+  Cyber Security Hackathon — Evaluation Criteria
+</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+/* =========================================================
+   GOOGLE FONTS
+========================================================= */
+
+@import url(
+  'https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&display=swap'
+);
+
+
+/* =========================================================
+   ROOT COLORS
+========================================================= */
 
 :root{
+
   --bg:#02050b;
+
   --panel:#07111e;
+
   --white:#f5f7ff;
+
   --muted:#aebbd0;
+
   --red:#ff1738;
+
   --blue:#168cff;
+
   --green:#20e889;
+
   --orange:#ffae19;
+
   --purple:#913cff;
+
   --cyan:#19d9ff;
+
 }
 
-*{box-sizing:border-box}
 
-html{scroll-behavior:smooth}
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
 
 body{
+
   margin:0;
+
   background:
-    radial-gradient(circle at 10% 10%,rgba(255,0,40,.15),transparent 25%),
-    radial-gradient(circle at 90% 20%,rgba(0,120,255,.14),transparent 28%),
-    radial-gradient(circle at 50% 90%,rgba(130,0,255,.12),transparent 30%),
+
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(255,0,40,.15),
+      transparent 25%
+    ),
+
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(0,120,255,.14),
+      transparent 28%
+    ),
+
+    radial-gradient(
+      circle at 50% 90%,
+      rgba(130,0,255,.12),
+      transparent 30%
+    ),
+
     var(--bg);
+
   color:var(--white);
-  font-family:Rajdhani,Arial,sans-serif;
+
+  font-family:
+    Rajdhani,
+    Arial,
+    sans-serif;
+
   overflow-x:hidden;
 }
 
+
+/* =========================================================
+   SCANLINES
+========================================================= */
+
 body::after{
+
   content:"";
+
   position:fixed;
+
   inset:0;
+
   pointer-events:none;
+
   z-index:100;
+
   opacity:.06;
-  background:repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    transparent 3px,
-    rgba(255,255,255,.15) 4px
-  );
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(255,255,255,.15) 4px
+    );
 }
 
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
 #particles{
+
   position:fixed;
+
   inset:0;
+
   pointer-events:none;
+
   overflow:hidden;
+
   z-index:0;
 }
 
 .particle{
+
   position:absolute;
+
   width:2px;
+
   height:2px;
+
   background:#fff;
+
   border-radius:50%;
-  box-shadow:0 0 8px #fff;
-  animation:float 10s linear infinite;
+
+  box-shadow:
+    0 0 8px #fff;
+
+  animation:
+    float 10s linear infinite;
 }
 
 @keyframes float{
-  from{transform:translateY(110vh);opacity:0}
-  20%{opacity:.8}
-  80%{opacity:.5}
-  to{transform:translateY(-10vh) translateX(100px);opacity:0}
+
+  from{
+    transform:
+      translateY(110vh);
+
+    opacity:0;
+  }
+
+  20%{
+    opacity:.8;
+  }
+
+  80%{
+    opacity:.5;
+  }
+
+  to{
+
+    transform:
+      translateY(-10vh)
+      translateX(100px);
+
+    opacity:0;
+  }
+
 }
 
+
+/* =========================================================
+   SCROLL PROGRESS
+========================================================= */
+
 #progress{
+
   position:fixed;
+
   top:0;
+
   left:0;
+
   width:0;
+
   height:4px;
-  background:linear-gradient(90deg,var(--red),var(--blue),var(--purple));
-  box-shadow:0 0 15px var(--red);
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--red),
+      var(--blue),
+      var(--purple)
+    );
+
+  box-shadow:
+    0 0 15px var(--red);
+
   z-index:999;
 }
 
-/* HERO */
+
+/* =========================================================
+   HERO
+========================================================= */
+
 .hero{
+
   position:relative;
+
   z-index:2;
+
+  width:100%;
+
   max-width:1250px;
+
   margin:auto;
-  padding:28px 20px 42px;
+
+  padding:
+    28px 20px 42px;
+
   text-align:center;
 }
 
+
 .topline{
+
   font-family:Orbitron;
+
   font-weight:700;
+
   letter-spacing:6px;
+
   color:#aebbd0;
+
   font-size:13px;
+
   margin-bottom:24px;
 }
 
+
 .topline span{
+
   color:var(--red);
-  margin:0 10px;
+
+  margin:
+    0 10px;
 }
+
 
 .project{
+
   font-family:Orbitron;
-  font-size:clamp(25px,4.5vw,55px);
+
+  font-size:
+    clamp(
+      25px,
+      4.5vw,
+      55px
+    );
+
   font-weight:900;
+
   letter-spacing:2px;
+
   margin:0;
-  text-shadow:0 0 20px rgba(100,150,255,.6);
+
+  text-shadow:
+    0 0 20px
+    rgba(100,150,255,.6);
 }
+
 
 .hero h1{
+
   font-family:Rajdhani;
-  font-size:clamp(55px,9vw,115px);
+
+  font-size:
+    clamp(
+      55px,
+      9vw,
+      115px
+    );
+
   line-height:.85;
+
   font-weight:900;
+
   font-style:italic;
-  margin:6px 0 24px;
+
+  margin:
+    6px 0 24px;
+
   color:var(--red);
+
   letter-spacing:3px;
+
   text-shadow:
+
     0 0 5px #fff,
+
     0 0 20px var(--red),
-    0 0 45px rgba(255,0,50,.6);
+
+    0 0 45px
+    rgba(255,0,50,.6);
 }
+
 
 .badge{
+
   display:inline-block;
-  padding:10px 28px;
-  background:linear-gradient(90deg,#7c0919,var(--red),#7c0919);
+
+  padding:
+    10px 28px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7c0919,
+      var(--red),
+      #7c0919
+    );
+
   font-family:Orbitron;
+
   font-weight:900;
+
   letter-spacing:3px;
+
   font-size:18px;
-  box-shadow:0 0 30px rgba(255,0,40,.35);
+
+  box-shadow:
+    0 0 30px
+    rgba(255,0,40,.35);
 }
 
+
 .hero-description{
+
   max-width:900px;
-  margin:20px auto 0;
+
+  margin:
+    20px auto 0;
+
   color:#d4ddea;
+
   font-size:19px;
+
   line-height:1.35;
 }
 
-/* ROUND GRID */
+
+/* =========================================================
+   ROUND CARDS GRID
+   EXACTLY 2 COLUMNS
+========================================================= */
+
 .grid{
+
   position:relative;
+
   z-index:2;
+
+  width:100%;
+
   max-width:1250px;
-  margin:auto;
-  padding:0 20px 30px;
+
+  margin:0 auto;
+
+  padding:
+    0 20px 35px;
+
   display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:18px;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0,1fr)
+    );
+
+  gap:20px;
+
+  align-items:stretch;
 }
+
+
+/* =========================================================
+   CARD
+========================================================= */
 
 .card{
+
   --accent:#fff;
-  grid-column:span 3;
+
+  grid-column:auto;
+
+  width:100%;
+
+  min-width:0;
+
+  height:100%;
+
   position:relative;
+
   padding:22px;
-  background:linear-gradient(145deg,rgba(9,20,34,.97),rgba(2,7,14,.95));
-  border:1px solid var(--accent);
+
+  background:
+
+    linear-gradient(
+      145deg,
+      rgba(9,20,34,.97),
+      rgba(2,7,14,.95)
+    );
+
+  border:
+    1px solid var(--accent);
+
   border-radius:18px;
+
   box-shadow:
-    0 0 25px color-mix(in srgb,var(--accent) 15%,transparent),
-    inset 0 0 30px rgba(255,255,255,.015);
+
+    0 0 25px
+    color-mix(
+      in srgb,
+      var(--accent) 15%,
+      transparent
+    ),
+
+    inset 0 0 30px
+    rgba(255,255,255,.015);
+
   overflow:hidden;
-  transition:transform .35s ease,box-shadow .35s ease;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease;
 }
+
 
 .card:hover{
-  transform:translateY(-8px);
+
+  transform:
+    translateY(-8px);
+
   box-shadow:
-    0 20px 60px color-mix(in srgb,var(--accent) 25%,transparent),
-    inset 0 0 40px rgba(255,255,255,.03);
+
+    0 20px 60px
+    color-mix(
+      in srgb,
+      var(--accent) 25%,
+      transparent
+    ),
+
+    inset 0 0 40px
+    rgba(255,255,255,.03);
 }
 
+
+/* =========================================================
+   CARD MOUSE GLOW
+========================================================= */
+
 .card::before{
+
   content:"";
+
   position:absolute;
+
   width:300px;
+
   height:300px;
-  left:var(--mouse-x,50%);
-  top:var(--mouse-y,50%);
-  transform:translate(-50%,-50%);
-  background:radial-gradient(
-    circle,
-    color-mix(in srgb,var(--accent) 20%,transparent),
-    transparent 65%
-  );
+
+  left:
+    var(
+      --mouse-x,
+      50%
+    );
+
+  top:
+    var(
+      --mouse-y,
+      50%
+    );
+
+  transform:
+    translate(-50%,-50%);
+
+  background:
+
+    radial-gradient(
+      circle,
+
+      color-mix(
+        in srgb,
+        var(--accent) 20%,
+        transparent
+      ),
+
+      transparent 65%
+    );
+
   pointer-events:none;
 }
 
-.red{--accent:var(--red)}
-.blue{--accent:var(--blue)}
-.green{--accent:var(--green)}
-.orange{--accent:var(--orange)}
-.purple{--accent:var(--purple)}
-.cyan{--accent:var(--cyan)}
+
+/* =========================================================
+   CARD COLORS
+========================================================= */
+
+.red{
+  --accent:var(--red);
+}
+
+.blue{
+  --accent:var(--blue);
+}
+
+.green{
+  --accent:var(--green);
+}
+
+.orange{
+  --accent:var(--orange);
+}
+
+.purple{
+  --accent:var(--purple);
+}
+
+.cyan{
+  --accent:var(--cyan);
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
 
 .card-header{
+
   display:flex;
+
   justify-content:space-between;
+
   align-items:center;
+
   gap:12px;
 }
 
+
 .round{
+
   color:var(--accent);
+
   font-family:Orbitron;
+
   font-weight:800;
+
   font-size:12px;
+
   letter-spacing:2px;
 }
 
+
 .marks{
+
   font-family:Orbitron;
+
   font-weight:800;
+
   font-size:16px;
+
   white-space:nowrap;
 }
 
+
+/* =========================================================
+   ICON
+========================================================= */
+
 .icon{
+
   width:58px;
+
   height:58px;
-  margin:18px 0 14px;
-  border:2px solid var(--accent);
+
+  margin:
+    18px 0 14px;
+
+  border:
+    2px solid var(--accent);
+
   border-radius:50%;
+
   display:flex;
+
   justify-content:center;
+
   align-items:center;
+
   color:var(--accent);
+
   font-size:27px;
-  box-shadow:0 0 20px color-mix(in srgb,var(--accent) 40%,transparent);
+
+  box-shadow:
+
+    0 0 20px
+    color-mix(
+      in srgb,
+      var(--accent) 40%,
+      transparent
+    );
 }
+
+
+/* =========================================================
+   CARD TITLE
+========================================================= */
 
 .card h2{
+
   font-family:Orbitron;
+
   font-size:20px;
+
   line-height:1.15;
-  margin:0 0 9px;
+
+  margin:
+    0 0 9px;
 }
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
 
 .description{
+
   color:#c6d1df;
+
   font-size:16px;
+
   line-height:1.35;
-  margin:0 0 17px;
+
+  margin:
+    0 0 17px;
 }
 
+
 .description strong{
+
   color:#fff;
 }
 
+
+/* =========================================================
+   IMPORTANT NOTE INSIDE DESCRIPTION
+========================================================= */
+
+.challenge-note{
+
+  display:block;
+
+  margin-top:12px;
+
+  padding:
+    10px 12px;
+
+  border-left:
+    3px solid var(--accent);
+
+  background:
+    rgba(255,255,255,.035);
+
+  color:#fff;
+
+  font-weight:700;
+}
+
+
+/* =========================================================
+   CHALLENGE STRUCTURE
+========================================================= */
+
 .criteria-title{
+
   color:var(--accent);
+
   font-family:Orbitron;
+
   font-size:12px;
+
   font-weight:800;
+
   letter-spacing:1.5px;
+
   margin-bottom:6px;
 }
 
+
 .criteria{
+
   list-style:none;
+
   padding:0;
+
   margin:0;
 }
 
+
 .criteria li{
+
   display:flex;
+
   justify-content:space-between;
+
+  align-items:center;
+
   gap:15px;
-  padding:7px 0;
-  border-bottom:1px solid rgba(255,255,255,.07);
+
+  padding:
+    7px 0;
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.07);
+
   color:#dfe7f3;
+
   font-size:15.5px;
 }
 
+
 .criteria li::before{
+
   content:"›";
+
   color:var(--accent);
+
   font-weight:900;
 }
 
+
 .criteria .text{
+
   flex:1;
 }
 
+
 .criteria strong{
+
   color:#fff;
+
+  white-space:nowrap;
 }
 
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
 .total{
+
   margin-top:16px;
+
   padding:10px;
+
   text-align:center;
-  background:color-mix(in srgb,var(--accent) 65%,#050911);
+
+  background:
+
+    color-mix(
+      in srgb,
+      var(--accent) 65%,
+      #050911
+    );
+
   border-radius:6px;
+
   font-family:Orbitron;
+
   font-size:13px;
+
   font-weight:900;
+
   letter-spacing:1px;
 }
 
-/* SECURITY NOTE */
+
+/* =========================================================
+   AUTHORIZED ENVIRONMENT NOTE
+========================================================= */
+
 .security-note{
+
   max-width:1250px;
-  margin:0 auto 22px;
-  padding:0 20px;
+
+  margin:
+    0 auto 22px;
+
+  padding:
+    0 20px;
+
   position:relative;
+
   z-index:2;
 }
+
 
 .note-box{
-  border:1px solid var(--cyan);
-  background:rgba(2,20,30,.78);
+
+  border:
+    1px solid var(--cyan);
+
+  background:
+    rgba(2,20,30,.78);
+
   border-radius:14px;
-  padding:14px 18px;
+
+  padding:
+    14px 18px;
+
   color:#d9efff;
-  box-shadow:0 0 25px rgba(25,217,255,.12);
+
+  box-shadow:
+    0 0 25px
+    rgba(25,217,255,.12);
 }
+
 
 .note-box strong{
+
   color:var(--cyan);
+
   font-family:Orbitron;
 }
 
-/* GENERAL SECTIONS */
+
+/* =========================================================
+   GENERAL SECTION
+========================================================= */
+
 .section{
+
   position:relative;
+
   z-index:2;
+
   max-width:1250px;
-  margin:0 auto 20px;
-  padding:0 20px;
+
+  margin:
+    0 auto 20px;
+
+  padding:
+    0 20px;
 }
+
 
 .panel{
-  background:rgba(5,13,24,.9);
-  border:1px solid #155ea8;
+
+  background:
+    rgba(5,13,24,.9);
+
+  border:
+    1px solid #155ea8;
+
   border-radius:18px;
+
   padding:24px;
-  box-shadow:0 0 30px rgba(0,100,255,.15),inset 0 0 30px rgba(255,255,255,.015);
+
+  box-shadow:
+
+    0 0 30px
+    rgba(0,100,255,.15),
+
+    inset 0 0 30px
+    rgba(255,255,255,.015);
 }
 
+
 .title{
+
   font-family:Orbitron;
+
   font-size:24px;
+
   font-weight:900;
+
   letter-spacing:2px;
+
   margin-bottom:18px;
 }
 
-/* TABLE */
-table{
+
+/* =========================================================
+   FINAL SCORE TABLE
+========================================================= */
+
+.table-wrapper{
+
   width:100%;
+
+  overflow-x:auto;
+}
+
+
+table{
+
+  width:100%;
+
+  min-width:650px;
+
   border-collapse:collapse;
+
   font-size:17px;
 }
 
-th,td{
-  padding:12px 15px;
-  border:1px solid rgba(40,130,220,.4);
+
+th,
+td{
+
+  padding:
+    12px 15px;
+
+  border:
+    1px solid
+    rgba(40,130,220,.4);
 }
 
+
 th{
-  background:rgba(20,75,130,.35);
+
+  background:
+    rgba(20,75,130,.35);
+
   font-family:Orbitron;
+
   text-align:left;
 }
 
-th:last-child,td:last-child{text-align:center}
 
-.total-row{
-  background:linear-gradient(90deg,#a90d22,#f01835);
-  font-weight:900;
-}
+th:last-child,
+td:last-child{
 
-/* FLOW */
-.flow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:7px;
-  overflow-x:auto;
-  padding:12px 0;
-}
-
-.step{
-  min-width:112px;
   text-align:center;
 }
 
-.number{
-  width:45px;
-  height:45px;
-  margin:auto;
-  border:2px solid var(--cyan);
-  border-radius:50%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-family:Orbitron;
+
+.total-row{
+
+  background:
+    linear-gradient(
+      90deg,
+      #a90d22,
+      #f01835
+    );
+
   font-weight:900;
-  box-shadow:0 0 18px rgba(25,217,255,.4);
 }
 
+
+/* =========================================================
+   EVALUATION FLOW
+========================================================= */
+
+.flow{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:7px;
+
+  overflow-x:auto;
+
+  padding:
+    12px 0;
+}
+
+
+.step{
+
+  min-width:112px;
+
+  text-align:center;
+}
+
+
+.number{
+
+  width:45px;
+
+  height:45px;
+
+  margin:auto;
+
+  border:
+    2px solid var(--cyan);
+
+  border-radius:50%;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  font-family:Orbitron;
+
+  font-weight:900;
+
+  box-shadow:
+    0 0 18px
+    rgba(25,217,255,.4);
+}
+
+
 .step small{
+
   display:block;
+
   margin-top:8px;
+
   color:#d9e3ef;
+
   line-height:1.05;
+
   font-size:14px;
 }
 
+
 .arrow{
+
   color:var(--cyan);
+
   font-size:25px;
-  animation:pulse 1.2s infinite;
+
+  animation:
+    pulse 1.2s infinite;
 }
+
 
 @keyframes pulse{
-  50%{opacity:.25;transform:translateX(5px)}
+
+  50%{
+
+    opacity:.25;
+
+    transform:
+      translateX(5px);
+  }
+
 }
 
-/* RULES */
+
+/* =========================================================
+   RULES
+========================================================= */
+
 .rules{
-  border:1px solid var(--red);
+
+  border:
+    1px solid var(--red);
+
   border-radius:18px;
+
   padding:22px;
-  background:rgba(25,4,10,.8);
-  box-shadow:0 0 30px rgba(255,0,40,.12);
+
+  background:
+    rgba(25,4,10,.8);
+
+  box-shadow:
+    0 0 30px
+    rgba(255,0,40,.12);
 }
+
 
 .rules-title{
+
   color:#ff4058;
+
   font-family:Orbitron;
+
   font-weight:900;
+
   font-size:20px;
+
   margin-bottom:15px;
 }
 
+
 .rules-grid{
+
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0 40px;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    0 40px;
 }
 
+
 .rule{
-  padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
+
+  padding:
+    8px 0;
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.06);
+
   color:#d9e1ed;
+
   font-size:16px;
 }
 
+
 .rule b{
+
   color:#ff4a60;
+
   margin-right:8px;
 }
 
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
 footer{
+
   position:relative;
+
   z-index:2;
+
   text-align:center;
-  padding:25px 20px 50px;
+
+  padding:
+    25px 20px 50px;
+
   color:#aeb9ca;
+
   letter-spacing:4px;
 }
 
+
 footer strong{
+
   display:block;
+
   font-family:Orbitron;
+
   font-size:25px;
+
   color:#fff;
+
   margin-bottom:10px;
-  text-shadow:0 0 15px var(--red);
+
+  text-shadow:
+    0 0 15px var(--red);
 }
 
-/* REVEAL */
+
+/* =========================================================
+   REVEAL ANIMATION
+========================================================= */
+
 .reveal{
+
   opacity:0;
-  transform:translateY(30px);
-  transition:.7s ease;
+
+  transform:
+    translateY(30px);
+
+  transition:
+    .7s ease;
 }
+
 
 .reveal.visible{
+
   opacity:1;
-  transform:translateY(0);
+
+  transform:
+    translateY(0);
 }
 
-/* MOBILE */
+
+/* =========================================================
+   TABLET
+========================================================= */
+
 @media(max-width:900px){
-  .grid{grid-template-columns:1fr 1fr}
-  .card{grid-column:span 1}
-  .rules-grid{grid-template-columns:1fr}
+
+  .grid{
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0,1fr)
+      );
+
+    gap:16px;
+  }
+
+
+  .card{
+
+    grid-column:auto;
+  }
+
+
+  .rules-grid{
+
+    grid-template-columns:1fr;
+  }
+
 }
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media(max-width:600px){
-  .topline{font-size:9px;letter-spacing:3px}
-  .hero{padding:20px 12px 35px}
-  .project{font-size:29px}
-  .hero h1{font-size:58px}
-  .badge{font-size:12px;letter-spacing:1.5px;padding:10px 14px}
-  .hero-description{font-size:16px}
-  .grid{grid-template-columns:1fr;padding:0 12px 25px}
-  .card{grid-column:span 1;padding:18px}
-  .section,.security-note{padding:0 12px}
-  .panel{padding:15px}
-  table{font-size:14px}
-  th,td{padding:9px}
-  .flow{justify-content:flex-start}
-  .description{font-size:15.5px}
+
+  .topline{
+
+    font-size:9px;
+
+    letter-spacing:3px;
+  }
+
+
+  .hero{
+
+    padding:
+      20px 12px 35px;
+  }
+
+
+  .project{
+
+    font-size:29px;
+  }
+
+
+  .hero h1{
+
+    font-size:58px;
+  }
+
+
+  .badge{
+
+    font-size:12px;
+
+    letter-spacing:1.5px;
+
+    padding:
+      10px 14px;
+  }
+
+
+  .hero-description{
+
+    font-size:16px;
+  }
+
+
+  /* ONE CARD PER ROW */
+
+  .grid{
+
+    grid-template-columns:1fr;
+
+    padding:
+      0 12px 25px;
+
+    gap:16px;
+  }
+
+
+  .card{
+
+    grid-column:auto;
+
+    width:100%;
+
+    padding:18px;
+  }
+
+
+  .section,
+  .security-note{
+
+    padding:
+      0 12px;
+  }
+
+
+  .panel{
+
+    padding:15px;
+  }
+
+
+  .table-wrapper{
+
+    overflow-x:auto;
+  }
+
+
+  table{
+
+    font-size:14px;
+  }
+
+
+  th,
+  td{
+
+    padding:9px;
+  }
+
+
+  .flow{
+
+    justify-content:flex-start;
+  }
+
+
+  .description{
+
+    font-size:15.5px;
+  }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
+<!-- =======================================================
+     SCROLL PROGRESS
+======================================================= -->
+
 <div id="progress"></div>
+
+
+<!-- =======================================================
+     PARTICLES
+======================================================= -->
+
 <div id="particles"></div>
 
+
+<!-- =======================================================
+     HERO
+======================================================= -->
+
 <header class="hero">
+
   <div class="topline">
+
     CYBER SECURITY
+
     <span>|</span>
+
     ANALYZE
+
     <span>|</span>
+
     DETECT
+
     <span>|</span>
+
     DEFEND
+
   </div>
 
-  <div class="project">CYBER SECURITY</div>
-  <h1>HACKATHON</h1>
 
-  <div class="badge">EVALUATION CRITERIA</div>
+  <div class="project">
+    CYBER SECURITY
+  </div>
+
+
+  <h1>
+    HACKATHON
+  </h1>
+
+
+  <div class="badge">
+    EVALUATION CRITERIA
+  </div>
+
 
   <p class="hero-description">
+
     Six practical cybersecurity challenge levels designed to evaluate
     problem-solving, security concepts, tool usage, investigation,
     vulnerability analysis and technical understanding.
+
   </p>
+
 </header>
 
 
+
+<!-- =======================================================
+     ROUND CARDS
+======================================================= -->
+
 <section class="grid">
 
-  <!-- ROUND 1 -->
-  <article class="card red reveal">
-    <div class="card-header">
-      <span class="round">ROUND 01</span>
-      <span class="marks">200 POINTS</span>
-    </div>
 
-    <div class="icon">◈</div>
+<!-- =====================================================
+     ROUND 1
+===================================================== -->
 
-    <h2>STEGANOGRAPHY — SECRET SPY MISSIONS</h2>
+<article class="card red reveal">
 
-    <p class="description">
-      First, extract the provided <strong>Toolkit</strong>. Inside the Toolkit,
-      open the <strong>Steganography</strong> folder, which contains different
-      types of steganography challenges such as <strong>Image, Text, Audio</strong>,
-      and more. Based on the steganography concepts learned during the workshop,
-      solve all the given challenges. After solving each challenge, identify its
-      final answer and submit the answer in the
-      <strong>War Room → CTF → Challenges</strong> category against the respective challenge.
-    </p>
+  <div class="card-header">
 
-    
-    <div class="criteria-title">CHALLENGE STRUCTURE</div>
-    <ul class="criteria">
-      <li><span class="text">Total Challenges</span><strong>20</strong></li>
-      <li><span class="text">Points per Challenge</span><strong>10</strong></li>
-      <li><span class="text">Maximum Points</span><strong>200</strong></li>
-    </ul>
-    <div class="total">TOTAL: 200 POINTS</div>
-  </article>
+    <span class="round">
+      ROUND 01
+    </span>
+
+    <span class="marks">
+      200 POINTS
+    </span>
+
+  </div>
 
 
-  <!-- ROUND 2 -->
-  <article class="card blue reveal">
-    <div class="card-header">
-      <span class="round">ROUND 02</span>
-      <span class="marks">110 POINTS</span>
-    </div>
-
-    <div class="icon">⌁</div>
-
-    <h2>SNIFFING — THE NETWORK SPY</h2>
-
-    <p class="description">
-      First, extract the provided <strong>Toolkit</strong>. Inside the Toolkit,
-      locate the <strong>Wireshark ZIP file</strong> and extract it using the
-      password provided by the Admin. The extracted folder contains multiple
-      network analysis challenges. Solve all the challenges using
-      <strong>Wireshark</strong> and identify the protocol that helped you find
-      the answer, such as <strong>HTTP, FTP, Telnet</strong>, or other protocols.
-      Submit the identified protocol in the
-      <strong>War Room → CTF → Challenges</strong> category against the respective challenge.
-    </p>
-
-    
-    <div class="criteria-title">CHALLENGE STRUCTURE</div>
-    <ul class="criteria">
-      <li><span class="text">Total Challenges</span><strong>11</strong></li>
-      <li><span class="text">Points per Challenge</span><strong>10</strong></li>
-      <li><span class="text">Maximum Points</span><strong>110</strong></li>
-    </ul>
-    <div class="total">TOTAL: 110 POINTS</div>
-  </article>
+  <div class="icon">
+    ◈
+  </div>
 
 
-  <!-- ROUND 3 -->
-  <article class="card green reveal">
-    <div class="card-header">
-      <span class="round">ROUND 03</span>
-      <span class="marks">20 POINTS</span>
-    </div>
-
-    <div class="icon">⌁</div>
-
-    <h2>BURP SUITE — FIND VULNERABILITIES</h2>
-
-    <p class="description">
-      Use the Burp Suite application to identify security vulnerabilities in 
-      web applications. The challenges will include scenarios such as 
-     Price Tampering and OTP Bypass. Analyze and test the applications 
-     using Burp Suite, identify the vulnerabilities, and demonstrate your 
-     findings to the Resource Persons.
-     <strong>Important: You have to find the web applications on your own for testing. 
-    No website will be provided to you<strong>.
-    </p>
-
-    
-    <div class="criteria-title">CHALLENGE STRUCTURE</div>
-    <ul class="criteria">
-      <li><span class="text">Price Tampering</span><strong>10</strong></li>
-      <li><span class="text">OTP Bypass</span><strong>10</strong></li>
-      <li><span class="text">Maximum Points</span><strong>20</strong></li>
-    </ul>
-    <div class="total">TOTAL: 20 POINTS</div>
-  </article>
+  <h2>
+    STEGANOGRAPHY — SECRET SPY MISSIONS
+  </h2>
 
 
-  <!-- ROUND 4 -->
-  <article class="card orange reveal">
-    <div class="card-header">
-      <span class="round">ROUND 04</span>
-      <span class="marks">100 POINTS</span>
-    </div>
+  <p class="description">
 
-    <div class="icon">⌘</div>
+    First, extract the provided
+    <strong>Toolkit</strong>.
 
-    <h2>EVENT LOGS — DIGITAL DETECTIVE WORK</h2>
+    Inside the Toolkit, open the
+    <strong>Steganography</strong>
+    folder, which contains different
+    types of steganography challenges
+    such as
+    <strong>Image, Text, Audio</strong>,
+    and more.
 
-    <p class="description">
-      First, extract the provided <strong>Toolkit</strong>. Inside the Toolkit,
-      locate the <strong>Event Logs ZIP file</strong> and extract it using the
-      password provided by the Admin. The extracted folder contains multiple
-      event log challenges. Using <strong>Windows Event Viewer</strong>, analyze
-      the provided logs and complete all the challenges according to the
-      questions given in the question paper. After finding the required answers,
-      submit the final answers in the
-      <strong>War Room → CTF → Challenges</strong> category against the respective challenge.
-    </p>
+    Based on the steganography concepts
+    learned during the workshop, solve
+    all the given challenges.
 
-    
-    <div class="criteria-title">CHALLENGE STRUCTURE</div>
-    <ul class="criteria">
-      <li><span class="text">Total Challenges</span><strong>10</strong></li>
-      <li><span class="text">Points per Challenge</span><strong>10</strong></li>
-      <li><span class="text">Maximum Points</span><strong>100</strong></li>
-    </ul>
-    <div class="total">TOTAL: 100 POINTS</div>
-  </article>
+    After solving each challenge,
+    identify its final answer and submit
+    the answer in the
+    <strong>
+      War Room → CTF → Challenges
+    </strong>
+    category against the respective
+    challenge.
+
+  </p>
 
 
-  <!-- ROUND 5 -->
-  <article class="card purple reveal">
-    <div class="card-header">
-      <span class="round">ROUND 05</span>
-      <span class="marks">200 POINTS</span>
-    </div>
-
-    <div class="icon">✉</div>
-
-    <h2>PHISHING — OUTSMART THE TRICKSTERS</h2>
-
-    <p class="description">
-      First, extract the provided <strong>Toolkit</strong>. Inside the Toolkit,
-      locate the <strong>Detecting Phishing Mail ZIP file</strong> and extract it
-      using the password provided by the Admin.
-      <br><br>
-      This round follows a <strong>challenge-unlocking mechanism</strong>.
-      Initially, only the <strong>1st challenge</strong> will be unlocked.
-      When you open the first challenge, you will find an email image.
-      Identify all the <strong>spelling mistakes</strong> and note down the
-      correct words.
-      <br><br>
-      One of the corrected words will act as the <strong>unlocking key</strong>
-      for the next challenge. Continue this process until all challenges are
-      unlocked and completed.
-      <br><br>
-      For the <strong>CTF submission</strong>, submit the correct word that acts
-      as the unlocking key for the next challenge as the flag for the current
-      challenge in the <strong>War Room → CTF → Challenges</strong> category.
-    </p>
-
-    
-    <div class="criteria-title">CHALLENGE STRUCTURE</div>
-    <ul class="criteria">
-      <li><span class="text">Total Challenges</span><strong>20</strong></li>
-      <li><span class="text">Points per Challenge</span><strong>10</strong></li>
-      <li><span class="text">Maximum Points</span><strong>200</strong></li>
-    </ul>
-    <div class="total">TOTAL: 200 POINTS</div>
-  </article>
+  <div class="criteria-title">
+    CHALLENGE STRUCTURE
+  </div>
 
 
-  <!-- ROUND 6 -->
-  <article class="card cyan reveal">
-    <div class="card-header">
-      <span class="round">ROUND 06</span>
-      <span class="marks">10 POINTS</span>
-    </div>
+  <ul class="criteria">
 
-    <div class="icon">⌬</div>
+    <li>
+      <span class="text">
+        Total Challenges
+      </span>
 
-    <h2>SQL INJECTION — DATABASE SECRETS</h2>
+      <strong>
+        20
+      </strong>
+    </li>
 
-    <p class="description">
-      First, extract the provided <strong>Toolkit</strong>. Inside the Toolkit,
-      locate the <strong>SQL Injection ZIP file</strong> and extract it using
-      the password provided by the Admin.
-      <br><br>
-      The Admin will provide you with a <strong>target website</strong> for the
-      challenge. Analyze the target application and perform the SQL Injection
-      challenge in the provided environment. Through the database-leak process,
-      identify the <strong>CTF flag</strong> hidden in the target application
-      or database.
-      <br><br>
-      After identifying the flag, submit it in the
-      <strong>War Room → CTF → Challenges</strong> category against the respective challenge.
-    </p>
 
-    
-    <div class="criteria-title">CHALLENGE STRUCTURE</div>
-    <ul class="criteria">
-      <li><span class="text">SQL Injection Challenge</span><strong>10</strong></li>
-      <li><span class="text">CTF Flag Identification</span><strong>10</strong></li>
-      <li><span class="text">Maximum Points</span><strong>10</strong></li>
-    </ul>
-    <div class="total">TOTAL: 10 POINTS</div>
-  </article>
+    <li>
+      <span class="text">
+        Points per Challenge
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Maximum Points
+      </span>
+
+      <strong>
+        200
+      </strong>
+    </li>
+
+  </ul>
+
+
+  <div class="total">
+    TOTAL: 200 POINTS
+  </div>
+
+</article>
+
+
+
+<!-- =====================================================
+     ROUND 2
+===================================================== -->
+
+<article class="card blue reveal">
+
+  <div class="card-header">
+
+    <span class="round">
+      ROUND 02
+    </span>
+
+    <span class="marks">
+      110 POINTS
+    </span>
+
+  </div>
+
+
+  <div class="icon">
+    ⌁
+  </div>
+
+
+  <h2>
+    SNIFFING — THE NETWORK SPY
+  </h2>
+
+
+  <p class="description">
+
+    First, extract the provided
+    <strong>Toolkit</strong>.
+
+    Inside the Toolkit, locate the
+    <strong>Wireshark ZIP file</strong>
+    and extract it using the password
+    provided by the Admin.
+
+    The extracted folder contains
+    multiple network analysis challenges.
+
+    Solve all the challenges using
+    <strong>Wireshark</strong> and identify
+    the protocol that helped you find
+    the answer, such as
+    <strong>HTTP, FTP, Telnet</strong>,
+    or other protocols.
+
+    Submit the identified protocol in the
+    <strong>
+      War Room → CTF → Challenges
+    </strong>
+    category against the respective
+    challenge.
+
+  </p>
+
+
+  <div class="criteria-title">
+    CHALLENGE STRUCTURE
+  </div>
+
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">
+        Total Challenges
+      </span>
+
+      <strong>
+        11
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Points per Challenge
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Maximum Points
+      </span>
+
+      <strong>
+        110
+      </strong>
+    </li>
+
+  </ul>
+
+
+  <div class="total">
+    TOTAL: 110 POINTS
+  </div>
+
+</article>
+
+
+
+<!-- =====================================================
+     ROUND 3
+===================================================== -->
+
+<article class="card green reveal">
+
+  <div class="card-header">
+
+    <span class="round">
+      ROUND 03
+    </span>
+
+    <span class="marks">
+      20 POINTS
+    </span>
+
+  </div>
+
+
+  <div class="icon">
+    ⌁
+  </div>
+
+
+  <h2>
+    BURP SUITE — FIND VULNERABILITIES
+  </h2>
+
+
+  <p class="description">
+
+    Use the
+    <strong>Burp Suite</strong>
+    application to identify security
+    vulnerabilities in web applications.
+
+    The challenges will include scenarios
+    such as
+    <strong>Price Tampering</strong>
+    and
+    <strong>OTP Bypass</strong>.
+
+    Analyze and test the applications
+    using Burp Suite, identify the
+    vulnerabilities, and demonstrate
+    your findings to the
+    <strong>Resource Persons</strong>.
+
+    <span class="challenge-note">
+
+      Important: You have to find the web
+      applications on your own for testing.
+      No website will be provided to you.
+
+    </span>
+
+  </p>
+
+
+  <div class="criteria-title">
+    CHALLENGE STRUCTURE
+  </div>
+
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">
+        Price Tampering
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        OTP Bypass
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Maximum Points
+      </span>
+
+      <strong>
+        20
+      </strong>
+    </li>
+
+  </ul>
+
+
+  <div class="total">
+    TOTAL: 20 POINTS
+  </div>
+
+</article>
+
+
+
+<!-- =====================================================
+     ROUND 4
+===================================================== -->
+
+<article class="card orange reveal">
+
+  <div class="card-header">
+
+    <span class="round">
+      ROUND 04
+    </span>
+
+    <span class="marks">
+      100 POINTS
+    </span>
+
+  </div>
+
+
+  <div class="icon">
+    ⌘
+  </div>
+
+
+  <h2>
+    EVENT LOGS — DIGITAL DETECTIVE WORK
+  </h2>
+
+
+  <p class="description">
+
+    First, extract the provided
+    <strong>Toolkit</strong>.
+
+    Inside the Toolkit, locate the
+    <strong>Event Logs ZIP file</strong>
+    and extract it using the password
+    provided by the Admin.
+
+    The extracted folder contains
+    multiple event log challenges.
+
+    Using
+    <strong>Windows Event Viewer</strong>,
+    analyze the provided logs and
+    complete all the challenges according
+    to the questions given in the
+    question paper.
+
+    After finding the required answers,
+    submit the final answers in the
+    <strong>
+      War Room → CTF → Challenges
+    </strong>
+    category against the respective
+    challenge.
+
+  </p>
+
+
+  <div class="criteria-title">
+    CHALLENGE STRUCTURE
+  </div>
+
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">
+        Total Challenges
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Points per Challenge
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Maximum Points
+      </span>
+
+      <strong>
+        100
+      </strong>
+    </li>
+
+  </ul>
+
+
+  <div class="total">
+    TOTAL: 100 POINTS
+  </div>
+
+</article>
+
+
+
+<!-- =====================================================
+     ROUND 5
+===================================================== -->
+
+<article class="card purple reveal">
+
+  <div class="card-header">
+
+    <span class="round">
+      ROUND 05
+    </span>
+
+    <span class="marks">
+      200 POINTS
+    </span>
+
+  </div>
+
+
+  <div class="icon">
+    ✉
+  </div>
+
+
+  <h2>
+    PHISHING — OUTSMART THE TRICKSTERS
+  </h2>
+
+
+  <p class="description">
+
+    First, extract the provided
+    <strong>Toolkit</strong>.
+
+    Inside the Toolkit, locate the
+    <strong>
+      Detecting Phishing Mail ZIP file
+    </strong>
+    and extract it using the password
+    provided by the Admin.
+
+    <br><br>
+
+    This round follows a
+    <strong>
+      challenge-unlocking mechanism
+    </strong>.
+
+    Initially, only the
+    <strong>
+      1st challenge
+    </strong>
+    will be unlocked.
+
+    When you open the first challenge,
+    you will find an email image.
+
+    Identify all the
+    <strong>
+      spelling mistakes
+    </strong>
+    and note down the correct words.
+
+    <br><br>
+
+    One of the corrected words will act
+    as the
+    <strong>
+      unlocking key
+    </strong>
+    for the next challenge.
+
+    Continue this process until all
+    challenges are unlocked and completed.
+
+    <br><br>
+
+    For the
+    <strong>
+      CTF submission
+    </strong>,
+    submit the correct word that acts
+    as the unlocking key for the next
+    challenge as the flag for the current
+    challenge in the
+    <strong>
+      War Room → CTF → Challenges
+    </strong>
+    category.
+
+  </p>
+
+
+  <div class="criteria-title">
+    CHALLENGE STRUCTURE
+  </div>
+
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">
+        Total Challenges
+      </span>
+
+      <strong>
+        20
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Points per Challenge
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Maximum Points
+      </span>
+
+      <strong>
+        200
+      </strong>
+    </li>
+
+  </ul>
+
+
+  <div class="total">
+    TOTAL: 200 POINTS
+  </div>
+
+</article>
+
+
+
+<!-- =====================================================
+     ROUND 6
+===================================================== -->
+
+<article class="card cyan reveal">
+
+  <div class="card-header">
+
+    <span class="round">
+      ROUND 06
+    </span>
+
+    <span class="marks">
+      10 POINTS
+    </span>
+
+  </div>
+
+
+  <div class="icon">
+    ⌬
+  </div>
+
+
+  <h2>
+    SQL INJECTION — DATABASE SECRETS
+  </h2>
+
+
+  <p class="description">
+
+    First, extract the provided
+    <strong>Toolkit</strong>.
+
+    Inside the Toolkit, locate the
+    <strong>
+      SQL Injection ZIP file
+    </strong>
+    and extract it using the password
+    provided by the Admin.
+
+    <br><br>
+
+    The Admin will provide you with a
+    <strong>
+      target website
+    </strong>
+    for the challenge.
+
+    Analyze the target application and
+    perform the SQL Injection challenge
+    in the provided environment.
+
+    Through the database-leak process,
+    identify the
+    <strong>
+      CTF flag
+    </strong>
+    hidden in the target application
+    or database.
+
+    <br><br>
+
+    After identifying the flag, submit it
+    in the
+    <strong>
+      War Room → CTF → Challenges
+    </strong>
+    category against the respective
+    challenge.
+
+  </p>
+
+
+  <div class="criteria-title">
+    CHALLENGE STRUCTURE
+  </div>
+
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">
+        SQL Injection CTF Challenge
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+
+    <li>
+      <span class="text">
+        Maximum Points
+      </span>
+
+      <strong>
+        10
+      </strong>
+    </li>
+
+  </ul>
+
+
+  <div class="total">
+    TOTAL: 10 POINTS
+  </div>
+
+</article>
 
 </section>
 
 
-<!-- AUTHORIZED ENVIRONMENT NOTE -->
+
+<!-- =======================================================
+     AUTHORIZED ENVIRONMENT
+======================================================= -->
+
 <section class="security-note reveal">
+
   <div class="note-box">
-    <strong>⚠ AUTHORIZED CHALLENGE ENVIRONMENT:</strong>
-    All vulnerability testing and security activities must be performed
-    only on the applications, websites, files, and challenge environments
-    provided by the Hackathon organizers. Do not test unauthorized systems.
+
+    <strong>
+      ⚠ AUTHORIZED CHALLENGE ENVIRONMENT:
+    </strong>
+
+    All vulnerability testing and security
+    activities must be performed only on
+    the applications, websites, files, and
+    challenge environments provided by the
+    Hackathon organizers.
+
+    Do not test unauthorized systems.
+
   </div>
+
 </section>
 
 
-<!-- FINAL SCORE -->
+
+<!-- =======================================================
+     FINAL SCORE
+======================================================= -->
+
 <section class="section reveal">
+
   <div class="panel">
-    <div class="title">FINAL SCORE</div>
 
-    <table>
-      <tr>
-        <th>Challenge / Round</th>
-        <th>Challenges / Breakdown</th>
-        <th>Maximum Points</th>
-      </tr>
+    <div class="title">
+      FINAL SCORE
+    </div>
 
-      <tr>
-        <td>01 — Steganography</td>
-        <td>20 Challenges × 10 Points</td>
-        <td>200</td>
-      </tr>
 
-      <tr>
-        <td>02 — Sniffing / Wireshark</td>
-        <td>11 Challenges × 10 Points</td>
-        <td>110</td>
-      </tr>
+    <div class="table-wrapper">
 
-      <tr>
-        <td>03 — Burp Suite</td>
-        <td>Price Tampering: 10 + OTP Bypass: 10</td>
-        <td>20</td>
-      </tr>
+      <table>
 
-      <tr>
-        <td>04 — Event Logs</td>
-        <td>10 Challenges × 10 Points</td>
-        <td>100</td>
-      </tr>
+        <tr>
 
-      <tr>
-        <td>05 — Detecting Phishing</td>
-        <td>20 Challenges × 10 Points</td>
-        <td>200</td>
-      </tr>
+          <th>
+            Challenge / Round
+          </th>
 
-      <tr>
-        <td>06 — SQL Injection</td>
-        <td>SQL Injection CTF Challenge</td>
-        <td>10</td>
-      </tr>
+          <th>
+            Challenges / Breakdown
+          </th>
 
-      <tr class="total-row">
-        <td colspan="2">TOTAL HACKATHON POINTS</td>
-        <td>640</td>
-      </tr>
-    </table>
+          <th>
+            Maximum Points
+          </th>
+
+        </tr>
+
+
+        <tr>
+
+          <td>
+            01 — Steganography
+          </td>
+
+          <td>
+            20 Challenges × 10 Points
+          </td>
+
+          <td>
+            200
+          </td>
+
+        </tr>
+
+
+        <tr>
+
+          <td>
+            02 — Sniffing / Wireshark
+          </td>
+
+          <td>
+            11 Challenges × 10 Points
+          </td>
+
+          <td>
+            110
+          </td>
+
+        </tr>
+
+
+        <tr>
+
+          <td>
+            03 — Burp Suite
+          </td>
+
+          <td>
+            Price Tampering: 10 +
+            OTP Bypass: 10
+          </td>
+
+          <td>
+            20
+          </td>
+
+        </tr>
+
+
+        <tr>
+
+          <td>
+            04 — Event Logs
+          </td>
+
+          <td>
+            10 Challenges × 10 Points
+          </td>
+
+          <td>
+            100
+          </td>
+
+        </tr>
+
+
+        <tr>
+
+          <td>
+            05 — Detecting Phishing
+          </td>
+
+          <td>
+            20 Challenges × 10 Points
+          </td>
+
+          <td>
+            200
+          </td>
+
+        </tr>
+
+
+        <tr>
+
+          <td>
+            06 — SQL Injection
+          </td>
+
+          <td>
+            SQL Injection CTF Challenge
+          </td>
+
+          <td>
+            10
+          </td>
+
+        </tr>
+
+
+        <tr class="total-row">
+
+          <td colspan="2">
+            TOTAL HACKATHON POINTS
+          </td>
+
+          <td>
+            640
+          </td>
+
+        </tr>
+
+      </table>
+
+    </div>
+
   </div>
+
 </section>
 
 
-<!-- FLOW -->
+
+<!-- =======================================================
+     EVALUATION FLOW
+======================================================= -->
+
 <section class="section reveal">
+
   <div class="panel">
-    <div class="title">CYBER SECURITY EVALUATION FLOW</div>
+
+    <div class="title">
+      CYBER SECURITY EVALUATION FLOW
+    </div>
+
 
     <div class="flow">
 
-      <div class="step">
-        <div class="number">01</div>
-        <small>Stegano-<br>graphy</small>
-      </div>
-
-      <div class="arrow">→</div>
 
       <div class="step">
-        <div class="number">02</div>
-        <small>Network<br>Sniffing</small>
+
+        <div class="number">
+          01
+        </div>
+
+        <small>
+          Stegano-<br>
+          graphy
+        </small>
+
       </div>
 
-      <div class="arrow">→</div>
+
+      <div class="arrow">
+        →
+      </div>
+
 
       <div class="step">
-        <div class="number">03</div>
-        <small>Burp Suite<br>Testing</small>
+
+        <div class="number">
+          02
+        </div>
+
+        <small>
+          Network<br>
+          Sniffing
+        </small>
+
       </div>
 
-      <div class="arrow">→</div>
+
+      <div class="arrow">
+        →
+      </div>
+
 
       <div class="step">
-        <div class="number">04</div>
-        <small>Event Log<br>Investigation</small>
+
+        <div class="number">
+          03
+        </div>
+
+        <small>
+          Burp Suite<br>
+          Testing
+        </small>
+
       </div>
 
-      <div class="arrow">→</div>
+
+      <div class="arrow">
+        →
+      </div>
+
 
       <div class="step">
-        <div class="number">05</div>
-        <small>Phishing<br>Detection</small>
+
+        <div class="number">
+          04
+        </div>
+
+        <small>
+          Event Log<br>
+          Investigation
+        </small>
+
       </div>
 
-      <div class="arrow">→</div>
+
+      <div class="arrow">
+        →
+      </div>
+
 
       <div class="step">
-        <div class="number">06</div>
-        <small>SQL Injection<br>Challenge</small>
+
+        <div class="number">
+          05
+        </div>
+
+        <small>
+          Phishing<br>
+          Detection
+        </small>
+
       </div>
+
+
+      <div class="arrow">
+        →
+      </div>
+
+
+      <div class="step">
+
+        <div class="number">
+          06
+        </div>
+
+        <small>
+          SQL Injection<br>
+          Challenge
+        </small>
+
+      </div>
+
 
     </div>
+
   </div>
+
 </section>
 
 
-<!-- RULES -->
+
+<!-- =======================================================
+     IMPORTANT RULES
+======================================================= -->
+
 <section class="section reveal">
+
   <div class="rules">
 
-    <div class="rules-title">⚠ IMPORTANT HACKATHON RULES</div>
+
+    <div class="rules-title">
+
+      ⚠ IMPORTANT HACKATHON RULES
+
+    </div>
+
 
     <div class="rules-grid">
 
+
       <div class="rule">
+
         <b>1</b>
-        Use only the Toolkit, applications and challenge environments
-        provided by the Admin.
-      </div>
 
-      <div class="rule">
-        <b>6</b>
-        CTF answers must be submitted against the correct challenge.
-      </div>
-
-      <div class="rule">
-        <b>2</b>
-        Toolkit ZIP files must be extracted using the password provided
+        Use only the Toolkit, applications
+        and challenge environments provided
         by the Admin.
+
       </div>
 
+
       <div class="rule">
+
+        <b>6</b>
+
+        CTF answers must be submitted
+        against the correct challenge.
+
+      </div>
+
+
+      <div class="rule">
+
+        <b>2</b>
+
+        Toolkit ZIP files must be extracted
+        using the password provided by the
+        Admin.
+
+      </div>
+
+
+      <div class="rule">
+
         <b>7</b>
-        Teams must be able to explain the technique used to obtain
-        their answers.
+
+        Teams must be able to explain the
+        technique used to obtain their answers.
+
       </div>
 
+
       <div class="rule">
+
         <b>3</b>
-        All challenges must be completed according to the instructions
-        provided for that round.
+
+        All challenges must be completed
+        according to the instructions provided
+        for that round.
+
       </div>
 
+
       <div class="rule">
+
         <b>8</b>
-        For practical security challenges, findings may be verified
-        by the Resource Persons.
+
+        For practical security challenges,
+        findings may be verified by the
+        Resource Persons.
+
       </div>
 
+
       <div class="rule">
+
         <b>4</b>
-        Do not test or attack systems that are not explicitly provided
-        as part of the Hackathon.
+
+        Do not test or attack systems that
+        are not explicitly provided as part
+        of the Hackathon.
+
       </div>
 
+
       <div class="rule">
+
         <b>9</b>
-        Incorrect, incomplete or invalid CTF submissions may receive
-        no marks for the respective challenge.
+
+        Incorrect, incomplete or invalid
+        CTF submissions may receive no marks
+        for the respective challenge.
+
       </div>
 
+
       <div class="rule">
+
         <b>5</b>
-        Teams should maintain the integrity of challenge files and
-        provided evidence.
+
+        Teams should maintain the integrity
+        of challenge files and provided
+        evidence.
+
       </div>
 
+
       <div class="rule">
+
         <b>10</b>
-        The final ranking will be based on the combined score out of
-        100 marks.
+
+        The final ranking will be based on
+        the combined score out of
+        <strong>640 points</strong>.
+
       </div>
+
 
     </div>
+
   </div>
+
 </section>
 
 
+
+<!-- =======================================================
+     FOOTER
+======================================================= -->
+
 <footer>
-  <strong>GOOD LUCK, CYBER WARRIORS</strong>
-  ANALYZE / DETECT / EXPLOIT / INVESTIGATE / DEFEND
+
+  <strong>
+    GOOD LUCK, CYBER WARRIORS
+  </strong>
+
+  ANALYZE /
+  DETECT /
+  EXPLOIT /
+  INVESTIGATE /
+  DEFEND
+
 </footer>
 
 
+
+<!-- =======================================================
+     JAVASCRIPT
+======================================================= -->
+
 <script>
 
-/* PARTICLES */
-const particleContainer = document.getElementById("particles");
 
-for(let i=0;i<80;i++){
-  const particle=document.createElement("span");
-  particle.className="particle";
+/* =========================================================
+   PARTICLES
+========================================================= */
 
-  particle.style.left=Math.random()*100+"%";
-  particle.style.animationDuration=(7+Math.random()*15)+"s";
-  particle.style.animationDelay=(-Math.random()*15)+"s";
-  particle.style.opacity=.2+Math.random()*.7;
+const particleContainer =
+  document.getElementById(
+    "particles"
+  );
 
-  particleContainer.appendChild(particle);
+
+for(
+  let i = 0;
+  i < 80;
+  i++
+){
+
+  const particle =
+    document.createElement(
+      "span"
+    );
+
+
+  particle.className =
+    "particle";
+
+
+  particle.style.left =
+    Math.random() * 100 + "%";
+
+
+  particle.style.animationDuration =
+    (
+      7 +
+      Math.random() * 15
+    ) + "s";
+
+
+  particle.style.animationDelay =
+    (
+      -Math.random() * 15
+    ) + "s";
+
+
+  particle.style.opacity =
+    .2 +
+    Math.random() * .7;
+
+
+  particleContainer.appendChild(
+    particle
+  );
+
 }
 
 
-/* CARD MOUSE GLOW */
-document.querySelectorAll(".card").forEach(card=>{
-  card.addEventListener("mousemove",event=>{
-    const rect=card.getBoundingClientRect();
+/* =========================================================
+   CARD MOUSE GLOW
+========================================================= */
 
-    card.style.setProperty(
-      "--mouse-x",
-      (event.clientX-rect.left)+"px"
-    );
+document
+  .querySelectorAll(".card")
+  .forEach(card => {
 
-    card.style.setProperty(
-      "--mouse-y",
-      (event.clientY-rect.top)+"px"
-    );
-  });
-});
+    card.addEventListener(
+      "mousemove",
+      event => {
+
+        const rect =
+          card.getBoundingClientRect();
 
 
-/* SCROLL REVEAL */
-const observer=new IntersectionObserver(
-  entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        entry.target.classList.add("visible");
+        const x =
+          event.clientX -
+          rect.left;
+
+
+        const y =
+          event.clientY -
+          rect.top;
+
+
+        card.style.setProperty(
+          "--mouse-x",
+          x + "px"
+        );
+
+
+        card.style.setProperty(
+          "--mouse-y",
+          y + "px"
+        );
+
       }
-    });
-  },
-  {threshold:.10}
+    );
+
+  });
+
+
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
+
+const observer =
+  new IntersectionObserver(
+
+    entries => {
+
+      entries.forEach(
+        entry => {
+
+          if(
+            entry.isIntersecting
+          ){
+
+            entry.target.classList.add(
+              "visible"
+            );
+
+          }
+
+        }
+      );
+
+    },
+
+    {
+      threshold:.10
+    }
+
+  );
+
+
+document
+  .querySelectorAll(".reveal")
+  .forEach(
+    element => {
+
+      observer.observe(
+        element
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   SCROLL PROGRESS
+========================================================= */
+
+window.addEventListener(
+  "scroll",
+  () => {
+
+    const documentHeight =
+
+      document.documentElement
+        .scrollHeight
+      -
+      window.innerHeight;
+
+
+    const percentage =
+
+      documentHeight > 0
+
+      ?
+
+      (
+        window.scrollY /
+        documentHeight
+      ) * 100
+
+      :
+
+      0;
+
+
+    document
+      .getElementById(
+        "progress"
+      )
+      .style.width =
+      percentage + "%";
+
+  }
 );
 
-document.querySelectorAll(".reveal").forEach(element=>{
-  observer.observe(element);
-});
-
-
-/* SCROLL PROGRESS */
-window.addEventListener("scroll",()=>{
-  const documentHeight=
-    document.documentElement.scrollHeight-window.innerHeight;
-
-  const percentage=
-    documentHeight>0
-    ? (window.scrollY/documentHeight)*100
-    : 0;
-
-  document.getElementById("progress").style.width=
-    percentage+"%";
-});
-
 </script>
+
 
 </body>
 </html>
