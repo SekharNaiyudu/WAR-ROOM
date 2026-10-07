@@ -1265,6 +1265,37 @@ async function submitAdminPoints() {
 
 
 /* =========================================================
+   RANKING TIME
+   ========================================================= */
+
+function formatRankingTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }
+    ).format(date);
+
+}
+
+
+/* =========================================================
    RENDER LEADERBOARD
    ========================================================= */
 
@@ -1321,7 +1352,9 @@ function renderLeaderboard() {
 
                     domain,
 
-                    points
+                    points,
+
+                    row.ranking_time
 
                 ]
 
@@ -1510,6 +1543,19 @@ function renderLeaderboard() {
                                     ${points.toLocaleString()}
 
                                 </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="ranking-time-value">
+                                    ${escapeHtml(
+                                        formatRankingTime(
+                                            row.ranking_time
+                                        )
+                                    )}
+                                </span>
 
                             </td>
 

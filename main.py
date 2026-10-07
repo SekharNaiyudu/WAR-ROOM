@@ -4717,7 +4717,9 @@ def get_user_leaderboard(
                     COALESCE(
                         ad.points,
                         0
-                    ) AS points
+                    ) AS points,
+                    ad.data_json AS data_json,
+                    ad.created_at AS account_created_at
 
                 FROM users u
 
@@ -4735,6 +4737,15 @@ def get_user_leaderboard(
 
                 ORDER BY
                     points DESC,
+                    CASE
+                        WHEN ad.data_json IS NOT NULL
+                             AND COALESCE(
+                                 ad.data_json,
+                                 ''
+                             ) LIKE '%"ranking_time"%'
+                        THEN 0
+                        ELSE 1
+                    END ASC,
                     LOWER(u.name) ASC,
                     u.id ASC
                 """,
@@ -4844,7 +4855,9 @@ def get_user_leaderboard(
                     COALESCE(
                         ad.points,
                         0
-                    ) AS points
+                    ) AS points,
+                    ad.data_json AS data_json,
+                    ad.created_at AS account_created_at
 
                 FROM hackathon_teams ht
 
@@ -4859,6 +4872,15 @@ def get_user_leaderboard(
 
                 ORDER BY
                     points DESC,
+                    CASE
+                        WHEN ad.data_json IS NOT NULL
+                             AND COALESCE(
+                                 ad.data_json,
+                                 ''
+                             ) LIKE '%"ranking_time"%'
+                        THEN 0
+                        ELSE 1
+                    END ASC,
                     LOWER(ht.team_name) ASC,
                     ht.id ASC
                 """,
@@ -4871,6 +4893,36 @@ def get_user_leaderboard(
 
 
         # =================================================
+        # SORT + RANK
+        # =================================================
+        # Primary: higher points.
+        # Tie-break: earlier permanent ranking timestamp.
+        # Final tie-breakers keep ordering deterministic.
+        def _ranking_key(row):
+            try:
+                row_data = json.loads(
+                    row["data_json"] or "{}"
+                )
+                if not isinstance(row_data, dict):
+                    row_data = {}
+            except Exception:
+                row_data = {}
+
+            ranking_time = get_persistent_ranking_time(
+                row_data,
+                row["account_created_at"]
+            )
+
+            return (
+                -int(row["points"] or 0),
+                str(ranking_time or "9999-12-31T23:59:59+00:00"),
+                str(row["account_name"] or "").lower(),
+                int(row["account_id"])
+            )
+
+        rows.sort(key=_ranking_key)
+
+        # =================================================
         # BUILD RESPONSE
         # =================================================
 
@@ -4881,6 +4933,20 @@ def get_user_leaderboard(
             rows,
             start=1
         ):
+
+            try:
+                account_data = json.loads(
+                    row["data_json"] or "{}"
+                )
+                if not isinstance(account_data, dict):
+                    account_data = {}
+            except Exception:
+                account_data = {}
+
+            ranking_time = get_persistent_ranking_time(
+                account_data,
+                row["account_created_at"]
+            )
 
             leaderboard_rows.append(
                 {
@@ -4899,7 +4965,10 @@ def get_user_leaderboard(
                     "points":
                         int(
                             row["points"] or 0
-                        )
+                        ),
+
+                    "ranking_time":
+                        ranking_time
                 }
             )
 
@@ -5224,7 +5293,9 @@ def get_admin_leaderboard(
                     u.id AS account_id,
                     u.name AS account_name,
                     wr.domain AS domain,
-                    COALESCE(ad.points, 0) AS points
+                    COALESCE(ad.points, 0) AS points,
+                    ad.data_json AS data_json,
+                    ad.created_at AS account_created_at
                 FROM users u
                 INNER JOIN workshop_registrations wr
                     ON wr.user_id = u.id
@@ -5250,7 +5321,11 @@ def get_admin_leaderboard(
                     "name": row["account_name"],
                     "domain": row["domain"],
                     "event": "workshop",
-                    "points": int(row["points"] or 0)
+                    "points": int(row["points"] or 0),
+                    "ranking_time": get_ranking_time_from_json(
+                        row["data_json"],
+                        row["account_created_at"]
+                    )
                 })
 
         # =====================================================
@@ -5272,7 +5347,9 @@ def get_admin_leaderboard(
                     ht.id AS account_id,
                     ht.team_name AS account_name,
                     ht.domain AS domain,
-                    COALESCE(ad.points, 0) AS points
+                    COALESCE(ad.points, 0) AS points,
+                    ad.data_json AS data_json,
+                    ad.created_at AS account_created_at
                 FROM hackathon_teams ht
                 LEFT JOIN account_data ad
                     ON ad.account_type = 'team'
@@ -5296,7 +5373,11 @@ def get_admin_leaderboard(
                     "name": row["account_name"],
                     "domain": row["domain"],
                     "event": "hackathon",
-                    "points": int(row["points"] or 0)
+                    "points": int(row["points"] or 0),
+                    "ranking_time": get_ranking_time_from_json(
+                        row["data_json"],
+                        row["account_created_at"]
+                    )
                 })
 
         # =====================================================
@@ -5306,6 +5387,10 @@ def get_admin_leaderboard(
         rows.sort(
             key=lambda row: (
                 -int(row["points"]),
+                str(
+                    row.get("ranking_time")
+                    or "9999-12-31T23:59:59+00:00"
+                ),
                 str(row["name"]).lower(),
                 str(row["event"]),
                 str(row["domain"]),
@@ -5607,6 +5692,11 @@ def add_admin_leaderboard_points(
 
         existing_extra_points = 0
 
+        existing_ranking_time = get_persistent_ranking_time(
+            current_data,
+            None
+        )
+
         try:
 
             existing_extra_points = int(
@@ -5647,6 +5737,11 @@ def add_admin_leaderboard_points(
         now = datetime.now(
             timezone.utc
         ).isoformat()
+
+        if not existing_ranking_time:
+            current_data["ranking_time"] = now
+        else:
+            current_data["ranking_time"] = existing_ranking_time
 
         # -----------------------------------------------------
         # Update or create the SAME account_data row consumed by
@@ -11688,6 +11783,44 @@ def _calculate_ctf_account_total(rows) -> tuple[int, int]:
     return stored_total, corrected_total
 
 
+def get_persistent_ranking_time(current_data, fallback_time=None):
+    """
+    Return the permanent leaderboard tie-break timestamp.
+    The first successful CTF submission / first admin point award
+    is preserved and is never replaced by leaderboard refreshes.
+    """
+    if isinstance(current_data, dict):
+        value = str(
+            current_data.get("ranking_time") or ""
+        ).strip()
+        if value:
+            return value
+
+    fallback = str(fallback_time or "").strip()
+    return fallback
+
+
+
+def get_ranking_time_from_json(raw_data, fallback_time=None):
+    try:
+        current_data = json.loads(
+            raw_data or "{}"
+        )
+        if not isinstance(
+            current_data,
+            dict
+        ):
+            current_data = {}
+    except Exception:
+        current_data = {}
+
+    return get_persistent_ranking_time(
+        current_data,
+        fallback_time
+    )
+
+
+
 def sync_ctf_account_to_leaderboard(
     cursor,
     account_type: str,
@@ -11841,6 +11974,52 @@ def sync_ctf_account_to_leaderboard(
         except Exception:
 
             current_data = {}
+
+    # -----------------------------------------------------
+    # PERMANENT LEADERBOARD TIE-BREAK TIMESTAMP
+    # -----------------------------------------------------
+    # Preserve the original ranking timestamp. A leaderboard
+    # refresh must NEVER change it.
+    #
+    # For older records that pre-date this feature, use the
+    # earliest successful CTF solve when one exists. This gives
+    # legacy participants a meaningful deterministic timestamp.
+    ranking_time = get_persistent_ranking_time(
+        current_data,
+        None
+    )
+
+    if not ranking_time:
+        cursor.execute(
+            """
+            SELECT MIN(solved_at) AS first_solved_at
+            FROM ctf_user_submissions
+            WHERE user_id = ?
+              AND event = ?
+              AND domain = ?
+              AND correct = 1
+              AND solved_at IS NOT NULL
+            """,
+            (
+                account_id,
+                event,
+                ctf_domain
+            )
+        )
+
+        first_solved_row = cursor.fetchone()
+
+        ranking_time = get_persistent_ranking_time(
+            current_data,
+            (
+                first_solved_row["first_solved_at"]
+                if first_solved_row
+                else None
+            )
+        )
+
+    if ranking_time:
+        current_data["ranking_time"] = ranking_time
 
     # Admin-awarded points are explicitly preserved when available.
     # Older rows without the marker retain their previous non-CTF
@@ -12659,6 +12838,67 @@ def submit_user_ctf_answer(
         )
 
         # -----------------------------------------------
+        # PERMANENT LEADERBOARD RANKING TIME
+        # -----------------------------------------------
+        # The first successful submission is the permanent
+        # tie-break timestamp. It is stored server-side and
+        # never changes when the leaderboard is refreshed.
+        cursor.execute(
+            """
+            SELECT
+                data_json
+            FROM account_data
+            WHERE account_type = ?
+              AND account_id = ?
+              AND event_type = ?
+              AND domain = ?
+            LIMIT 1
+            """,
+            (
+                account_type,
+                account_id,
+                event,
+                leaderboard_domain
+            )
+        )
+
+        ranking_account = cursor.fetchone()
+
+        try:
+            ranking_data = json.loads(
+                ranking_account["data_json"] or "{}"
+            ) if ranking_account else {}
+            if not isinstance(ranking_data, dict):
+                ranking_data = {}
+        except Exception:
+            ranking_data = {}
+
+        if not get_persistent_ranking_time(
+            ranking_data,
+            None
+        ):
+            ranking_data["ranking_time"] = solved_at
+
+            cursor.execute(
+                """
+                UPDATE account_data
+                SET
+                    data_json = ?
+                WHERE account_type = ?
+                  AND account_id = ?
+                  AND event_type = ?
+                  AND domain = ?
+                """,
+                (
+                    json.dumps(ranking_data),
+                    account_type,
+                    account_id,
+                    event,
+                    leaderboard_domain
+                )
+            )
+
+        # -----------------------------------------------
         # UPDATE USER POINTS
         # -----------------------------------------------
         # Recalculate the complete CTF total from the saved
@@ -12770,7 +13010,7 @@ def submit_user_ctf_answer(
                     created_at,
                     updated_at
                 )
-                VALUES (?, ?, ?, ?, ?, '{}', ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     account_type,
@@ -12778,6 +13018,9 @@ def submit_user_ctf_answer(
                     event,
                     leaderboard_domain,
                     corrected_ctf_total,
+                    json.dumps(
+                        ranking_data
+                    ),
                     now,
                     now
                 )

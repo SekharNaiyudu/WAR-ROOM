@@ -453,7 +453,7 @@ function showTableMessage(
 
         <tr>
 
-            <td colspan="4">
+            <td colspan="5">
 
                 <div
                     class="empty-state ${className}"
@@ -466,6 +466,37 @@ function showTableMessage(
         </tr>
 
     `;
+
+}
+
+
+/* =========================================================
+   RANKING TIME
+   ========================================================= */
+
+function formatRankingTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }
+    ).format(date);
 
 }
 
@@ -509,7 +540,9 @@ function renderLeaderboard() {
                         row.points
                         ??
                         0
-                    )
+                    ),
+
+                    row.ranking_time
 
                 ]
                     .join(" ")
@@ -639,6 +672,19 @@ function renderLeaderboard() {
                                     class="points-value"
                                 >
                                     ${points.toLocaleString()}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="ranking-time-value">
+                                    ${escapeHtml(
+                                        formatRankingTime(
+                                            row.ranking_time
+                                        )
+                                    )}
                                 </span>
 
                             </td>
