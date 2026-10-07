@@ -23,6 +23,27 @@
         href="/css/user-dashboard.css?v=5"
     >
 
+    <style>
+        .domain-description-button {
+            margin-top: 14px;
+            padding: 10px 16px;
+            border: 1px solid #ff1738;
+            border-radius: 8px;
+            background: rgba(255, 23, 56, 0.10);
+            color: #ff1738;
+            font: 700 12px/1.1 Arial, sans-serif;
+            letter-spacing: 1.2px;
+            cursor: pointer;
+            transition: .25s ease;
+        }
+        .domain-description-button:hover {
+            background: #ff1738;
+            color: #fff;
+            box-shadow: 0 0 18px rgba(255, 23, 56, .35);
+            transform: translateY(-1px);
+        }
+    </style>
+
 </head>
 
 
@@ -480,6 +501,15 @@
                     <p id="userDomainDescription">
                         Certified Ethical Hacking
                     </p>
+
+                    <button
+                        type="button"
+                        id="domainDescriptionBtn"
+                        class="domain-description-button"
+                        hidden
+                    >
+                        DESCRIPTION
+                    </button>
 
                 </article>
 

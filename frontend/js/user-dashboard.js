@@ -986,10 +986,47 @@ function updateEventInformation() {
 }
 
 
+function updateDomainDescriptionButton() {
+
+    const button = document.getElementById(
+        "domainDescriptionBtn"
+    );
+
+    if (!button) {
+        return;
+    }
+
+    const isHackathon =
+        userSession.event === "hackathon";
+
+    const domain = String(
+        userSession.domain || ""
+    ).trim().toLowerCase();
+
+    const descriptionPages = {
+        ceh: "/hackathon/ceh-description",
+        forensics: "/hackathon/digital-forensics-description"
+    };
+
+    const target =
+        isHackathon && descriptionPages[domain]
+            ? descriptionPages[domain]
+            : "";
+
+    button.hidden = !target;
+
+    button.onclick = target
+        ? function () {
+              window.location.href = target;
+          }
+        : null;
+
+}
+
+
 /* =========================================================
    UPDATE DOMAIN INFORMATION
    ========================================================= */
-
 function updateDomainInformation() {
 
     const domain =
@@ -1014,6 +1051,9 @@ function updateDomainInformation() {
         );
 
 
+        updateDomainDescriptionButton();
+
+
         return;
 
     }
@@ -1035,6 +1075,9 @@ function updateDomainInformation() {
         "detailDomain",
         domain.name
     );
+
+
+    updateDomainDescriptionButton();
 
 }
 

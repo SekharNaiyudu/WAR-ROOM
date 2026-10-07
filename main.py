@@ -10418,6 +10418,38 @@ def health():
 # USER DASHBOARD
 # =========================================================
 
+# =========================================================
+# HACKATHON DOMAIN DESCRIPTION PAGES
+# =========================================================
+# These pages are the participant-facing evaluation descriptions.
+# The files must exist inside frontend/public with the exact names below.
+
+@app.get("/hackathon/ceh-description")
+def hackathon_ceh_description_page():
+    file_path = PUBLIC_DIR / "cyber security.html"
+
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="cyber security.html not found inside frontend/public."
+        )
+
+    return FileResponse(file_path)
+
+
+@app.get("/hackathon/digital-forensics-description")
+def hackathon_digital_forensics_description_page():
+    file_path = PUBLIC_DIR / "digital forensic.html"
+
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="digital forensic.html not found inside frontend/public."
+        )
+
+    return FileResponse(file_path)
+
+
 @app.get("/user/dashboard")
 def user_dashboard_page():
 
