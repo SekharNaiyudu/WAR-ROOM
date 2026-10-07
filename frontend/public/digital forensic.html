@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Development Hackathon — Evaluation Criteria</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+:root{
+  --bg:#02050b;
+  --panel:#07111e;
+  --white:#f5f7ff;
+  --muted:#aebbd0;
+  --red:#ff1738;
+  --blue:#168cff;
+  --green:#20e889;
+  --orange:#ffae19;
+  --purple:#913cff;
+  --cyan:#19d9ff;
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(255,0,40,.15),transparent 25%),
+    radial-gradient(circle at 90% 20%,rgba(0,120,255,.14),transparent 28%),
+    radial-gradient(circle at 50% 90%,rgba(130,0,255,.12),transparent 30%),
+    var(--bg);
+  color:var(--white);
+  font-family:Rajdhani,Arial,sans-serif;
+  overflow-x:hidden;
+}
+
+/* Scanline effect */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:100;
+  opacity:.08;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255,255,255,.15) 4px
+  );
+}
+
+/* Animated particles */
+#particles{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+
+.particle{
+  position:absolute;
+  width:2px;
+  height:2px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:0 0 8px #fff;
+  animation:float 10s linear infinite;
+}
+
+@keyframes float{
+  from{
+    transform:translateY(110vh);
+    opacity:0;
+  }
+  20%{opacity:.8}
+  80%{opacity:.5}
+  to{
+    transform:translateY(-10vh) translateX(100px);
+    opacity:0;
+  }
+}
+
+/* Progress bar */
+#progress{
+  position:fixed;
+  top:0;
+  left:0;
+  width:0;
+  height:4px;
+  background:linear-gradient(
+    90deg,
+    var(--red),
+    var(--blue),
+    var(--purple)
+  );
+  box-shadow:0 0 15px var(--red);
+  z-index:999;
+}
+
+/* HERO */
+.hero{
+  position:relative;
+  z-index:2;
+  max-width:1250px;
+  margin:auto;
+  padding:25px 20px 45px;
+  text-align:center;
+}
+
+.topline{
+  font-family:Orbitron;
+  font-weight:700;
+  letter-spacing:7px;
+  color:#aebbd0;
+  font-size:13px;
+  margin-bottom:25px;
+}
+
+.topline span{
+  color:var(--red);
+  margin:0 12px;
+}
+
+.project{
+  font-family:Orbitron;
+  font-size:clamp(28px,5vw,60px);
+  font-weight:900;
+  letter-spacing:2px;
+  margin:0;
+  text-shadow:0 0 20px rgba(100,150,255,.6);
+}
+
+.hero h1{
+  font-family:Rajdhani;
+  font-size:clamp(55px,10vw,125px);
+  line-height:.8;
+  font-weight:900;
+  font-style:italic;
+  margin:5px 0 25px;
+  color:var(--red);
+  letter-spacing:3px;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 20px var(--red),
+    0 0 45px rgba(255,0,50,.6);
+}
+
+.badge{
+  display:inline-block;
+  padding:10px 30px;
+  background:linear-gradient(
+    90deg,
+    #7c0919,
+    var(--red),
+    #7c0919
+  );
+  font-family:Orbitron;
+  font-weight:900;
+  letter-spacing:4px;
+  font-size:20px;
+  box-shadow:0 0 30px rgba(255,0,40,.35);
+}
+
+.hero-description{
+  max-width:850px;
+  margin:22px auto 0;
+  color:#d4ddea;
+  font-size:19px;
+  line-height:1.35;
+}
+
+/* MAIN GRID */
+.grid{
+  position:relative;
+  z-index:2;
+  max-width:1250px;
+  margin:auto;
+  padding:0 20px 30px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:18px;
+}
+
+/* CARDS */
+.card{
+  --accent:#fff;
+
+  grid-column:span 2;
+
+  position:relative;
+  padding:22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(9,20,34,.96),
+      rgba(2,7,14,.94)
+    );
+
+  border:1px solid var(--accent);
+  border-radius:18px;
+
+  box-shadow:
+    0 0 25px color-mix(
+      in srgb,
+      var(--accent) 15%,
+      transparent
+    ),
+    inset 0 0 30px rgba(255,255,255,.015);
+
+  overflow:hidden;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease;
+}
+
+.card:hover{
+  transform:translateY(-9px) scale(1.015);
+
+  box-shadow:
+    0 20px 60px color-mix(
+      in srgb,
+      var(--accent) 25%,
+      transparent
+    ),
+    inset 0 0 40px rgba(255,255,255,.03);
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  width:300px;
+  height:300px;
+  left:var(--mouse-x,50%);
+  top:var(--mouse-y,50%);
+  transform:translate(-50%,-50%);
+
+  background:radial-gradient(
+    circle,
+    color-mix(
+      in srgb,
+      var(--accent) 22%,
+      transparent
+    ),
+    transparent 65%
+  );
+
+  pointer-events:none;
+}
+
+.red{--accent:var(--red)}
+.blue{--accent:var(--blue)}
+.green{--accent:var(--green)}
+.orange{--accent:var(--orange)}
+.purple{--accent:var(--purple)}
+
+.wide{
+  grid-column:span 3;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.round{
+  color:var(--accent);
+  font-family:Orbitron;
+  font-weight:800;
+  font-size:13px;
+  letter-spacing:2px;
+}
+
+.marks{
+  font-family:Orbitron;
+  font-weight:800;
+  font-size:17px;
+}
+
+.icon{
+  width:60px;
+  height:60px;
+  margin:18px 0 14px;
+
+  border:2px solid var(--accent);
+  border-radius:50%;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  color:var(--accent);
+  font-size:28px;
+
+  box-shadow:
+    0 0 20px color-mix(
+      in srgb,
+      var(--accent) 40%,
+      transparent
+    );
+}
+
+.card h2{
+  font-family:Orbitron;
+  font-size:21px;
+  line-height:1.1;
+  margin:0 0 8px;
+}
+
+.description{
+  color:var(--muted);
+  font-size:16px;
+  line-height:1.15;
+  margin-bottom:15px;
+}
+
+.criteria{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.criteria li{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+
+  padding:7px 0;
+
+  border-bottom:1px solid rgba(255,255,255,.07);
+
+  color:#dfe7f3;
+  font-size:16px;
+}
+
+.criteria li::before{
+  content:"›";
+  color:var(--accent);
+  font-weight:900;
+}
+
+.criteria .text{
+  flex:1;
+}
+
+.criteria strong{
+  color:#fff;
+}
+
+.total{
+  margin-top:16px;
+  padding:10px;
+
+  text-align:center;
+
+  background:color-mix(
+    in srgb,
+    var(--accent) 70%,
+    #050911
+  );
+
+  border-radius:6px;
+
+  font-family:Orbitron;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+/* SECTIONS */
+.section{
+  position:relative;
+  z-index:2;
+
+  max-width:1250px;
+  margin:0 auto 20px;
+
+  padding:0 20px;
+}
+
+.panel{
+  background:rgba(5,13,24,.9);
+
+  border:1px solid #155ea8;
+  border-radius:18px;
+
+  padding:24px;
+
+  box-shadow:
+    0 0 30px rgba(0,100,255,.15),
+    inset 0 0 30px rgba(255,255,255,.015);
+}
+
+.title{
+  font-family:Orbitron;
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:2px;
+  margin-bottom:18px;
+}
+
+/* SCORE TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:17px;
+}
+
+th,td{
+  padding:12px 15px;
+  border:1px solid rgba(40,130,220,.4);
+}
+
+th{
+  background:rgba(20,75,130,.35);
+  font-family:Orbitron;
+  text-align:left;
+}
+
+th:last-child,
+td:last-child{
+  text-align:center;
+}
+
+.total-row{
+  background:linear-gradient(
+    90deg,
+    #a90d22,
+    #f01835
+  );
+
+  font-weight:900;
+}
+
+/* FLOW */
+.flow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+
+  overflow-x:auto;
+  padding:12px 0;
+}
+
+.step{
+  min-width:115px;
+  text-align:center;
+}
+
+.number{
+  width:45px;
+  height:45px;
+
+  margin:auto;
+
+  border:2px solid var(--cyan);
+  border-radius:50%;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  font-family:Orbitron;
+  font-weight:900;
+
+  box-shadow:
+    0 0 18px rgba(25,217,255,.4);
+}
+
+.step small{
+  display:block;
+  margin-top:8px;
+  color:#d9e3ef;
+  line-height:1.05;
+  font-size:14px;
+}
+
+.arrow{
+  color:var(--cyan);
+  font-size:26px;
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{
+  50%{
+    opacity:.25;
+    transform:translateX(5px);
+  }
+}
+
+/* RULES */
+.rules{
+  border:1px solid var(--red);
+  border-radius:18px;
+
+  padding:22px;
+
+  background:rgba(25,4,10,.8);
+
+  box-shadow:
+    0 0 30px rgba(255,0,40,.12);
+}
+
+.rules-title{
+  color:#ff4058;
+  font-family:Orbitron;
+  font-weight:900;
+  font-size:20px;
+  margin-bottom:15px;
+}
+
+.rules-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 40px;
+}
+
+.rule{
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+
+  color:#d9e1ed;
+  font-size:16px;
+}
+
+.rule b{
+  color:#ff4a60;
+  margin-right:8px;
+}
+
+/* FOOTER */
+footer{
+  position:relative;
+  z-index:2;
+
+  text-align:center;
+
+  padding:25px 20px 50px;
+
+  color:#aeb9ca;
+  letter-spacing:4px;
+}
+
+footer strong{
+  display:block;
+
+  font-family:Orbitron;
+  font-size:25px;
+
+  color:#fff;
+
+  margin-bottom:10px;
+
+  text-shadow:
+    0 0 15px var(--red);
+}
+
+/* REVEAL ANIMATION */
+.reveal{
+  opacity:0;
+  transform:translateY(35px);
+  transition:.7s ease;
+}
+
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* MOBILE */
+@media(max-width:900px){
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .card,
+  .wide{
+    grid-column:span 1;
+  }
+
+  .rules-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+
+  .topline{
+    font-size:9px;
+    letter-spacing:3px;
+  }
+
+  .hero{
+    padding:20px 12px 35px;
+  }
+
+  .project{
+    font-size:30px;
+  }
+
+  .hero h1{
+    font-size:58px;
+  }
+
+  .badge{
+    font-size:13px;
+    letter-spacing:2px;
+    padding:10px 15px;
+  }
+
+  .hero-description{
+    font-size:16px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+    padding:0 12px 25px;
+  }
+
+  .card,
+  .wide{
+    grid-column:span 1;
+  }
+
+  .section{
+    padding:0 12px;
+  }
+
+  .panel{
+    padding:15px;
+  }
+
+  table{
+    font-size:14px;
+  }
+
+  th,td{
+    padding:9px;
+  }
+
+  .flow{
+    justify-content:flex-start;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="progress"></div>
+<div id="particles"></div>
+
+<!-- HERO -->
+<header class="hero">
+
+  <div class="topline">
+    IDEAS
+    <span>|</span>
+    CODE
+    <span>|</span>
+    BUILD
+    <span>|</span>
+    IMPACT
+  </div>
+
+  <div class="project">
+    PROJECT DEVELOPMENT
+  </div>
+
+  <h1>HACKATHON</h1>
+
+  <div class="badge">
+    EVALUATION CRITERIA
+  </div>
+
+  <p class="hero-description">
+    The projects will be evaluated through multiple stages covering
+    the complete development process, from problem understanding
+    to final implementation and demonstration.
+  </p>
+
+</header>
+
+
+<!-- EVALUATION CARDS -->
+<section class="grid">
+
+<!-- ROUND 1 -->
+<article class="card red reveal">
+
+  <div class="card-header">
+    <span class="round">ROUND 1</span>
+    <span class="marks">20 MARKS</span>
+  </div>
+
+  <div class="icon">◈</div>
+
+  <h2>PPT & PROBLEM PRESENTATION</h2>
+
+  <p class="description">
+    Evaluate the team's understanding of the problem
+    and proposed solution.
+  </p>
+
+  <ul class="criteria">
+    <li>
+      <span class="text">Problem Understanding</span>
+      <strong>5</strong>
+    </li>
+
+    <li>
+      <span class="text">Proposed Solution</span>
+      <strong>5</strong>
+    </li>
+
+    <li>
+      <span class="text">Innovation & Uniqueness</span>
+      <strong>4</strong>
+    </li>
+
+    <li>
+      <span class="text">Technical Approach</span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">Feasibility & Expected Impact</span>
+      <strong>3</strong>
+    </li>
+  </ul>
+
+  <div class="total">
+    TOTAL: 20 MARKS
+  </div>
+
+</article>
+
+
+<!-- ROUND 2 -->
+<article class="card blue reveal">
+
+  <div class="card-header">
+    <span class="round">ROUND 2</span>
+    <span class="marks">25 MARKS</span>
+  </div>
+
+  <div class="icon">⚙</div>
+
+  <h2>FEATURES & FUNCTIONALITY</h2>
+
+  <p class="description">
+    Evaluate whether the proposed features have been
+    properly developed and implemented.
+  </p>
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">Core Features</span>
+      <strong>10</strong>
+    </li>
+
+    <li>
+      <span class="text">Feature Completeness</span>
+      <strong>5</strong>
+    </li>
+
+    <li>
+      <span class="text">Working Functionality</span>
+      <strong>5</strong>
+    </li>
+
+    <li>
+      <span class="text">Component Integration</span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">Usability & Interface</span>
+      <strong>2</strong>
+    </li>
+
+  </ul>
+
+  <div class="total">
+    TOTAL: 25 MARKS
+  </div>
+
+</article>
+
+
+<!-- ROUND 3 -->
+<article class="card green reveal">
+
+  <div class="card-header">
+    <span class="round">ROUND 3</span>
+    <span class="marks">20 MARKS</span>
+  </div>
+
+  <div class="icon">▱</div>
+
+  <h2>TOOLS, TECHNOLOGY & IMPLEMENTATION</h2>
+
+  <p class="description">
+    Evaluate the technical decisions and actual implementation.
+  </p>
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">
+        Technology Selection & Justification
+      </span>
+      <strong>4</strong>
+    </li>
+
+    <li>
+      <span class="text">
+        Tools Used & Tool Knowledge
+      </span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">System Architecture</span>
+      <strong>4</strong>
+    </li>
+
+    <li>
+      <span class="text">Code / Implementation Quality</span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">Algorithms & Technical Depth</span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">Security & Scalability</span>
+      <strong>3</strong>
+    </li>
+
+  </ul>
+
+  <div class="total">
+    TOTAL: 20 MARKS
+  </div>
+
+</article>
+
+
+<!-- ROUND 4 -->
+<article class="card orange wide reveal">
+
+  <div class="card-header">
+    <span class="round">ROUND 4</span>
+    <span class="marks">15 MARKS</span>
+  </div>
+
+  <div class="icon">✓</div>
+
+  <h2>TESTING & VALIDATION</h2>
+
+  <p class="description">
+    Evaluate the reliability and correctness of the developed project.
+  </p>
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">Test Cases & Coverage</span>
+      <strong>4</strong>
+    </li>
+
+    <li>
+      <span class="text">Accuracy of Results</span>
+      <strong>4</strong>
+    </li>
+
+    <li>
+      <span class="text">Reliability & Error Handling</span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">Performance</span>
+      <strong>2</strong>
+    </li>
+
+    <li>
+      <span class="text">Edge-Case Handling</span>
+      <strong>2</strong>
+    </li>
+
+  </ul>
+
+  <div class="total">
+    TOTAL: 15 MARKS
+  </div>
+
+</article>
+
+
+<!-- ROUND 5 -->
+<article class="card purple wide reveal">
+
+  <div class="card-header">
+    <span class="round">ROUND 5</span>
+    <span class="marks">20 MARKS</span>
+  </div>
+
+  <div class="icon">◉</div>
+
+  <h2>FINAL DEMONSTRATION & TECHNICAL VIVA</h2>
+
+  <p class="description">
+    Evaluate the final working project and the team's
+    technical understanding.
+  </p>
+
+  <ul class="criteria">
+
+    <li>
+      <span class="text">Live Project Demonstration</span>
+      <strong>6</strong>
+    </li>
+
+    <li>
+      <span class="text">Technical Explanation</span>
+      <strong>4</strong>
+    </li>
+
+    <li>
+      <span class="text">Results & Output</span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">Technical Knowledge</span>
+      <strong>3</strong>
+    </li>
+
+    <li>
+      <span class="text">Questions & Answers</span>
+      <strong>2</strong>
+    </li>
+
+    <li>
+      <span class="text">Presentation</span>
+      <strong>2</strong>
+    </li>
+
+  </ul>
+
+  <div class="total">
+    TOTAL: 20 MARKS
+  </div>
+
+</article>
+
+</section>
+
+
+<!-- FINAL SCORE -->
+<section class="section reveal">
+
+<div class="panel">
+
+  <div class="title">
+    FINAL SCORE
+  </div>
+
+  <table>
+
+    <tr>
+      <th>Evaluation Stage</th>
+      <th>Marks</th>
+    </tr>
+
+    <tr>
+      <td>PPT & Problem Presentation</td>
+      <td>20</td>
+    </tr>
+
+    <tr>
+      <td>Features & Functionality</td>
+      <td>25</td>
+    </tr>
+
+    <tr>
+      <td>Tools, Technology & Implementation</td>
+      <td>20</td>
+    </tr>
+
+    <tr>
+      <td>Testing & Validation</td>
+      <td>15</td>
+    </tr>
+
+    <tr>
+      <td>Final Demonstration & Technical Viva</td>
+      <td>20</td>
+    </tr>
+
+    <tr class="total-row">
+      <td>TOTAL</td>
+      <td>100</td>
+    </tr>
+
+  </table>
+
+</div>
+
+</section>
+
+
+<!-- FLOW -->
+<section class="section reveal">
+
+<div class="panel">
+
+  <div class="title">
+    EVALUATION FLOW
+  </div>
+
+  <div class="flow">
+
+    <div class="step">
+      <div class="number">01</div>
+      <small>
+        Problem<br>
+        Understanding
+      </small>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="number">02</div>
+      <small>
+        PPT &<br>
+        Proposed Solution
+      </small>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="number">03</div>
+      <small>
+        Features &<br>
+        Development
+      </small>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="number">04</div>
+      <small>
+        Tools &<br>
+        Technologies
+      </small>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="number">05</div>
+      <small>
+        Testing &<br>
+        Validation
+      </small>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="number">06</div>
+      <small>
+        Working<br>
+        Project
+      </small>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="number">07</div>
+      <small>
+        Final<br>
+        Demonstration
+      </small>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="step">
+      <div class="number">08</div>
+      <small>
+        Technical Viva<br>
+        & Ranking
+      </small>
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<!-- RULES -->
+<section class="section reveal">
+
+<div class="rules">
+
+  <div class="rules-title">
+    ⚠ IMPORTANT EVALUATION RULES
+  </div>
+
+  <div class="rules-grid">
+
+    <div class="rule">
+      <b>1</b>
+      PPT quality alone will not determine the final ranking.
+    </div>
+
+    <div class="rule">
+      <b>6</b>
+      Teams must explain the purpose and justification
+      of the tools and technologies used.
+    </div>
+
+    <div class="rule">
+      <b>2</b>
+      Teams must demonstrate their actual working project.
+    </div>
+
+    <div class="rule">
+      <b>7</b>
+      Technical implementation and actual functionality
+      will receive greater importance than presentation quality.
+    </div>
+
+    <div class="rule">
+      <b>3</b>
+      Claimed features must be demonstrated during evaluation.
+    </div>
+
+    <div class="rule">
+      <b>8</b>
+      For cybersecurity and DFIR projects, security,
+      evidence integrity, accuracy and reliability will be considered.
+    </div>
+
+    <div class="rule">
+      <b>4</b>
+      Judges may verify features, outputs and implementation.
+    </div>
+
+    <div class="rule">
+      <b>9</b>
+      Teams may be questioned about any component of their project.
+    </div>
+
+    <div class="rule">
+      <b>5</b>
+      Using more tools does not automatically result in higher marks.
+    </div>
+
+    <div class="rule">
+      <b>10</b>
+      The final score will be based on the complete evaluation process.
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<footer>
+
+<strong>GOOD LUCK TO ALL TEAMS</strong>
+
+THINK / DESIGN / DEVELOP / DELIVER
+
+</footer>
+
+
+<script>
+
+/* PARTICLES */
+
+const particleContainer =
+document.getElementById("particles");
+
+for(let i=0;i<80;i++){
+
+  const particle =
+  document.createElement("span");
+
+  particle.className="particle";
+
+  particle.style.left =
+  Math.random()*100+"%";
+
+  particle.style.animationDuration =
+  (7+Math.random()*15)+"s";
+
+  particle.style.animationDelay =
+  (-Math.random()*15)+"s";
+
+  particle.style.opacity =
+  .2+Math.random()*.7;
+
+  particleContainer.appendChild(particle);
+}
+
+
+/* CARD MOUSE GLOW */
+
+document
+.querySelectorAll(".card")
+.forEach(card=>{
+
+  card.addEventListener(
+    "mousemove",
+    event=>{
+
+      const rect =
+      card.getBoundingClientRect();
+
+      const x =
+      event.clientX-rect.left;
+
+      const y =
+      event.clientY-rect.top;
+
+      card.style.setProperty(
+        "--mouse-x",
+        x+"px"
+      );
+
+      card.style.setProperty(
+        "--mouse-y",
+        y+"px"
+      );
+
+    }
+  );
+
+});
+
+
+/* SCROLL REVEAL */
+
+const observer =
+new IntersectionObserver(
+entries=>{
+
+  entries.forEach(entry=>{
+
+    if(entry.isIntersecting){
+
+      entry.target.classList.add("visible");
+
+    }
+
+  });
+
+},
+{
+  threshold:.12
+});
+
+
+document
+.querySelectorAll(".reveal")
+.forEach(element=>{
+  observer.observe(element);
+});
+
+
+/* SCROLL PROGRESS */
+
+window.addEventListener(
+"scroll",
+()=>{
+
+  const documentHeight =
+  document.documentElement.scrollHeight -
+  window.innerHeight;
+
+  const percentage =
+  documentHeight > 0
+  ? (window.scrollY/documentHeight)*100
+  : 0;
+
+  document
+  .getElementById("progress")
+  .style.width =
+  percentage+"%";
+
+});
+
+
+</script>
+
+</body>
+</html>
