@@ -4604,6 +4604,11 @@ def get_user_leaderboard(
             )
         )
 
+    # Keep the original leaderboard behavior: repair legacy VAPT CTF
+    # scores and synchronize solved CTF points before reading rankings.
+    repair_existing_vapt_ctf_scores()
+    sync_all_ctf_scores_to_leaderboards()
+
     connection = get_user_db()
 
     try:
@@ -4737,15 +4742,6 @@ def get_user_leaderboard(
 
                 ORDER BY
                     points DESC,
-                    CASE
-                        WHEN ad.data_json IS NOT NULL
-                             AND COALESCE(
-                                 ad.data_json,
-                                 ''
-                             ) LIKE '%"ranking_time"%'
-                        THEN 0
-                        ELSE 1
-                    END ASC,
                     LOWER(u.name) ASC,
                     u.id ASC
                 """,
@@ -4872,15 +4868,6 @@ def get_user_leaderboard(
 
                 ORDER BY
                     points DESC,
-                    CASE
-                        WHEN ad.data_json IS NOT NULL
-                             AND COALESCE(
-                                 ad.data_json,
-                                 ''
-                             ) LIKE '%"ranking_time"%'
-                        THEN 0
-                        ELSE 1
-                    END ASC,
                     LOWER(ht.team_name) ASC,
                     ht.id ASC
                 """,
