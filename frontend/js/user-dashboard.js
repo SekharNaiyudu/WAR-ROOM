@@ -194,16 +194,29 @@ async function updateDigitalForensicsProjectAccess() {
 
     if (!actions) return;
 
-    const isDigitalForensicsHackathon =
-        userSession.event === "hackathon" &&
+    const currentDomain =
         String(userSession.domain || "")
             .trim()
-            .toLowerCase() === "forensics";
+            .toLowerCase();
+
+    // userSession keeps the display domain normalized (forensics),
+    // while the backend Hackathon domain is forensics_hackathon.
+    const isDigitalForensicsHackathon =
+        userSession.event === "hackathon" &&
+        (
+            currentDomain === "forensics" ||
+            currentDomain === "forensics_hackathon"
+        );
 
     if (!isDigitalForensicsHackathon) {
         actions.hidden = true;
         return;
     }
+
+    const backendDomain =
+        currentDomain.endsWith("_hackathon")
+            ? currentDomain
+            : `${currentDomain}_hackathon`;
 
     actions.hidden = false;
 
@@ -223,7 +236,7 @@ async function updateDigitalForensicsProjectAccess() {
 
     try {
         const response = await fetch(
-            `/api/hackathon/digital-forensics/project-access?session_token=${encodeURIComponent(sessionToken)}&time=${Date.now()}`,
+            `/api/hackathon/digital-forensics/project-access?session_token=${encodeURIComponent(sessionToken)}&domain=${encodeURIComponent(backendDomain)}&time=${Date.now()}`,
             {
                 method: "GET",
                 cache: "no-store"
