@@ -1032,8 +1032,30 @@ def get_user_db():
                 finally:
                     _USER_DATABASE_INITIALIZING = False
 
+    # On Vercel, never silently fall back to a fresh /tmp SQLite database.
+    # That database is ephemeral and would make existing students appear
+    # to have incorrect credentials after a new serverless instance starts.
+    if IS_VERCEL and not USE_PERSISTENT_DATABASE:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Persistent database is not configured. "
+                "Set DATABASE_URL (or POSTGRES_URL) in Vercel Environment Variables."
+            )
+        )
+
     if USE_PERSISTENT_DATABASE:
-        return connect_persistent_database()
+        try:
+            return connect_persistent_database()
+        except Exception as error:
+            # Keep the error safe for clients; do not expose credentials/URLs.
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "WAR ROOM database is temporarily unavailable. "
+                    "Please retry shortly."
+                )
+            ) from error
 
     connection = sqlite3.connect(USER_DATABASE, timeout=10)
     connection.row_factory = sqlite3.Row
@@ -10483,6 +10505,11 @@ def update_hackathon_participant_status(
 def health():
     """Lightweight liveness/readiness probe without schema migrations."""
     try:
+        if IS_VERCEL and not USE_PERSISTENT_DATABASE:
+            raise RuntimeError(
+                "Persistent database is not configured for Vercel."
+            )
+
         if USE_PERSISTENT_DATABASE:
             connection = connect_persistent_database()
         else:
