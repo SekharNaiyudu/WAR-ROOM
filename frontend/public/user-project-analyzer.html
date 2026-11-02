@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WAR ROOM — Project Analyzer</title>
+  <link rel="stylesheet" href="/css/user-project-analyzer.css?v=1">
+</head>
+<body>
+  <main class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="/user/dashboard">SQ <span>WAR ROOM</span></a>
+      <p class="label">PARTICIPANT PANEL</p>
+      <nav>
+        <a href="/user/dashboard">Dashboard</a>
+        <a href="/user/ctf">CTF</a>
+        <a class="active" href="/user/project-analyzer">Upload Project</a>
+        <a href="/user/leaderboard">Leaderboard</a>
+      </nav>
+    </aside>
+    <section class="content">
+      <p class="eyebrow">WAR ROOM / PROJECT SUBMISSION CHECK</p>
+      <h1>Analyze Your Project</h1>
+      <p class="lead">Upload your project ZIP to get a strict static-analysis report before submission. Your source code is inspected safely and never executed.</p>
+      <form id="analyzerForm" class="upload-card">
+        <input id="projectFile" name="file" type="file" accept=".zip,application/zip" required>
+        <label for="projectFile"><strong>Choose project ZIP</strong><span>Maximum 200 MB. Please exclude node_modules, .git, build output and datasets.</span></label>
+        <button id="analyzeButton" type="submit">Upload & analyze project</button>
+      </form>
+      <p id="status" class="status" aria-live="polite"></p>
+      <section id="report" class="report" hidden></section>
+    </section>
+  </main>
+  <script src="/js/user-project-analyzer.js?v=1"></script>
+</body>
+</html>

@@ -33,6 +33,8 @@ from email.utils import parseaddr
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
+from project_analyzer import analyze_project_zip
+
 try:
     import psycopg
     from psycopg.rows import dict_row
@@ -8286,6 +8288,66 @@ def delete_all_admin_accounts(
 
 
 # =========================================================
+# =========================================================
+# USER — PROJECT ANALYZER
+# =========================================================
+
+@app.post("/api/user/project-analyzer/analyze")
+async def analyze_participant_project(
+    session_token: str,
+    file: UploadFile = File(...)
+):
+    """Analyze a participant ZIP without running uploaded code.
+
+    The same session token format is used by the existing workshop and
+    hackathon dashboards, so a participant can only analyze a project while
+    authenticated to one of those event accounts.
+    """
+    user = get_current_workshop_user(session_token)
+    event_type = "workshop"
+    identity = None
+    if user:
+        identity = user["name"]
+    else:
+        user = get_current_hackathon_user(session_token)
+        event_type = "hackathon"
+        if user:
+            identity = user["team_name"]
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Your session expired. Please sign in again."
+        )
+
+    filename = Path(file.filename or "").name
+    if not filename.lower().endswith(".zip"):
+        raise HTTPException(
+            status_code=400,
+            detail="Upload a project ZIP file."
+        )
+
+    try:
+        report = analyze_project_zip(
+            await file.read(),
+            filename
+        )
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        ) from error
+    finally:
+        await file.close()
+
+    return {
+        "success": True,
+        "participant": identity,
+        "event": event_type,
+        "report": report
+    }
+
+
 # ADMIN DASHBOARD
 # =========================================================
 
@@ -10580,6 +10642,17 @@ def user_dashboard_page():
     return FileResponse(
         file_path
     )
+
+
+@app.get("/user/project-analyzer")
+def user_project_analyzer_page():
+    file_path = PUBLIC_DIR / "user-project-analyzer.html"
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="user-project-analyzer.html not found inside frontend/public."
+        )
+    return FileResponse(file_path)
 
 BASE_DIR = Path(__file__).resolve().parent
 
