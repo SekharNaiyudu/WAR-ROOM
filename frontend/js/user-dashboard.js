@@ -2423,6 +2423,11 @@ function renderProjectAnalyzerReport(report) {
     container.hidden = false;
 }
 
+function formatProjectAnalyzerBytes(bytes) {
+    if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
 function setupProjectAnalyzer() {
     const button = document.getElementById("projectAnalyzerQuickAccess");
     const modal = document.getElementById("projectAnalyzerModal");
@@ -2431,12 +2436,25 @@ function setupProjectAnalyzer() {
     const submit = document.getElementById("projectAnalyzerSubmit");
     const status = document.getElementById("projectAnalyzerStatus");
     const report = document.getElementById("projectAnalyzerReport");
-    if (!button || !modal || !form || !input || !submit || !status || !report) return;
+    const fileName = document.getElementById("projectAnalyzerFileName");
+    const fileMeta = document.getElementById("projectAnalyzerFileMeta");
+    const loader = document.getElementById("projectAnalyzerLoader");
+    const loaderTitle = document.getElementById("projectAnalyzerLoaderTitle");
+    const loaderStep = document.getElementById("projectAnalyzerLoaderStep");
+    if (!button || !modal || !form || !input || !submit || !status || !report || !fileName || !fileMeta || !loader || !loaderTitle || !loaderStep) return;
 
     updateProjectAnalyzerVisibility();
     button.addEventListener("click", openProjectAnalyzer);
     modal.querySelectorAll("[data-project-analyzer-close]").forEach(function (element) {
         element.addEventListener("click", closeProjectAnalyzer);
+    });
+    input.addEventListener("change", function () {
+        const selected = input.files?.[0];
+        if (!selected) return;
+        fileName.textContent = selected.name;
+        fileMeta.textContent = `${formatProjectAnalyzerBytes(selected.size)} selected — ready for secure analysis.`;
+        status.textContent = "Project ZIP selected. Click Upload & analyze to begin.";
+        status.className = "project-analyzer-status";
     });
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
@@ -2454,20 +2472,44 @@ function setupProjectAnalyzer() {
         }
         submit.disabled = true;
         status.className = "project-analyzer-status";
-        status.textContent = "Inspecting project safely…";
+        status.textContent = `Uploading ${file.name}…`;
         report.hidden = true;
+        loader.hidden = false;
+        loaderTitle.textContent = "Uploading project ZIP";
+        loaderStep.textContent = "Sending your selected project for a secure static scan…";
+        const scanSteps = [
+            ["Scanning archive structure", "Checking files and safe ZIP paths…"],
+            ["Reviewing source quality", "Checking syntax, debug code and TODO markers…"],
+            ["Checking project readiness", "Reviewing tests, documentation and security signals…"]
+        ];
+        let stepIndex = 0;
+        const stepTimer = window.setInterval(function () {
+            const step = scanSteps[stepIndex % scanSteps.length];
+            loaderTitle.textContent = step[0];
+            loaderStep.textContent = step[1];
+            stepIndex += 1;
+        }, 1100);
         try {
             const body = new FormData();
             body.append("file", file);
             const response = await fetch(`/api/user/project-analyzer/analyze?session_token=${encodeURIComponent(token)}`, { method: "POST", body });
-            const payload = await response.json().catch(function () { return {}; });
-            if (!response.ok) throw new Error(payload.detail || "Analysis failed.");
+            const raw = await response.text();
+            let payload = {};
+            try { payload = raw ? JSON.parse(raw) : {}; } catch (_) { payload = {}; }
+            if (!response.ok) {
+                const fallback = response.status === 413
+                    ? "Upload is too large for this deployment. Remove node_modules, build output and datasets, then ZIP only your source code."
+                    : `Analysis request failed (HTTP ${response.status}). Please try again or use a smaller source-only ZIP.`;
+                throw new Error(payload.detail || fallback);
+            }
             renderProjectAnalyzerReport(payload.report);
             status.textContent = "Analysis complete. Fix critical findings before final submission.";
         } catch (error) {
-            status.textContent = error.message || "Analysis failed.";
+            status.textContent = error.message || "Analysis failed. Please try a fresh source-only ZIP.";
             status.className = "project-analyzer-status error";
         } finally {
+            window.clearInterval(stepTimer);
+            loader.hidden = true;
             submit.disabled = false;
         }
     });

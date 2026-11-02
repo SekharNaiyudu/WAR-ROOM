@@ -8327,6 +8327,14 @@ async def analyze_participant_project(
             status_code=400,
             detail=str(error)
         ) from error
+    except Exception as error:
+        # Do not leak a server traceback to participants, but always return
+        # a useful response instead of an opaque 500/"Analysis failed" UI.
+        print("PROJECT ANALYZER ERROR:", type(error).__name__, str(error))
+        raise HTTPException(
+            status_code=422,
+            detail="This ZIP could not be inspected. Re-create the ZIP without encrypted or corrupted files and try again."
+        ) from error
     finally:
         await file.close()
 

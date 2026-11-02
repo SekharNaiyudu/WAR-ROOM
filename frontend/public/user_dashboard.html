@@ -1055,10 +1055,14 @@
     <p class="project-analyzer-description">Upload a ZIP for a strict static analysis. Your code is never run.</p>
     <form id="projectAnalyzerForm" class="project-analyzer-form">
       <input id="projectAnalyzerFile" type="file" accept=".zip,application/zip" required>
-      <label for="projectAnalyzerFile"><strong>Choose project ZIP</strong><span>Maximum 200 MB. Exclude node_modules, .git, build output and datasets.</span></label>
+      <label for="projectAnalyzerFile"><strong id="projectAnalyzerFileName">Choose project ZIP</strong><span id="projectAnalyzerFileMeta">Maximum 200 MB. Exclude node_modules, .git, build output and datasets.</span></label>
       <button type="submit" id="projectAnalyzerSubmit">Upload & analyze</button>
     </form>
     <p id="projectAnalyzerStatus" class="project-analyzer-status" aria-live="polite"></p>
+    <div id="projectAnalyzerLoader" class="project-analyzer-loader" hidden aria-live="polite">
+      <div class="project-analyzer-spinner"><i></i><i></i><i></i></div>
+      <div><strong id="projectAnalyzerLoaderTitle">Uploading project ZIP</strong><span id="projectAnalyzerLoaderStep">Preparing secure static scan…</span></div>
+    </div>
     <section id="projectAnalyzerReport" class="project-analyzer-report" hidden></section>
   </section>
 </div>
@@ -1085,7 +1089,7 @@
      USER DASHBOARD JAVASCRIPT
      ===================================================== -->
 
- <script src="/js/user-dashboard.js?v=11"></script>
+ <script src="/js/user-dashboard.js?v=12"></script>
 
 
 </body>
