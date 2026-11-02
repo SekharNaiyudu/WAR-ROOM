@@ -142,29 +142,6 @@
 
             </button>
 
-
-            <!-- =================================================
-                 PROJECT ANALYZER
-                 ================================================= -->
-
-            <button
-                class="sidebar-item"
-                data-section="project-analyzer"
-                type="button"
-                onclick="window.location.href='/user/project-analyzer'"
-            >
-
-                <span class="sidebar-icon">
-                    ◫
-                </span>
-
-                <span>
-                    Upload Project
-                </span>
-
-            </button>
-
-
             <!-- =================================================
                  LEADERBOARD
                  ================================================= -->
@@ -770,7 +747,8 @@
                         <button
                             type="button"
                             class="quick-access-item"
-                            onclick="window.location.href='/user/project-analyzer'"
+                            id="projectAnalyzerQuickAccess"
+                            hidden
                         >
 
                             <span class="quick-access-icon">
@@ -1066,6 +1044,24 @@
 </main>
 
 
+
+<!-- HACKATHON PROJECT ANALYZER MODAL -->
+<div class="project-analyzer-modal" id="projectAnalyzerModal" aria-hidden="true" hidden>
+  <div class="project-analyzer-backdrop" data-project-analyzer-close></div>
+  <section class="project-analyzer-dialog" role="dialog" aria-modal="true" aria-labelledby="projectAnalyzerTitle" tabindex="-1">
+    <button type="button" class="project-analyzer-close" data-project-analyzer-close aria-label="Close">×</button>
+    <p class="project-analyzer-kicker">HACKATHON / PROJECT QUALITY CHECK</p>
+    <h2 id="projectAnalyzerTitle">Upload Your Project</h2>
+    <p class="project-analyzer-description">Upload a ZIP for a strict static analysis. Your code is never run.</p>
+    <form id="projectAnalyzerForm" class="project-analyzer-form">
+      <input id="projectAnalyzerFile" type="file" accept=".zip,application/zip" required>
+      <label for="projectAnalyzerFile"><strong>Choose project ZIP</strong><span>Maximum 200 MB. Exclude node_modules, .git, build output and datasets.</span></label>
+      <button type="submit" id="projectAnalyzerSubmit">Upload & analyze</button>
+    </form>
+    <p id="projectAnalyzerStatus" class="project-analyzer-status" aria-live="polite"></p>
+    <section id="projectAnalyzerReport" class="project-analyzer-report" hidden></section>
+  </section>
+</div>
 
 <!-- WAR ROOM THEMED PROJECT PDF PASSWORD MODAL -->
 <div class="wr-pdf-modal" id="projectPdfPasswordModal" aria-hidden="true" hidden>

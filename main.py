@@ -8303,21 +8303,11 @@ async def analyze_participant_project(
     hackathon dashboards, so a participant can only analyze a project while
     authenticated to one of those event accounts.
     """
-    user = get_current_workshop_user(session_token)
-    event_type = "workshop"
-    identity = None
-    if user:
-        identity = user["name"]
-    else:
-        user = get_current_hackathon_user(session_token)
-        event_type = "hackathon"
-        if user:
-            identity = user["team_name"]
-
-    if not user:
+    team = get_current_hackathon_user(session_token)
+    if not team:
         raise HTTPException(
-            status_code=401,
-            detail="Your session expired. Please sign in again."
+            status_code=403,
+            detail="Project analysis is available only to signed-in Hackathon teams."
         )
 
     filename = Path(file.filename or "").name
@@ -8342,8 +8332,8 @@ async def analyze_participant_project(
 
     return {
         "success": True,
-        "participant": identity,
-        "event": event_type,
+        "participant": team["team_name"],
+        "event": "hackathon",
         "report": report
     }
 
@@ -10643,16 +10633,6 @@ def user_dashboard_page():
         file_path
     )
 
-
-@app.get("/user/project-analyzer")
-def user_project_analyzer_page():
-    file_path = PUBLIC_DIR / "user-project-analyzer.html"
-    if not file_path.exists():
-        raise HTTPException(
-            status_code=404,
-            detail="user-project-analyzer.html not found inside frontend/public."
-        )
-    return FileResponse(file_path)
 
 BASE_DIR = Path(__file__).resolve().parent
 

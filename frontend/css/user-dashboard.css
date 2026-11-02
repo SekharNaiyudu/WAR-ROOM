@@ -2195,3 +2195,31 @@ body {
 .wr-pdf-modal-btn:disabled { opacity:.55; cursor:wait; }
 body.wr-pdf-modal-open { overflow:hidden; }
 @media(max-width:520px) { .wr-pdf-modal-dialog { padding:25px 20px; border-radius:16px; } .wr-pdf-modal-actions { flex-direction:column-reverse; } .wr-pdf-modal-btn { width:100%; } }
+
+/* HACKATHON PROJECT ANALYZER MODAL */
+.project-analyzer-modal[hidden] { display:none !important; }
+.project-analyzer-modal { position:fixed; inset:0; z-index:10060; display:grid; place-items:center; padding:20px; }
+.project-analyzer-backdrop { position:absolute; inset:0; background:rgba(0,0,0,.84); backdrop-filter:blur(7px); }
+.project-analyzer-dialog { position:relative; z-index:1; width:min(100%,760px); max-height:calc(100vh - 40px); overflow:auto; padding:30px; border:1px solid rgba(229,9,20,.42); border-radius:20px; background:radial-gradient(circle at 100% 0,rgba(229,9,20,.10),transparent 36%),linear-gradient(145deg,#151515,#080808); box-shadow:12px 12px 35px #000,0 0 30px rgba(229,9,20,.10); color:#f7f7f7; outline:none; }
+.project-analyzer-dialog::before { content:""; position:absolute; top:0; left:25px; width:155px; height:2px; background:linear-gradient(90deg,#ff2634,transparent); }
+.project-analyzer-close { position:absolute; top:13px; right:15px; border:0; background:transparent; color:#888; font-size:25px; cursor:pointer; }
+.project-analyzer-close:hover { color:#fff; }
+.project-analyzer-kicker { margin:0 30px 10px 0; color:#ff2634; font-size:9px; font-weight:900; letter-spacing:2.4px; }
+.project-analyzer-dialog h2 { margin:0 25px 10px 0; color:#fff; font-size:24px; font-weight:900; letter-spacing:.4px; }
+.project-analyzer-description { margin:0 0 18px; color:#aaa; font-size:12px; line-height:1.65; }
+.project-analyzer-form { padding:17px; border:1px dashed rgba(229,9,20,.48); border-radius:13px; background:rgba(255,255,255,.025); }
+.project-analyzer-form input { display:none; }
+.project-analyzer-form label { display:flex; flex-direction:column; gap:7px; padding:15px; border:1px solid #313131; border-radius:10px; cursor:pointer; color:#fff; font-size:13px; }
+.project-analyzer-form label span { color:#999; font-size:11px; line-height:1.5; }
+.project-analyzer-form button { margin-top:13px; min-height:42px; padding:0 17px; border:1px solid #ff2634; border-radius:10px; background:linear-gradient(145deg,#ff2634,#b7070e); color:#fff; font:800 11px/1 Arial,sans-serif; letter-spacing:.6px; cursor:pointer; }
+.project-analyzer-form button:disabled { opacity:.58; cursor:wait; }
+.project-analyzer-status { min-height:18px; margin:13px 0 0; color:#bbb; font-size:11px; }
+.project-analyzer-status.error { color:#ff6873; }
+.project-analyzer-report { margin-top:18px; }
+.project-analyzer-summary { display:flex; gap:22px; align-items:center; padding:18px; border:1px solid #313131; border-radius:12px; background:#0b0b0b; }
+.project-analyzer-score { color:#44df9a; font-size:45px; font-weight:900; line-height:1; }.project-analyzer-score small { color:#888; font-size:13px; }
+.project-analyzer-verdict { margin:0; font-size:16px; font-weight:900; text-transform:uppercase; }.project-analyzer-verdict.approved { color:#44df9a; }.project-analyzer-verdict.conditional { color:#ffc95a; }.project-analyzer-verdict.rejected { color:#ff6873; }
+.project-analyzer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:12px 0; }.project-analyzer-metric { padding:13px; border:1px solid #292929; border-radius:10px; background:#0b0b0b; }.project-analyzer-metric span { display:block; color:#999; font-size:10px; text-transform:capitalize; }.project-analyzer-metric b { display:block; margin-top:6px; color:#fff; font-size:20px; }
+.project-analyzer-findings { margin:12px 0 0; padding:17px 17px 17px 34px; border:1px solid #292929; border-radius:12px; background:#0b0b0b; }.project-analyzer-findings h3 { margin:0 0 10px -17px; font-size:13px; }.project-analyzer-findings li { margin:8px 0; color:#bbb; font-size:11px; line-height:1.5; }.project-analyzer-findings li.critical { color:#ff7c86; }.project-analyzer-findings li.warning { color:#ffc95a; }
+body.project-analyzer-open { overflow:hidden; }
+@media(max-width:600px) { .project-analyzer-dialog { padding:24px 18px; border-radius:16px; }.project-analyzer-grid { grid-template-columns:repeat(2,1fr); } }

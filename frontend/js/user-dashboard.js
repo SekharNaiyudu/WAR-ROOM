@@ -154,6 +154,8 @@ async function initializeUserDashboard() {
 
     setupLogout();
 
+    setupProjectAnalyzer();
+
 
     console.log(
         "======================================"
@@ -2329,6 +2331,8 @@ async function refreshUserDashboardLive() {
         updateAccountStatus();
         updateRegistrationDetails();
 
+        updateProjectAnalyzerVisibility();
+
         await Promise.all([
             updateToolkit(),
             updateDigitalForensicsProjectAccess()
@@ -2349,6 +2353,125 @@ document.addEventListener("visibilitychange", function () {
         refreshUserDashboardLive();
     }
 });
+
+
+/* =========================================================
+   HACKATHON PROJECT ANALYZER
+   The upload action is intentionally available only on the
+   dashboard and only for an authenticated Hackathon team.
+   ========================================================= */
+
+function updateProjectAnalyzerVisibility() {
+    const button = document.getElementById("projectAnalyzerQuickAccess");
+    const modal = document.getElementById("projectAnalyzerModal");
+    const isHackathon = userSession.event === "hackathon";
+
+    if (button) {
+        button.hidden = !isHackathon;
+    }
+
+    if (!isHackathon && modal) {
+        closeProjectAnalyzer();
+    }
+}
+
+function closeProjectAnalyzer() {
+    const modal = document.getElementById("projectAnalyzerModal");
+    if (!modal) return;
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("project-analyzer-open");
+}
+
+function openProjectAnalyzer() {
+    if (userSession.event !== "hackathon") return;
+    const modal = document.getElementById("projectAnalyzerModal");
+    const dialog = modal?.querySelector(".project-analyzer-dialog");
+    if (!modal) return;
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("project-analyzer-open");
+    window.setTimeout(function () { dialog?.focus(); }, 0);
+}
+
+function escapeProjectAnalyzerHtml(value) {
+    const node = document.createElement("span");
+    node.textContent = String(value ?? "");
+    return node.innerHTML;
+}
+
+function renderProjectAnalyzerReport(report) {
+    const container = document.getElementById("projectAnalyzerReport");
+    if (!container) return;
+    const metrics = Object.entries(report.scores || {}).map(function ([name, value]) {
+        return `<article class="project-analyzer-metric"><span>${escapeProjectAnalyzerHtml(name.replace("_", " "))}</span><b>${escapeProjectAnalyzerHtml(value)}</b></article>`;
+    }).join("");
+    const findings = report.issues?.length
+        ? report.issues.map(function (issue) {
+            const location = issue.path ? ` <small>(${escapeProjectAnalyzerHtml(issue.path)})</small>` : "";
+            return `<li class="${escapeProjectAnalyzerHtml(issue.severity)}"><b>${escapeProjectAnalyzerHtml(issue.severity.toUpperCase())}</b> — ${escapeProjectAnalyzerHtml(issue.message)}${location}</li>`;
+        }).join("")
+        : "<li class=\"approved\">No static issues found.</li>";
+
+    container.innerHTML = `
+        <section class="project-analyzer-summary">
+            <div class="project-analyzer-score">${escapeProjectAnalyzerHtml(report.score)}<small>/100</small></div>
+            <div><p class="project-analyzer-kicker">PROJECT READINESS</p><h3 class="project-analyzer-verdict ${escapeProjectAnalyzerHtml(report.verdict)}">${escapeProjectAnalyzerHtml(report.verdict)}</h3></div>
+        </section>
+        <div class="project-analyzer-grid">${metrics}</div>
+        <section class="project-analyzer-findings"><h3>Findings (${report.issues?.length || 0})</h3><ul>${findings}</ul></section>`;
+    container.hidden = false;
+}
+
+function setupProjectAnalyzer() {
+    const button = document.getElementById("projectAnalyzerQuickAccess");
+    const modal = document.getElementById("projectAnalyzerModal");
+    const form = document.getElementById("projectAnalyzerForm");
+    const input = document.getElementById("projectAnalyzerFile");
+    const submit = document.getElementById("projectAnalyzerSubmit");
+    const status = document.getElementById("projectAnalyzerStatus");
+    const report = document.getElementById("projectAnalyzerReport");
+    if (!button || !modal || !form || !input || !submit || !status || !report) return;
+
+    updateProjectAnalyzerVisibility();
+    button.addEventListener("click", openProjectAnalyzer);
+    modal.querySelectorAll("[data-project-analyzer-close]").forEach(function (element) {
+        element.addEventListener("click", closeProjectAnalyzer);
+    });
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const file = input.files?.[0];
+        const token = getHackathonSessionToken();
+        if (userSession.event !== "hackathon" || !token) {
+            status.textContent = "Project analysis is available only to Hackathon teams.";
+            status.className = "project-analyzer-status error";
+            return;
+        }
+        if (!file || !file.name.toLowerCase().endsWith(".zip")) {
+            status.textContent = "Choose a ZIP project file.";
+            status.className = "project-analyzer-status error";
+            return;
+        }
+        submit.disabled = true;
+        status.className = "project-analyzer-status";
+        status.textContent = "Inspecting project safely…";
+        report.hidden = true;
+        try {
+            const body = new FormData();
+            body.append("file", file);
+            const response = await fetch(`/api/user/project-analyzer/analyze?session_token=${encodeURIComponent(token)}`, { method: "POST", body });
+            const payload = await response.json().catch(function () { return {}; });
+            if (!response.ok) throw new Error(payload.detail || "Analysis failed.");
+            renderProjectAnalyzerReport(payload.report);
+            status.textContent = "Analysis complete. Fix critical findings before final submission.";
+        } catch (error) {
+            status.textContent = error.message || "Analysis failed.";
+            status.className = "project-analyzer-status error";
+        } finally {
+            submit.disabled = false;
+        }
+    });
+}
 
 console.log(
     "WAR ROOM USER DASHBOARD JS LOADED"
