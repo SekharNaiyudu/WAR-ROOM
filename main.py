@@ -8292,6 +8292,84 @@ def delete_all_admin_accounts(
 # USER — PROJECT ANALYZER
 # =========================================================
 
+class ProjectAnalyzerPresignRequest(BaseModel):
+    filename: str
+    size: int
+
+
+class ProjectAnalyzerR2AnalyzeRequest(BaseModel):
+    filename: str
+    storage_key: str
+
+
+def get_project_analyzer_team(session_token: str):
+    team = get_current_hackathon_user(session_token)
+    if not team:
+        raise HTTPException(
+            status_code=403,
+            detail="Project analysis is available only to signed-in Hackathon teams."
+        )
+    return team
+
+
+@app.post("/api/user/project-analyzer/r2-presign")
+def presign_participant_project_upload(
+    payload: ProjectAnalyzerPresignRequest,
+    session_token: str
+):
+    team = get_project_analyzer_team(session_token)
+    filename = Path(str(payload.filename or "").strip()).name
+    size = int(payload.size or 0)
+    if not filename or filename != str(payload.filename).strip() or not filename.lower().endswith(".zip"):
+        raise HTTPException(status_code=400, detail="Upload a project ZIP file.")
+    if size <= 0 or size > 200 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Project ZIP must be between 1 byte and 200 MB.")
+    if not r2_is_configured():
+        raise HTTPException(status_code=503, detail="Project upload storage is not configured.")
+
+    storage_key = (
+        f"war-room/project-analyzer/{team['id']}/"
+        f"{secrets.token_hex(12)}-{filename}"
+    )
+    try:
+        presigned_url = r2_presigned_put_url(storage_key, "application/zip")
+    except Exception as error:
+        raise HTTPException(status_code=503, detail="Unable to prepare secure project upload.") from error
+
+    return {"success": True, "storage_key": storage_key, "presigned_url": presigned_url}
+
+
+@app.post("/api/user/project-analyzer/r2-analyze")
+def analyze_participant_r2_project(
+    payload: ProjectAnalyzerR2AnalyzeRequest,
+    session_token: str
+):
+    team = get_project_analyzer_team(session_token)
+    filename = Path(str(payload.filename or "").strip()).name
+    storage_key = str(payload.storage_key or "").strip()
+    expected_prefix = f"war-room/project-analyzer/{team['id']}/"
+    if not filename or not filename.lower().endswith(".zip") or not storage_key.startswith(expected_prefix):
+        raise HTTPException(status_code=400, detail="Invalid uploaded project reference.")
+
+    try:
+        client = get_r2_client()
+        response = client.get_object(Bucket=R2_BUCKET_NAME, Key=storage_key)
+        payload_bytes = response["Body"].read()
+        report = analyze_project_zip(payload_bytes, filename)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+    except Exception as error:
+        print("PROJECT ANALYZER R2 ERROR:", type(error).__name__, str(error))
+        raise HTTPException(status_code=422, detail="Uploaded ZIP could not be inspected. Re-create the ZIP and try again.") from error
+    finally:
+        try:
+            r2_delete_object(storage_key)
+        except Exception:
+            pass
+
+    return {"success": True, "participant": team["team_name"], "event": "hackathon", "report": report}
+
+
 @app.post("/api/user/project-analyzer/analyze")
 async def analyze_participant_project(
     session_token: str,
@@ -8303,12 +8381,7 @@ async def analyze_participant_project(
     hackathon dashboards, so a participant can only analyze a project while
     authenticated to one of those event accounts.
     """
-    team = get_current_hackathon_user(session_token)
-    if not team:
-        raise HTTPException(
-            status_code=403,
-            detail="Project analysis is available only to signed-in Hackathon teams."
-        )
+    team = get_project_analyzer_team(session_token)
 
     filename = Path(file.filename or "").name
     if not filename.lower().endswith(".zip"):

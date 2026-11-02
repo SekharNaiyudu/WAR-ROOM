@@ -2428,6 +2428,28 @@ function formatProjectAnalyzerBytes(bytes) {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
+function uploadProjectToR2WithProgress(url, file, onProgress) {
+    return new Promise(function (resolve, reject) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", url, true);
+        xhr.setRequestHeader("Content-Type", "application/zip");
+        xhr.upload.addEventListener("progress", function (event) {
+            if (event.lengthComputable) onProgress(event.loaded, event.total);
+        });
+        xhr.addEventListener("load", function () {
+            if (xhr.status >= 200 && xhr.status < 300) return resolve();
+            reject(new Error(`Cloud upload failed (HTTP ${xhr.status}). Check the R2 CORS policy and retry.`));
+        });
+        xhr.addEventListener("error", function () {
+            reject(new Error("Cloud upload could not be completed. Check your connection and retry."));
+        });
+        xhr.addEventListener("timeout", function () {
+            reject(new Error("Cloud upload timed out. Please retry."));
+        });
+        xhr.send(file);
+    });
+}
+
 function setupProjectAnalyzer() {
     const button = document.getElementById("projectAnalyzerQuickAccess");
     const modal = document.getElementById("projectAnalyzerModal");
@@ -2441,7 +2463,9 @@ function setupProjectAnalyzer() {
     const loader = document.getElementById("projectAnalyzerLoader");
     const loaderTitle = document.getElementById("projectAnalyzerLoaderTitle");
     const loaderStep = document.getElementById("projectAnalyzerLoaderStep");
-    if (!button || !modal || !form || !input || !submit || !status || !report || !fileName || !fileMeta || !loader || !loaderTitle || !loaderStep) return;
+    const progressBar = document.getElementById("projectAnalyzerProgressBar");
+    const progressText = document.getElementById("projectAnalyzerProgressText");
+    if (!button || !modal || !form || !input || !submit || !status || !report || !fileName || !fileMeta || !loader || !loaderTitle || !loaderStep || !progressBar || !progressText) return;
 
     updateProjectAnalyzerVisibility();
     button.addEventListener("click", openProjectAnalyzer);
@@ -2477,38 +2501,37 @@ function setupProjectAnalyzer() {
         loader.hidden = false;
         loaderTitle.textContent = "Uploading project ZIP";
         loaderStep.textContent = "Sending your selected project for a secure static scan…";
-        const scanSteps = [
-            ["Scanning archive structure", "Checking files and safe ZIP paths…"],
-            ["Reviewing source quality", "Checking syntax, debug code and TODO markers…"],
-            ["Checking project readiness", "Reviewing tests, documentation and security signals…"]
-        ];
-        let stepIndex = 0;
-        const stepTimer = window.setInterval(function () {
-            const step = scanSteps[stepIndex % scanSteps.length];
-            loaderTitle.textContent = step[0];
-            loaderStep.textContent = step[1];
-            stepIndex += 1;
-        }, 1100);
+        progressBar.style.width = "0%";
+        progressText.textContent = "0%";
         try {
-            const body = new FormData();
-            body.append("file", file);
-            const response = await fetch(`/api/user/project-analyzer/analyze?session_token=${encodeURIComponent(token)}`, { method: "POST", body });
-            const raw = await response.text();
-            let payload = {};
-            try { payload = raw ? JSON.parse(raw) : {}; } catch (_) { payload = {}; }
-            if (!response.ok) {
-                const fallback = response.status === 413
-                    ? "Upload is too large for this deployment. Remove node_modules, build output and datasets, then ZIP only your source code."
-                    : `Analysis request failed (HTTP ${response.status}). Please try again or use a smaller source-only ZIP.`;
-                throw new Error(payload.detail || fallback);
+            const presignResponse = await fetch(`/api/user/project-analyzer/r2-presign?session_token=${encodeURIComponent(token)}`, {
+                method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({filename: file.name, size: file.size})
+            });
+            const presign = await presignResponse.json().catch(function () { return {}; });
+            if (!presignResponse.ok || !presign.presigned_url || !presign.storage_key) {
+                throw new Error(presign.detail || "Unable to prepare secure project upload.");
             }
+            await uploadProjectToR2WithProgress(presign.presigned_url, file, function (loaded, total) {
+                const percent = total ? Math.min(100, Math.round((loaded / total) * 100)) : 0;
+                progressBar.style.width = `${percent}%`;
+                progressText.textContent = `${percent}% · ${formatProjectAnalyzerBytes(loaded)} / ${formatProjectAnalyzerBytes(total)}`;
+                status.textContent = `Uploading ${file.name} — ${percent}%`;
+            });
+            loaderTitle.textContent = "Analyzing project";
+            loaderStep.textContent = "Checking architecture, source quality, tests and security signals…";
+            progressBar.style.width = "100%";
+            progressText.textContent = "100% uploaded";
+            const analyzeResponse = await fetch(`/api/user/project-analyzer/r2-analyze?session_token=${encodeURIComponent(token)}`, {
+                method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({filename: file.name, storage_key: presign.storage_key})
+            });
+            const payload = await analyzeResponse.json().catch(function () { return {}; });
+            if (!analyzeResponse.ok) throw new Error(payload.detail || `Analysis request failed (HTTP ${analyzeResponse.status}).`);
             renderProjectAnalyzerReport(payload.report);
             status.textContent = "Analysis complete. Fix critical findings before final submission.";
         } catch (error) {
             status.textContent = error.message || "Analysis failed. Please try a fresh source-only ZIP.";
             status.className = "project-analyzer-status error";
         } finally {
-            window.clearInterval(stepTimer);
             loader.hidden = true;
             submit.disabled = false;
         }
